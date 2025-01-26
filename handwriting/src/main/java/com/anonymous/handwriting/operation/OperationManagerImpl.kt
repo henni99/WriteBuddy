@@ -16,19 +16,40 @@ class OperationManagerImpl constructor(
 
     override fun executeOperation(operation: Operation) {
 
-        if(operation.doOperation(addElement)) {
-            Log.d("undoOperationStack", undoOperationStack.size.toString())
+        when(operation) {
+            is InsertOperation -> {
+                if (operation.doOperation(addElement)) {
+                    Log.d("undoOperationStack", undoOperationStack.size.toString())
 
-            undoOperationStack.add(operation)
-            redoOperationStack.clear()
+                    undoOperationStack.add(operation)
+                    redoOperationStack.clear()
+                }
+            }
+            is RemoveOperation -> {
+                if (operation.doOperation(removeElement)) {
+                    Log.d("undoOperationStack", undoOperationStack.size.toString())
+
+                    undoOperationStack.add(operation)
+                    redoOperationStack.clear()
+                }
+            }
         }
+
+
+
+
     }
 
 
     override fun undo() {
         if (undoOperationStack.isNotEmpty()) {
             val operation = undoOperationStack.removeLast()
-            operation.undo(removeElement)
+            operation.undo(
+                when(operation) {
+                    is InsertOperation -> removeElement
+                    is RemoveOperation -> addElement
+                    else -> addElement
+                })
             redoOperationStack.add(operation)
             Log.d("operationStack", "undoOperationStack: ${undoOperationStack.size} redoOperationStack: ${redoOperationStack.size}".toString())
 
@@ -38,7 +59,12 @@ class OperationManagerImpl constructor(
     override fun redo() {
         if (redoOperationStack.isNotEmpty()) {
             val operation = redoOperationStack.removeLast()
-            operation.redo(addElement)
+            operation.redo(
+                when(operation) {
+                    is InsertOperation -> addElement
+                    is RemoveOperation -> removeElement
+                    else -> removeElement
+                })
             undoOperationStack.add(operation)
             Log.d("operationStack", "undoOperationStack: ${undoOperationStack.size} redoOperationStack: ${redoOperationStack.size}".toString())
         }

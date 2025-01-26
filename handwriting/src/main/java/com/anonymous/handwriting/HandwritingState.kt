@@ -18,6 +18,7 @@ import androidx.core.graphics.forEach
 import com.anonymous.handwriting.operation.InsertOperation
 import com.anonymous.handwriting.operation.OperationManager
 import com.anonymous.handwriting.operation.OperationManagerImpl
+import com.anonymous.handwriting.operation.RemoveOperation
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -110,7 +111,11 @@ class HandwritingState internal constructor(
         if (isHitHandWritingPath) {
 
             handwritingElement?.let {
-                removeHandWritingElement(it)
+
+                operationManager.executeOperation(
+                    RemoveOperation(it)
+                )
+//                removeHandWritingElement(it)
             }
 //            Log.d("hitHandWritingPath", "${x} ${y}")
         }
