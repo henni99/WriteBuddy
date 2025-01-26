@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
@@ -30,7 +31,6 @@ import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.core.util.Pools
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -43,8 +43,9 @@ fun HandWritingNote(
 //    var canvas: Canvas? by remember { mutableStateOf(null) }
 
     var path by remember { mutableStateOf(Path()) }
+    var eraserPath by remember { mutableStateOf(Path()) }
     var canvas: Canvas? by remember { mutableStateOf(null) }
-    val currentPoint by remember { mutableStateOf(PointF(0f, 0f)) }
+    var currentPoint: PointF? by remember { mutableStateOf(null) }
     val touchTolerance = LocalViewConfiguration.current.touchSlop
     val invalidatorTick: MutableState<Int> = remember { mutableStateOf(0) }
     var pathBitmap: ImageBitmap? by remember { mutableStateOf(null) }
@@ -62,17 +63,24 @@ fun HandWritingNote(
     SideEffect {
         coroutineScope.launch(Dispatchers.Main) {
             controller.reviseTick.collect {
-                Log.d("reviseTick - canUndo", "${controller.canUndo.value} ${controller.canRedo.value}")
-                Log.d("reviseTick - handwritingElements", controller.handwritingElements.size.toString())
+                Log.d(
+                    "reviseTick - canUndo",
+                    "${controller.canUndo.value} ${controller.canRedo.value}"
+                )
+                Log.d(
+                    "reviseTick - handwritingElements",
+                    controller.handwritingElements.size.toString()
+                )
+
                 canvas?.nativeCanvas?.drawColor(0, PorterDuff.Mode.CLEAR)
                 controller.handwritingElements.forEach { element ->
                     canvas?.drawPath(element.path, element.paint)
                 }
+
+
             }
         }
-
     }
-
 
     Canvas(
         modifier = modifier
@@ -98,36 +106,55 @@ fun HandWritingNote(
                     MotionEvent.ACTION_DOWN -> {
                         path.reset()
                         path.moveTo(motionTouchEventX, motionTouchEventY)
-                        currentPoint.x = motionTouchEventX
-                        currentPoint.y = motionTouchEventY
+                        currentPoint = PointF(motionTouchEventX, motionTouchEventY)
+
+//                        if (controller.currentMode.value == HandWritingMode.ERASER) {
+//                            controller.removeHandWritingPath(
+//                                motionTouchEventX.toInt(),
+//                                motionTouchEventY.toInt()
+//                            )
+//                        }
                     }
 
                     MotionEvent.ACTION_MOVE -> {
-                        val dx = abs(motionTouchEventX - currentPoint.x)
-                        val dy = abs(motionTouchEventY - currentPoint.y)
-                        if (dx >= touchTolerance || dy >= touchTolerance) {
-                            // QuadTo() adds a quadratic bezier from the last point,
-                            // approaching control point (x1,y1), and ending at (x2,y2).
-                            path.quadraticBezierTo(
-                                currentPoint.x,
-                                currentPoint.y,
-                                (motionTouchEventX + currentPoint.x) / 2,
-                                (motionTouchEventY + currentPoint.y) / 2
+
+                        path.lineTo(
+                            motionTouchEventX,
+                            motionTouchEventY,
+                        )
+                        currentPoint = PointF(motionTouchEventX, motionTouchEventY)
+
+                        if (controller.currentMode.value == HandWritingMode.ERASER) {
+//                            eraserPath.reset()
+                            eraserPath.addOval(
+                                Rect(
+                                    motionTouchEventX - 10,
+                                    motionTouchEventY - 10,
+                                    motionTouchEventX + 10,
+                                    motionTouchEventY + 10
+                                )
                             )
-                            currentPoint.x = motionTouchEventX
-                            currentPoint.y = motionTouchEventY
+                            controller.removeHandWritingPath(eraserPath, motionTouchEventX.toInt(), motionTouchEventY.toInt())
 
 
+                        } else {
                             canvas?.drawPath(path, controller.currentPaint.value)
                         }
+
                     }
 
                     MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
 
 //                        onPathListener?.invoke(path)
+                        Log.d("currentMode", controller.currentMode.toString())
+                        if (controller.currentMode.value == HandWritingMode.PEN) {
+                            controller.addHandWritingPath(path)
+                            path = Path()
+                        } else if (controller.currentMode.value == HandWritingMode.ERASER) {
 
-                        controller.addHandWritingPath(path)
-                        path = Path()
+                        }
+
+                        currentPoint = null
                     }
 
                     else -> false
@@ -196,7 +223,18 @@ fun HandWritingNote(
             pathBitmap?.let { bitmap ->
                 canvas.drawImage(bitmap, Offset.Zero, Paint())
             }
+
+            if (controller.currentMode.value == HandWritingMode.ERASER) {
+
+                canvas.drawCircle(
+                    Offset(currentPoint?.x ?: -40f, currentPoint?.y ?: -40f),
+                    20f,
+                    controller.currentPaint.value
+                )
+            }
         }
+        Log.d("mode", controller.currentMode.toString())
+
         Log.d("controller", invalidatorTick.toString())
         Log.d("reviseTick - canUndo", "${controller.canUndo.value} ${controller.canRedo.value}")
 

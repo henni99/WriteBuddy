@@ -1,5 +1,7 @@
 package com.anonymous.handwriting
 
+import android.graphics.Point
+import android.graphics.Region
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -12,11 +14,11 @@ import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.core.graphics.forEach
 import com.anonymous.handwriting.operation.InsertOperation
 import com.anonymous.handwriting.operation.OperationManager
 import com.anonymous.handwriting.operation.OperationManagerImpl
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 public fun rememberHandwritingState(): HandwritingState {
@@ -30,7 +32,7 @@ class HandwritingState internal constructor(
 ) {
     val reviseTick = MutableStateFlow<Int>(0)
 
-    val currentMode: MutableState<HandWritingMode> = mutableStateOf(HandWritingMode.NONE)
+    val currentMode: MutableState<HandWritingMode> = mutableStateOf(HandWritingMode.PEN)
 
     val currentPaint: MutableState<Paint> = mutableStateOf(defaultPaint())
 
@@ -38,6 +40,7 @@ class HandwritingState internal constructor(
         addElement = {
             addHandWritingElement(it)
             updateOperationStack()
+
         },
         removeElement = {
             removeHandWritingElement(it)
@@ -64,26 +67,27 @@ class HandwritingState internal constructor(
 
     fun undo() {
         operationManager.undo()
-        reviseTick.value ++
+        reviseTick.value++
         updateOperationStack()
     }
 
     fun redo() {
         operationManager.redo()
-        reviseTick.value ++
+        reviseTick.value++
         updateOperationStack()
     }
-
 
 
     val handwritingElements = ArrayDeque<HandWritingElement>()
 
     fun addHandWritingPath(path: Path) {
+        Log.d("addHandWritingPath", operationManager.toString())
         operationManager.executeOperation(
             InsertOperation(
                 HandWritingElement(
                     path = path,
-                    paint = currentPaint.value
+                    paint = currentPaint.value,
+                    pathCoordinates = getPathCoordinates(path)
                 )
             )
         )
@@ -95,6 +99,43 @@ class HandwritingState internal constructor(
 //        )
     }
 
+    fun removeHandWritingPath(path: Path, x: Int, y: Int) {
+
+        val hitResult = hitHandWritingPath(path, x, y)
+        val handwritingElement = hitResult.first
+        val isHitHandWritingPath = hitResult.second
+
+        Log.d("hitResult", "${hitResult} ${handwritingElements.size}".toString())
+
+        if (isHitHandWritingPath) {
+
+            handwritingElement?.let {
+                removeHandWritingElement(it)
+            }
+//            Log.d("hitHandWritingPath", "${x} ${y}")
+        }
+    }
+
+    private fun hitHandWritingPath(path: Path, x: Int, y: Int): Pair<HandWritingElement?, Boolean> {
+
+        val eraserRegion = createRegionFromPath(path)
+        for(idx in handwritingElements.size - 1 downTo  0) {
+            val element = handwritingElements[idx]
+            val elementRegion = createRegionFromPath(element.path)
+
+            if (elementRegion.op(eraserRegion, Region.Op.INTERSECT) || elementRegion.isEmpty) {
+                element.pathCoordinates.forEach { pathCoordinate ->
+                    if (pathCoordinate.contains(x, y)
+                    ) {
+                        return Pair(element, true)
+                    }
+                }
+            }
+        }
+
+        return Pair(null, false)
+    }
+
     fun addHandWritingElement(handWritingElement: HandWritingElement) {
         handwritingElements.add(handWritingElement)
         Log.d("handwritingElements", handwritingElements.size.toString())
@@ -102,6 +143,7 @@ class HandwritingState internal constructor(
 
     fun removeHandWritingElement(handWritingElement: HandWritingElement) {
         handwritingElements.remove(handWritingElement)
+        reviseTick.value++
         Log.d("handwritingElements", handwritingElements.size.toString())
     }
 

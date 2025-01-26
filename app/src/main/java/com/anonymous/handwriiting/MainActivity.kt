@@ -64,6 +64,15 @@ class MainActivity : ComponentActivity() {
                                 Text("펜")
                             }
 
+                            Button(
+                                modifier = Modifier.size(50.dp),
+                                onClick = {
+                                    state.setCurrentMode(HandWritingMode.ERASER)
+                                }
+                            ) {
+                                Text("지")
+                            }
+
 
 
                             Button(
