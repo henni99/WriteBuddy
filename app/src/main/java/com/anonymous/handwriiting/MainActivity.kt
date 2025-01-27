@@ -73,6 +73,15 @@ class MainActivity : ComponentActivity() {
                                 Text("지")
                             }
 
+                            Button(
+                                modifier = Modifier.size(50.dp),
+                                onClick = {
+                                    state.setCurrentMode(HandWritingMode.LASSO_SELECTION)
+                                }
+                            ) {
+                                Text("올")
+                            }
+
 
 
                             Button(

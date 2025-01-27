@@ -1,6 +1,5 @@
 package com.anonymous.handwriting
 
-import android.graphics.Point
 import android.graphics.Region
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -8,18 +7,20 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
-import androidx.core.graphics.forEach
 import com.anonymous.handwriting.operation.InsertOperation
 import com.anonymous.handwriting.operation.OperationManager
 import com.anonymous.handwriting.operation.OperationManagerImpl
 import com.anonymous.handwriting.operation.RemoveOperation
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 @Composable
 public fun rememberHandwritingState(): HandwritingState {
@@ -35,7 +36,12 @@ class HandwritingState internal constructor(
 
     val currentMode: MutableState<HandWritingMode> = mutableStateOf(HandWritingMode.PEN)
 
-    val currentPaint: MutableState<Paint> = mutableStateOf(defaultPaint())
+    var currentPaint: MutableState<Paint> = mutableStateOf(defaultPaint())
+
+
+    fun setCurrentPaint(paint: Paint) {
+        this.currentPaint.value = paint
+    }
 
     private val operationManager: OperationManager = OperationManagerImpl(
         addElement = {
@@ -52,6 +58,22 @@ class HandwritingState internal constructor(
 
     fun setCurrentMode(handWritingMode: HandWritingMode) {
         currentMode.value = handWritingMode
+        selectedBoundBox.value = Rect.Zero
+
+
+        when (handWritingMode) {
+            HandWritingMode.PEN -> {
+                currentPaint.value = defaultPaint()
+            }
+
+            HandWritingMode.LASSO_SELECTION -> {
+                currentPaint.value = lassoLinePaint()
+            }
+
+            else -> {}
+        }
+
+        reviseTick.update { it + 1 }
     }
 
 
@@ -68,18 +90,22 @@ class HandwritingState internal constructor(
 
     fun undo() {
         operationManager.undo()
-        reviseTick.value++
+        reviseTick.update { it + 1 }
         updateOperationStack()
     }
 
     fun redo() {
         operationManager.redo()
-        reviseTick.value++
+        reviseTick.update { it + 1 }
         updateOperationStack()
     }
 
 
     val handwritingElements = ArrayDeque<HandWritingElement>()
+
+    val selectedElements: MutableState<Set<HandWritingElement>> = mutableStateOf(emptySet())
+
+    val selectedBoundBox: MutableState<Rect> = mutableStateOf(Rect.Zero)
 
     fun addHandWritingPath(path: Path) {
         Log.d("addHandWritingPath", operationManager.toString())
@@ -102,7 +128,7 @@ class HandwritingState internal constructor(
 
     fun removeHandWritingPath(path: Path, x: Int, y: Int) {
 
-        val hitResult = hitHandWritingPath(path, x, y)
+        val hitResult = hitHandWritingPathAndPoint(path, x, y)
         val handwritingElement = hitResult.first
         val isHitHandWritingPath = hitResult.second
 
@@ -121,10 +147,65 @@ class HandwritingState internal constructor(
         }
     }
 
-    private fun hitHandWritingPath(path: Path, x: Int, y: Int): Pair<HandWritingElement?, Boolean> {
+    fun selectHandWritingElements(path: Path) {
+
+        val tempSelectedElements = mutableSetOf<HandWritingElement>()
+        var tempRect = Rect.Zero
+
+        val lassoRegion = createRegionFromPath(path)
+        for (idx in handwritingElements.size - 1 downTo 0) {
+            val element = handwritingElements[idx]
+            val elementRegion = createRegionFromPath(element.path)
+
+            if (elementRegion.op(lassoRegion, Region.Op.INTERSECT) || elementRegion.isEmpty) {
+                element.pathCoordinates.forEach { pathCoordinate ->
+                    if (elementRegion.contains(pathCoordinate.centerX(), pathCoordinate.centerY())
+                    ) {
+                        tempSelectedElements.add(element)
+
+                        val elementBoundBox = element.path.getBounds()
+
+                        if (tempRect == Rect.Zero) {
+                            tempRect = elementBoundBox
+                        } else {
+                            tempRect = Rect(
+                                left = minOf(tempRect.left, elementBoundBox.left),
+                                top = minOf(tempRect.top, elementBoundBox.top),
+                                right = maxOf(tempRect.right, elementBoundBox.right),
+                                bottom = maxOf(
+                                    tempRect.bottom,
+                                    elementBoundBox.bottom
+                                )
+                            )
+                        }
+
+                        Log.d("tempRect", tempRect.toString())
+                    }
+                }
+            }
+        }
+
+
+        if (tempSelectedElements.isNotEmpty()) {
+            selectedElements.value = tempSelectedElements
+            selectedBoundBox.value = tempRect
+            currentMode.value = HandWritingMode.LASSO_MOVE
+        } else {
+            selectedBoundBox.value = Rect.Zero
+            currentMode.value = HandWritingMode.LASSO_SELECTION
+        }
+
+        reviseTick.update { it + 1 }
+    }
+
+    private fun hitHandWritingPathAndPoint(
+        path: Path,
+        x: Int = 0,
+        y: Int = 0
+    ): Pair<HandWritingElement?, Boolean> {
 
         val eraserRegion = createRegionFromPath(path)
-        for(idx in handwritingElements.size - 1 downTo  0) {
+        for (idx in handwritingElements.size - 1 downTo 0) {
             val element = handwritingElements[idx]
             val elementRegion = createRegionFromPath(element.path)
 
@@ -148,7 +229,7 @@ class HandwritingState internal constructor(
 
     fun removeHandWritingElement(handWritingElement: HandWritingElement) {
         handwritingElements.remove(handWritingElement)
-        reviseTick.value++
+        reviseTick.update { it + 1 }
         Log.d("handwritingElements", handwritingElements.size.toString())
     }
 
@@ -412,6 +493,20 @@ internal fun defaultPaint(): Paint {
         strokeCap = StrokeCap.Round
     }
 }
+
+/** Returns a default [Paint]. */
+internal fun lassoLinePaint(): Paint {
+    return Paint().apply {
+        color = Color.Black
+        strokeWidth = 14f
+        isAntiAlias = true
+        style = PaintingStyle.Stroke
+        strokeJoin = StrokeJoin.Round
+        strokeCap = StrokeCap.Round
+        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 40f), 10f)
+    }
+}
+
 
 internal fun Paint.copy(from: Paint): Paint = apply {
     alpha = from.alpha
