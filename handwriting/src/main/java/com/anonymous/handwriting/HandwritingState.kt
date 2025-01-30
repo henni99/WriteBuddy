@@ -228,9 +228,10 @@ class HandwritingState internal constructor(
     }
 
     fun removeHandWritingElement(handWritingElement: HandWritingElement) {
-        handwritingElements.remove(handWritingElement)
-        reviseTick.update { it + 1 }
-        Log.d("handwritingElements", handwritingElements.size.toString())
+        if (handwritingElements.remove(handWritingElement)) {
+            reviseTick.update { it + 1 }
+            Log.d("handwritingElements", handwritingElements.size.toString())
+        }
     }
 
     fun clearHandWritingElements() {
