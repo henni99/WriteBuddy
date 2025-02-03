@@ -1,5 +1,6 @@
 package com.anonymous.handwriting
 
+import android.graphics.Canvas
 import android.graphics.Region
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -56,6 +57,10 @@ class HandwritingState internal constructor(
 
         when (handWritingMode) {
             HandWritingMode.PEN -> {
+                currentPaint.value = defaultPaint()
+            }
+
+            HandWritingMode.ERASER -> {
                 currentPaint.value = defaultPaint()
             }
 
@@ -128,9 +133,9 @@ class HandwritingState internal constructor(
     }
 
 
-    fun removeHandWritingPath(path: Path, x: Int, y: Int) {
+    fun removeHandWritingPath(path: Path) {
 
-        val hitResult = hitHandWritingPathAndPoint(path, x, y)
+        val hitResult = hitHandWritingPath(path)
         val handwritingElement = hitResult.first
         val isHitHandWritingPath = hitResult.second
 
@@ -164,7 +169,7 @@ class HandwritingState internal constructor(
 
     }
 
-    fun selectHandWritingElements(path: Path) {
+    fun selectHandWritingElements(path: Path, canvas: androidx.compose.ui.graphics.Canvas?) {
 
         val tempSelectedElements = mutableSetOf<HandWritingElement>()
         var tempRect = Rect.Zero
@@ -204,10 +209,11 @@ class HandwritingState internal constructor(
                     continue
                 }
 
-
                 val pathWithOp = Path().apply {
                     this.op(element.path, path, PathOperation.Intersect)
                 }
+
+
                 val isIntersection = pathWithOp.isEmpty.not()
 
                 if (isIntersection) {
@@ -255,10 +261,8 @@ class HandwritingState internal constructor(
         reviseTick.update { it + 1 }
     }
 
-    private fun hitHandWritingPathAndPoint(
+    private fun hitHandWritingPath(
         path: Path,
-        x: Int = 0,
-        y: Int = 0
     ): Pair<HandWritingElement?, Boolean> {
 
         val eraserRegion = createRegionFromPath(path)
@@ -267,12 +271,16 @@ class HandwritingState internal constructor(
             val elementRegion = createRegionFromPath(element.path)
 
             if (elementRegion.op(eraserRegion, Region.Op.INTERSECT) || elementRegion.isEmpty) {
-//                element.pathCoordinates.forEach { pathCoordinate ->
-//                    if (pathCoordinate.contains(x, y)
-//                    ) {
-//                        return Pair(element, true)
-//                    }
+
+                val pathWithOp = Path().apply {
+                    this.op(element.path, path, PathOperation.Intersect)
+                }
+                val isIntersection = pathWithOp.isEmpty.not()
+
+//                if(isIntersection) {
+//                    return Pair(element, true)
 //                }
+
             }
         }
 
@@ -544,6 +552,17 @@ internal data class SketchPath(
 internal fun defaultPaint(): Paint {
     return Paint().apply {
         color = Color.White
+        strokeWidth = 14f
+        isAntiAlias = true
+        style = PaintingStyle.Stroke
+        strokeJoin = StrokeJoin.Round
+        strokeCap = StrokeCap.Round
+    }
+}
+
+internal fun defaultPaint2(): Paint {
+    return Paint().apply {
+        color = Color.Red
         strokeWidth = 14f
         isAntiAlias = true
         style = PaintingStyle.Stroke

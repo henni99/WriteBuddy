@@ -23,13 +23,17 @@ import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.util.fastForEachReversed
 import androidx.core.util.Pools
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.update
@@ -175,6 +179,8 @@ fun HandWritingNote(
                             }
 
                             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+
+
                                 tmpList.add(
                                     com.anonymous.handwriting.Point(
                                         motionTouchEventX.toInt(),
@@ -182,6 +188,11 @@ fun HandWritingNote(
                                     )
                                 )
                                 Log.d("tmpList", tmpList.size.toString())
+
+                                tmpList.fastForEachReversed {
+                                    penPath.lineTo(it.x.toFloat(), it.y.toFloat())
+                                }
+
                                 controller.addHandWritingPath(penPath, tmpList)
                                 tmpList = mutableListOf()
                                 penPath = Path()
@@ -208,7 +219,7 @@ fun HandWritingNote(
                                 )
 
                                 controller.removeHandWritingPath(
-                                    eraserPath, motionTouchEventX.toInt(), motionTouchEventY.toInt()
+                                    eraserPath
                                 )
                             }
 
@@ -254,7 +265,8 @@ fun HandWritingNote(
                                         motionTouchEventY.toInt()
                                     )
                                 )
-                                controller.selectHandWritingElements(lassoPath)
+
+                                controller.selectHandWritingElements(lassoPath, canvas)
                                 tmpList = mutableListOf()
                                 lassoPath = Path()
                             }
@@ -430,6 +442,37 @@ fun HandWritingNote(
 
                 HandWritingMode.LASSO_SELECTION -> {
                     canvas.drawPath(lassoPath, controller.currentPaint.value)
+
+//                    val tmptmpt = Path().apply {
+//                        moveTo(100f, 100f)  // 새로운 시작점 설정
+//                        lineTo(200f, 100f)
+//                        lineTo(200f, 200f)
+//                    }
+//
+//                    canvas.drawPath(tmptmpt, defaultPaint2() )
+
+                    val tmp = Path()
+                    controller.handwritingElements.forEach { element ->
+
+                        val tmpElementPath = Path().apply {
+                            addPath(element.path)
+                        }
+
+//                        tmpElementPath.translate(Offset(0f, 1f))
+
+                        val pathWithOp = Path().apply {
+                            this.op(tmpElementPath, lassoPath, PathOperation.Intersect)
+                        }
+                        canvas.drawPath(pathWithOp, defaultPaint2())
+//                        canvas.drawPath(path, lassoLinePaint())
+
+//                        tmpElementPath.translate(Offset(0f, -2f))
+//                        val path2 = Path().apply {
+//                            op(tmpElementPath, element.path, PathOperation.ReverseDifference)
+//                        }
+//
+//                        canvas.drawPath(path2, lassoLinePaint())
+                    }
                 }
 
                 HandWritingMode.LASSO_MOVE -> {
