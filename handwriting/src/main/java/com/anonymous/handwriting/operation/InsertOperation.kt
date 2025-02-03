@@ -1,22 +1,27 @@
 package com.anonymous.handwriting.operation
 
 import com.anonymous.handwriting.HandWritingElement
+import com.anonymous.handwriting.HandwritingState
 
 class InsertOperation constructor(
-    private val element: HandWritingElement
+    private val handwritingState: HandwritingState,
+    private val element: HandWritingElement,
 ) : Operation {
 
-    override fun doOperation(operationEvent: (HandWritingElement) -> Unit): Boolean {
-        operationEvent(element)
+    override fun doOperation(): Boolean {
+        handwritingState.addHandWritingElement(element)
+        handwritingState.updateOperationStack()
         return true
     }
 
-    override fun undo(reOperationEvent: (HandWritingElement) -> Unit) {
-        reOperationEvent(element)
+    override fun undo() {
+        handwritingState.removeHandWritingElement(element)
+        handwritingState.updateOperationStack()
     }
 
-    override fun redo(operationEvent: (HandWritingElement) -> Unit) {
-        operationEvent(element)
+    override fun redo() {
+        handwritingState.addHandWritingElement(element)
+        handwritingState.updateOperationStack()
     }
 
 }

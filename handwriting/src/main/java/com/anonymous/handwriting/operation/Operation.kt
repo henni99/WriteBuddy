@@ -4,9 +4,9 @@ import com.anonymous.handwriting.HandWritingElement
 
 interface Operation {
 
-    fun doOperation(operationEvent: (HandWritingElement) -> Unit): Boolean
+    fun doOperation(): Boolean
 
-    fun undo(reOperationEvent: (HandWritingElement) -> Unit)
+    fun undo()
 
-    fun redo(operationEvent: (HandWritingElement) -> Unit)
+    fun redo()
 }

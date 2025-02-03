@@ -3,6 +3,7 @@ package com.anonymous.handwriting
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.Region
+import android.util.Log
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.toAndroidRectF
@@ -30,6 +31,7 @@ fun createRegionFromPath(path: Path): Region {
 fun getPathCoordinates(path: Path, interval: Int = 1): Set<Rect> {
     val pathMeasure = android.graphics.PathMeasure(path.asAndroidPath(), false)
     val pathLength = pathMeasure.length
+    Log.d("pathLength", pathLength.toString())
     val coordinates = mutableSetOf<Rect>()
 
     var distance = 0f
