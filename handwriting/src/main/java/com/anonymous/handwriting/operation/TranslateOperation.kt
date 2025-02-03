@@ -30,11 +30,16 @@ class TranslateOperation(
                 - translateOffset.x,
                 - translateOffset.y
             )
+
             element.path.translate(translateOffset.unaryMinus())
 
             Log.d("TransformOperation", "undo: originalMatrix: ${element.matrix}")
 
         }
+
+        handwritingState.selectedBoundBox.value = handwritingState.selectedBoundBox.value.translate(
+            translateOffset.unaryMinus()
+        )
         handwritingState.updateOperationStack()
     }
 
@@ -46,10 +51,11 @@ class TranslateOperation(
             )
             element.path.translate(translateOffset)
         }
+        handwritingState.selectedBoundBox.value = handwritingState.selectedBoundBox.value.translate(
+            translateOffset
+        )
         handwritingState.updateOperationStack()
-
         Log.d("TransformOperation", "redo")
-
     }
 
 }

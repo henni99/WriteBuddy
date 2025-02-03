@@ -99,13 +99,12 @@ fun HandWritingNote(
 
                 controller.handwritingElements.forEach { element ->
 
-                    Log.d("handwritingElements", element.matrix.toString())
-
-                    if (!controller.selectedElements.value.contains(element)) {
+                    Log.d("selectedElements", controller.selectedElements.value.contains(element).toString())
+                    if(controller.selectedElements.value.find {
+                        it.elementId == element.elementId
+                    } == null) {
                         canvas?.drawPath(element.path, defaultPaint())
                     }
-
-
 //                    canvas?.let {
 //                        element.drawToCanvas(it, transformMatrix)
 //                    }
@@ -284,7 +283,7 @@ fun HandWritingNote(
                                     firstPoint.set(motionTouchEventX, motionTouchEventY)
                                     Log.d("ACTION_DOWN", "LASSO_MOVE")
                                 } else {
-
+                                    Log.d("ACTION_DOWN", "LASSO_SELECTION")
                                     controller.setCurrentMode(HandWritingMode.LASSO_SELECTION)
                                     controller.selectedElements.value = emptySet()
                                     controller.selectedBoundBox.value = Rect.Zero
@@ -355,6 +354,7 @@ fun HandWritingNote(
 
 
                 invalidatorTick.value++
+                Log.d("selectionElements", controller.selectedElements.value.size.toString())
                 return@pointerInteropFilter true
             }
 
