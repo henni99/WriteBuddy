@@ -169,7 +169,8 @@ class HandwritingState internal constructor(
 
     }
 
-    fun selectHandWritingElements(path: Path, canvas: androidx.compose.ui.graphics.Canvas?) {
+
+    fun selectHandWritingElements(path: Path) {
 
         val tempSelectedElements = mutableSetOf<HandWritingElement>()
         var tempRect = Rect.Zero

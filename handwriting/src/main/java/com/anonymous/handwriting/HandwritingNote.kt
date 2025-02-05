@@ -4,8 +4,15 @@ import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.PorterDuff
 import android.util.Log
+import android.view.GestureDetector
+import android.view.InputDevice
 import android.view.MotionEvent
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -19,6 +26,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
@@ -29,10 +37,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.util.fastForEachReversed
 import androidx.core.util.Pools
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +75,9 @@ fun HandWritingNote(
     var lassoMoveFirstFlag: Boolean by remember { mutableStateOf(false) }
     var transformMatrix: Matrix by remember { mutableStateOf(Matrix()) }
 
+    var canvasSize: Size by remember { mutableStateOf(Size(0f, 0f)) }
+
+    var isTapped by remember { mutableStateOf(true) }
 
     var tmpList: MutableList<com.anonymous.handwriting.Point> by remember {
         mutableStateOf(
@@ -79,6 +93,17 @@ fun HandWritingNote(
 //            controller.clear()
 //        }
 //    }
+
+    var scale by remember { mutableStateOf(1f) }
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+    val minScale = 1f
+    val maxScale = 4f
+
+    var initialOffset by remember { mutableStateOf(Offset(0f, 0f)) }
+    val slowMovement = 0.5f
+
+
 
     val coroutineScope = rememberCoroutineScope()
     SideEffect {
@@ -127,12 +152,22 @@ fun HandWritingNote(
         }
     }
 
+    val state = rememberTransformableState { zoomChange, panChange, rotationChange ->
+
+
+        scale = (scale * zoomChange).coerceIn(1f, 5f)
+
+        val extraWidth = (scale - 1)
+        Log.d("scale", scale.toString())
+    }
+
     Canvas(
         modifier = modifier
             .fillMaxSize()
             .onSizeChanged { newSize ->
                 val size =
                     newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
+
                 pathBitmap =
                     ImageBitmap(size.width, size.height, ImageBitmapConfig.Argb8888)
                         .also {
@@ -141,236 +176,278 @@ fun HandWritingNote(
 
                 Log.d("pathBitmap", pathBitmap.toString())
             }
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+                translationX = offsetX
+                translationY = offsetY
+
+                canvasSize = size
+                Log.d("canvasSize", canvasSize.toString())
+            }
             .pointerInteropFilter { event ->
 
-                val motionTouchEventX = event.x
-                val motionTouchEventY = event.y
+                if(event.pointerCount == 2) {
+                    return@pointerInteropFilter false
+                }
 
-                when (controller.currentMode.value) {
-                    HandWritingMode.PEN -> {
+                if(event.pointerCount == 1) {
 
-                        when (event.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                tmpList.add(
-                                    com.anonymous.handwriting.Point(
-                                        motionTouchEventX.toInt(),
-                                        motionTouchEventY.toInt()
-                                    )
-                                )
-                                penPath.reset()
-                                penPath.moveTo(motionTouchEventX, motionTouchEventY)
-                                currentPoint.set(motionTouchEventX, motionTouchEventY)
-                            }
+                    val motionTouchEventX = event.x
+                    val motionTouchEventY = event.y
 
-                            MotionEvent.ACTION_MOVE -> {
-                                tmpList.add(
-                                    com.anonymous.handwriting.Point(
-                                        motionTouchEventX.toInt(),
-                                        motionTouchEventY.toInt()
-                                    )
-                                )
+                    when (controller.currentMode.value) {
+                        HandWritingMode.PEN -> {
 
-                                penPath.lineTo(
-                                    motionTouchEventX,
-                                    motionTouchEventY,
-                                )
-
-                                canvas?.drawPath(penPath, controller.currentPaint.value)
-                            }
-
-                            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-
-
-                                tmpList.add(
-                                    com.anonymous.handwriting.Point(
-                                        motionTouchEventX.toInt(),
-                                        motionTouchEventY.toInt()
-                                    )
-                                )
-                                Log.d("tmpList", tmpList.size.toString())
-
-                                tmpList.fastForEachReversed {
-                                    penPath.lineTo(it.x.toFloat(), it.y.toFloat())
-                                }
-
-                                controller.addHandWritingPath(penPath, tmpList)
-                                tmpList = mutableListOf()
-                                penPath = Path()
-                                currentPoint.set(-40f, -40f)
-                            }
-                        }
-                    }
-
-                    HandWritingMode.ERASER -> {
-                        when (event.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                currentPoint.set(motionTouchEventX, motionTouchEventY)
-                            }
-
-                            MotionEvent.ACTION_MOVE -> {
-                                currentPoint.set(motionTouchEventX, motionTouchEventY)
-                                eraserPath.addOval(
-                                    Rect(
-                                        motionTouchEventX - 10,
-                                        motionTouchEventY - 10,
-                                        motionTouchEventX + 10,
-                                        motionTouchEventY + 10
-                                    )
-                                )
-
-                                controller.removeHandWritingPath(
-                                    eraserPath
-                                )
-                            }
-
-                            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                                eraserPath = Path()
-                                currentPoint.set(-40f, -40f)
-                            }
-                        }
-                    }
-
-                    HandWritingMode.LASSO_SELECTION -> {
-
-                        when (event.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                lassoPath.reset()
-                                tmpList.add(
-                                    com.anonymous.handwriting.Point(
-                                        motionTouchEventX.toInt(),
-                                        motionTouchEventY.toInt()
-                                    )
-                                )
-                                lassoPath.moveTo(motionTouchEventX, motionTouchEventY)
-                                currentPoint.set(motionTouchEventX, motionTouchEventY)
-                            }
-
-                            MotionEvent.ACTION_MOVE -> {
-                                lassoPath.lineTo(
-                                    motionTouchEventX,
-                                    motionTouchEventY,
-                                )
-                                tmpList.add(
-                                    com.anonymous.handwriting.Point(
-                                        motionTouchEventX.toInt(),
-                                        motionTouchEventY.toInt()
-                                    )
-                                )
-
-                            }
-
-                            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                                tmpList.add(
-                                    com.anonymous.handwriting.Point(
-                                        motionTouchEventX.toInt(),
-                                        motionTouchEventY.toInt()
-                                    )
-                                )
-
-                                controller.selectHandWritingElements(lassoPath, canvas)
-                                tmpList = mutableListOf()
-                                lassoPath = Path()
-                            }
-                        }
-                    }
-
-                    HandWritingMode.LASSO_MOVE -> {
-                        when (event.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                lassoPath.reset()
-                                lassoPath.moveTo(motionTouchEventX, motionTouchEventY)
-
-
-                                if (controller.selectedBoundBox.value.contains(
-                                        Offset(
-                                            motionTouchEventX,
-                                            motionTouchEventY
+                            when (event.action) {
+                                MotionEvent.ACTION_DOWN -> {
+                                    tmpList.add(
+                                        com.anonymous.handwriting.Point(
+                                            motionTouchEventX.toInt(),
+                                            motionTouchEventY.toInt()
                                         )
                                     )
-                                ) {
-                                    lassoMoveFlag = true
-                                    lassoMoveFirstFlag = true
-
-                                    controller.reviseTick.update { it + 1 }
+                                    penPath.reset()
+                                    penPath.moveTo(motionTouchEventX, motionTouchEventY)
+                                    penPath.lineTo(motionTouchEventX, motionTouchEventY)
                                     currentPoint.set(motionTouchEventX, motionTouchEventY)
-                                    firstPoint.set(motionTouchEventX, motionTouchEventY)
-                                    Log.d("ACTION_DOWN", "LASSO_MOVE")
-                                } else {
-                                    Log.d("ACTION_DOWN", "LASSO_SELECTION")
-                                    controller.setCurrentMode(HandWritingMode.LASSO_SELECTION)
-                                    controller.selectedElements.value = emptySet()
-                                    controller.selectedBoundBox.value = Rect.Zero
+                                    canvas?.drawPath(penPath, controller.currentPaint.value)
                                 }
-                            }
 
-                            MotionEvent.ACTION_MOVE -> {
-                                if (lassoMoveFlag) {
-
-                                    transformMatrix.reset()
-                                    transformMatrix.translate(
-                                        motionTouchEventX - currentPoint.x,
-                                        motionTouchEventY - currentPoint.y
+                                MotionEvent.ACTION_MOVE -> {
+                                    tmpList.add(
+                                        com.anonymous.handwriting.Point(
+                                            motionTouchEventX.toInt(),
+                                            motionTouchEventY.toInt()
+                                        )
                                     )
 
-                                    controller.selectedBoundBox.value =
-                                        controller.selectedBoundBox.value.translate(
-                                            transformMatrix.values[12],
-                                            transformMatrix.values[13]
+                                    penPath.lineTo(
+                                        motionTouchEventX,
+                                        motionTouchEventY,
+                                    )
+
+                                    canvas?.drawPath(penPath, controller.currentPaint.value)
+                                }
+
+                                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+
+
+                                    tmpList.add(
+                                        com.anonymous.handwriting.Point(
+                                            motionTouchEventX.toInt(),
+                                            motionTouchEventY.toInt()
+                                        )
+                                    )
+                                    Log.d("tmpList", tmpList.size.toString())
+                                    penPath.lineTo(motionTouchEventX, motionTouchEventY)
+                                    tmpList.fastForEachReversed {
+                                        penPath.lineTo(it.x.toFloat(), it.y.toFloat())
+                                    }
+
+                                    controller.addHandWritingPath(penPath, tmpList)
+                                    tmpList = mutableListOf()
+                                    penPath = Path()
+                                    currentPoint.set(-40f, -40f)
+
+                                }
+                            }
+                        }
+
+                        HandWritingMode.ERASER -> {
+                            when (event.action) {
+                                MotionEvent.ACTION_DOWN -> {
+                                    currentPoint.set(motionTouchEventX, motionTouchEventY)
+                                }
+
+                                MotionEvent.ACTION_MOVE -> {
+                                    currentPoint.set(motionTouchEventX, motionTouchEventY)
+                                    eraserPath.addOval(
+                                        Rect(
+                                            motionTouchEventX - 10,
+                                            motionTouchEventY - 10,
+                                            motionTouchEventX + 10,
+                                            motionTouchEventY + 10
+                                        )
+                                    )
+
+                                    controller.removeHandWritingPath(
+                                        eraserPath
+                                    )
+                                }
+
+                                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                                    eraserPath = Path()
+                                    currentPoint.set(-40f, -40f)
+                                }
+                            }
+                        }
+
+                        HandWritingMode.LASSO_SELECTION -> {
+
+                            when (event.action) {
+                                MotionEvent.ACTION_DOWN -> {
+
+                                    lassoPath.reset()
+                                    tmpList.add(
+                                        com.anonymous.handwriting.Point(
+                                            motionTouchEventX.toInt(),
+                                            motionTouchEventY.toInt()
+                                        )
+                                    )
+                                    lassoPath.moveTo(motionTouchEventX, motionTouchEventY)
+                                    currentPoint.set(motionTouchEventX, motionTouchEventY)
+                                }
+
+                                MotionEvent.ACTION_MOVE -> {
+                                    isTapped = false
+                                    lassoPath.lineTo(
+                                        motionTouchEventX,
+                                        motionTouchEventY,
+                                    )
+                                    tmpList.add(
+                                        com.anonymous.handwriting.Point(
+                                            motionTouchEventX.toInt(),
+                                            motionTouchEventY.toInt()
+                                        )
+                                    )
+
+                                }
+
+                                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+
+                                    if(isTapped) {
+                                        Log.d("isTapped", isTapped.toString())
+                                        val tapPath = Path()
+                                        tapPath.addOval(
+                                            Rect(
+                                                motionTouchEventX - 20,
+                                                motionTouchEventY - 20,
+                                                motionTouchEventX + 20,
+                                                motionTouchEventY + 20
+                                            )
+                                        )
+                                        controller.selectHandWritingElements(tapPath)
+                                        return@pointerInteropFilter true
+                                    }
+
+                                    tmpList.add(
+                                        com.anonymous.handwriting.Point(
+                                            motionTouchEventX.toInt(),
+                                            motionTouchEventY.toInt()
+                                        )
+                                    )
+
+                                    controller.selectHandWritingElements(lassoPath)
+                                    tmpList = mutableListOf()
+                                    lassoPath = Path()
+                                    isTapped = true
+                                }
+                            }
+                        }
+
+                        HandWritingMode.LASSO_MOVE -> {
+                            when (event.action) {
+                                MotionEvent.ACTION_DOWN -> {
+                                    lassoPath.reset()
+                                    lassoPath.moveTo(motionTouchEventX, motionTouchEventY)
+
+
+                                    if (controller.selectedBoundBox.value.contains(
+                                            Offset(
+                                                motionTouchEventX,
+                                                motionTouchEventY
+                                            )
+                                        )
+                                    ) {
+                                        lassoMoveFlag = true
+                                        lassoMoveFirstFlag = true
+
+                                        controller.reviseTick.update { it + 1 }
+                                        currentPoint.set(motionTouchEventX, motionTouchEventY)
+                                        firstPoint.set(motionTouchEventX, motionTouchEventY)
+                                        Log.d("ACTION_DOWN", "LASSO_MOVE")
+                                    } else {
+                                        Log.d("ACTION_DOWN", "LASSO_SELECTION")
+                                        controller.setCurrentMode(HandWritingMode.LASSO_SELECTION)
+                                        controller.selectedElements.value = emptySet()
+                                        controller.selectedBoundBox.value = Rect.Zero
+                                    }
+                                }
+
+                                MotionEvent.ACTION_MOVE -> {
+                                    if (lassoMoveFlag) {
+
+                                        transformMatrix.reset()
+                                        transformMatrix.translate(
+                                            motionTouchEventX - currentPoint.x,
+                                            motionTouchEventY - currentPoint.y
                                         )
 
-                                    currentPoint.set(motionTouchEventX, motionTouchEventY)
+                                        controller.selectedBoundBox.value =
+                                            controller.selectedBoundBox.value.translate(
+                                                transformMatrix.values[12],
+                                                transformMatrix.values[13]
+                                            )
 
-                                    if (lassoMoveFirstFlag) {
-                                        lassoMoveFirstFlag = false
+                                        currentPoint.set(motionTouchEventX, motionTouchEventY)
+
+                                        if (lassoMoveFirstFlag) {
+                                            lassoMoveFirstFlag = false
+                                            controller.reviseTick.update { it + 1 }
+                                        }
+                                    }
+                                }
+
+                                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                                    if (lassoMoveFlag) {
+
+                                        transformMatrix.reset()
+                                        transformMatrix.translate(
+                                            motionTouchEventX - currentPoint.x,
+                                            motionTouchEventY - currentPoint.y
+                                        )
+
+                                        controller.selectedBoundBox.value =
+                                            controller.selectedBoundBox.value.translate(
+                                                transformMatrix.values[12],
+                                                transformMatrix.values[13]
+                                            )
+
+                                        Log.d(
+                                            "translateOffset",
+                                            "${motionTouchEventX} ${motionTouchEventY} ${firstPoint}"
+                                        )
+
+                                        controller.transformHandWritings(
+                                            translateOffset = Offset(
+                                                x = motionTouchEventX - firstPoint.x,
+                                                y = motionTouchEventY - firstPoint.y
+                                            )
+                                        )
+
+                                        firstPoint.set(0f, 0f)
+
+                                        currentPoint.set(motionTouchEventX, motionTouchEventY)
                                         controller.reviseTick.update { it + 1 }
                                     }
                                 }
                             }
+                        }
 
-                            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                                if (lassoMoveFlag) {
-
-                                    transformMatrix.reset()
-                                    transformMatrix.translate(
-                                        motionTouchEventX - currentPoint.x,
-                                        motionTouchEventY - currentPoint.y
-                                    )
-
-                                    controller.selectedBoundBox.value =
-                                        controller.selectedBoundBox.value.translate(
-                                            transformMatrix.values[12],
-                                            transformMatrix.values[13]
-                                        )
-
-                                    Log.d("translateOffset", "${motionTouchEventX} ${motionTouchEventY} ${firstPoint}")
-
-                                    controller.transformHandWritings(
-                                        translateOffset = Offset(
-                                            x = motionTouchEventX - firstPoint.x,
-                                            y = motionTouchEventY - firstPoint.y
-                                        )
-                                    )
-
-                                     firstPoint.set(0f, 0f)
-
-                                    currentPoint.set(motionTouchEventX, motionTouchEventY)
-                                    controller.reviseTick.update { it + 1 }
-                                }
-                            }
+                        else -> {
+                            return@pointerInteropFilter false
                         }
                     }
-
-                    else -> {
-                        return@pointerInteropFilter false
-                    }
                 }
-
 
                 invalidatorTick.value++
                 Log.d("selectionElements", controller.selectedElements.value.size.toString())
                 return@pointerInteropFilter true
             }
 
+
+//            .transformable(state)
     ) {
         drawIntoCanvas { canvas ->
 
