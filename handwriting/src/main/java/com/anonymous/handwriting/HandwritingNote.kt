@@ -224,6 +224,7 @@ fun HandWritingNote(
                             }
 
                             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                                eraserPath = Path()
                                 currentPoint.set(-40f, -40f)
                             }
                         }

@@ -277,9 +277,9 @@ class HandwritingState internal constructor(
                 }
                 val isIntersection = pathWithOp.isEmpty.not()
 
-//                if(isIntersection) {
-//                    return Pair(element, true)
-//                }
+                if(isIntersection) {
+                    return Pair(element, true)
+                }
 
             }
         }
