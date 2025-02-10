@@ -8,6 +8,8 @@ import android.view.GestureDetector
 import android.view.InputDevice
 import android.view.MotionEvent
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -95,8 +97,7 @@ fun HandWritingNote(
 //    }
 
     var scale by remember { mutableStateOf(1f) }
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
     val minScale = 1f
     val maxScale = 4f
 
@@ -161,6 +162,8 @@ fun HandWritingNote(
         Log.d("scale", scale.toString())
     }
 
+    var fingerCount by remember { mutableStateOf(0) }
+
     Canvas(
         modifier = modifier
             .fillMaxSize()
@@ -179,22 +182,57 @@ fun HandWritingNote(
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
-                translationX = offsetX
-                translationY = offsetY
+                translationX = offset.x
+                translationY = offset.y
 
                 canvasSize = size
                 Log.d("canvasSize", canvasSize.toString())
             }
-            .pointerInteropFilter { event ->
+            .pointerInput(Unit) {
+                awaitPointerEventScope {
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        val pointers = event.changes.count()
 
-                if(event.pointerCount == 2) {
-                    return@pointerInteropFilter false
+                        if (pointers >= 2) {
+                            fingerCount = 2
+                            Log.d("pointerInput", "MultiTouch ${event.changes}")
+
+                            if(controller.currentMode.value == HandWritingMode.LASSO_SELECTION) {
+
+                                val zoomChange = event.calculateZoom()
+                                val panChange = event.calculatePan()
+
+                                scale = (scale * zoomChange).coerceIn(1f, 5f)
+
+                                val extraWidth = (scale - 1) * canvasSize.width
+                                val extraHeight = (scale - 1) * canvasSize.height
+
+                                val maxX = extraWidth / 2
+                                val maxY = extraHeight / 2
+
+                                offset = Offset(
+                                    x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
+                                    y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
+                                )
+
+                            }
+                        } else {
+                            fingerCount = 1
+                        }
+                    }
                 }
+            }
+            .pointerInteropFilter { event ->
 
                 if(event.pointerCount == 1) {
 
-                    val motionTouchEventX = event.x
-                    val motionTouchEventY = event.y
+                    val motionTouchEventX = event.x / scale  + offset.x
+                    val motionTouchEventY = event.y / scale  + offset.y
+
+                    Log.d("touchEvent", "touchEvent: ${event.x} ${event.y}")
+
+                    Log.d("offset", offset.toString())
 
                     when (controller.currentMode.value) {
                         HandWritingMode.PEN -> {
