@@ -53,7 +53,6 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-            implementation(project(":handwriting-compose"))
 
             implementation(compose.preview)
             implementation(libs.androidx.core.ktx)
@@ -71,7 +70,6 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
         }
         desktopMain.dependencies {
-            implementation(project(":handwriting-compose"))
 
             implementation(compose.desktop.currentOs)
         }
