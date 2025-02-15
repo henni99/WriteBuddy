@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
@@ -114,7 +115,8 @@ class HandwritingController internal constructor(
     }
 
     fun selectHandWritingData(
-        path: Path
+        path: Path,
+        padding: Int = 20
     ) {
 
         val tempSelectedDataSet = mutableSetOf<HandwritingData>()
@@ -129,12 +131,13 @@ class HandwritingController internal constructor(
 
                 if (lassoBounds.contains(dataBounds) || dataBounds.contains(lassoBounds)) {
                     tempSelectedDataSet.add(data)
-                    tempRect = tempRect.unions(dataBounds)
+                    tempRect = tempRect.unions(
+                        dataBounds, padding)
                 }
 
                 if (overlaps(data.path, path)) {
                     tempSelectedDataSet.add(data)
-                    tempRect = tempRect.unions(dataBounds)
+                    tempRect = tempRect.unions(dataBounds, padding)
                 }
             }
         }

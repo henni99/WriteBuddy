@@ -9,13 +9,26 @@ fun Rect.contains(other: Rect): Boolean {
             (this.bottom >= other.bottom)
 }
 
-fun Rect.unions(other: Rect): Rect {
+fun Rect.unions(
+    other: Rect,
+    padding: Int
+): Rect {
     if(this == Rect.Zero && other != Rect.Zero) {
-        return other
+        return Rect(
+            left = other.left - padding,
+            top = other.top - padding,
+            right = other.right + padding,
+            bottom = other.bottom + padding
+        )
     }
 
     if(this != Rect.Zero && other == Rect.Zero) {
-        return this
+        return Rect(
+            left = this.left - padding,
+            top = this.top - padding,
+            right = this.right + padding,
+            bottom = this.bottom + padding
+        )
     }
 
     if(this == Rect.Zero && other == Rect.Zero) {
@@ -23,9 +36,9 @@ fun Rect.unions(other: Rect): Rect {
     }
 
     return Rect(
-        left = minOf(this.left, other.left),
-        top = minOf(this.top, other.top),
-        right = maxOf(this.right, other.right),
-        bottom = maxOf(this.bottom, other.bottom)
+        left = minOf(this.left - padding, other.left - padding),
+        top = minOf(this.top - padding, other.top - padding),
+        right = maxOf(this.right + padding, other.right + padding),
+        bottom = maxOf(this.bottom + padding, other.bottom + padding)
     )
 }

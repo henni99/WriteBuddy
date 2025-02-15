@@ -152,6 +152,7 @@ fun HandWritingNote(
                                     controller.initializeSelection()
                                     controller.selectHandWritingData(
                                         path = path,
+
                                     )
                                 }
                             )
