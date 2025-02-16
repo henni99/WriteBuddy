@@ -1,6 +1,7 @@
 package com.henni.handwriting.kmp
 
 import androidx.compose.ui.geometry.Rect
+import com.henni.handwriting.kmp.model.Padding
 
 fun Rect.contains(other: Rect): Boolean {
     return (this.left >= other.left) &&
@@ -11,23 +12,22 @@ fun Rect.contains(other: Rect): Boolean {
 
 fun Rect.unions(
     other: Rect,
-    padding: Int
 ): Rect {
     if(this == Rect.Zero && other != Rect.Zero) {
         return Rect(
-            left = other.left - padding,
-            top = other.top - padding,
-            right = other.right + padding,
-            bottom = other.bottom + padding
+            left = other.left,
+            top = other.top,
+            right = other.right,
+            bottom = other.bottom
         )
     }
 
     if(this != Rect.Zero && other == Rect.Zero) {
         return Rect(
-            left = this.left - padding,
-            top = this.top - padding,
-            right = this.right + padding,
-            bottom = this.bottom + padding
+            left = other.left,
+            top = other.top,
+            right = other.right,
+            bottom = other.bottom
         )
     }
 
@@ -36,9 +36,18 @@ fun Rect.unions(
     }
 
     return Rect(
-        left = minOf(this.left - padding, other.left - padding),
-        top = minOf(this.top - padding, other.top - padding),
-        right = maxOf(this.right + padding, other.right + padding),
-        bottom = maxOf(this.bottom + padding, other.bottom + padding)
+        left = minOf(this.left, other.left),
+        top = minOf(this.top, other.top),
+        right = maxOf(this.right, other.right),
+        bottom = maxOf(this.bottom, other.bottom )
+    )
+}
+
+fun Rect.addPadding(padding: Padding): Rect {
+    return Rect(
+        this.left - padding.left,
+        this.top - padding.top,
+        this.right + padding.right,
+        this.bottom + padding.bottom
     )
 }

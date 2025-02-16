@@ -6,8 +6,6 @@ package com.henni.handwriting.kmp.model
  */
 
 enum class ToolMode {
-    None,
-
     /**
      * Allow users to freely draw or write.
      */

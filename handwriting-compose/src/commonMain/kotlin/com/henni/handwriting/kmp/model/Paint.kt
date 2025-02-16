@@ -19,22 +19,11 @@ internal fun defaultPaint(): Paint {
     }
 }
 
-internal fun defaultPaint2(): Paint {
-    return Paint().apply {
-        color = Color.Red
-        strokeWidth = 14f
-        isAntiAlias = true
-        style = PaintingStyle.Stroke
-        strokeJoin = StrokeJoin.Round
-        strokeCap = StrokeCap.Round
-    }
-}
-
 /** Returns a default [Paint]. */
 internal fun lassoDefaultPaint(): Paint {
     return Paint().apply {
         color = Color.Black
-        strokeWidth = 14f
+        strokeWidth = 12f
         isAntiAlias = true
         style = PaintingStyle.Stroke
         strokeJoin = StrokeJoin.Round

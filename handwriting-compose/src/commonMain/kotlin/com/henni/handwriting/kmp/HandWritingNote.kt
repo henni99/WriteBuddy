@@ -1,5 +1,6 @@
 package com.henni.handwriting.kmp
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.graphics.Matrix
@@ -26,11 +28,12 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import com.henni.handwriting.kmp.model.ToolMode
+import com.henni.handwriting.kmp.model.TouchCountType
 import com.henni.handwriting.kmp.model.defaultPaint
-import com.henni.handwriting.kmp.model.defaultPaint2
 import com.henni.handwriting.kmp.model.lassoDefaultPaint
 import com.henni.handwriting.kmp.tool.onEraserDrag
 import com.henni.handwriting.kmp.tool.onEraserDragEnd
@@ -52,13 +55,13 @@ import kotlinx.coroutines.launch
 fun HandWritingNote(
     modifier: Modifier = Modifier,
     controller: HandwritingController,
-    eraserPointRadius: Int = 10,
+    contentBackgroundColor: Color = Color.Black,
+    containerBackgroundColor: Color = Color.Magenta,
 ) {
-
     var penPath by remember { mutableStateOf(Path()) }
     val penPathOffsets = mutableStateListOf<Offset>()
 
-    var eraserPath by remember { mutableStateOf(Path()) }
+    val eraserPath by remember { mutableStateOf(Path()) }
 
     var lassoPath by remember { mutableStateOf(Path()) }
     val lassoPathOffsets = mutableStateListOf<Offset>()
@@ -73,7 +76,6 @@ fun HandWritingNote(
 
     var firstPoint: Offset by remember { mutableStateOf(Offset.Zero) }
     var lassoMoveFlag: Boolean by remember { mutableStateOf(false) }
-    var lassoMoveFirstFlag: Boolean by remember { mutableStateOf(false) }
     var transformMatrix: Matrix by remember { mutableStateOf(Matrix()) }
 
     var canvasSize: Size by remember { mutableStateOf(Size(0f, 0f)) }
@@ -104,9 +106,10 @@ fun HandWritingNote(
                 controller.handwritingDataCollection.forEach { data ->
 
                     if (!controller.isDataSelected(data)) {
+
                         canvas?.drawPath(
                             path = data.path,
-                            paint = defaultPaint()
+                            paint = data.paint
                         )
                     }
                 }
@@ -117,11 +120,12 @@ fun HandWritingNote(
     }
 
 
-    var fingerCount by remember { mutableStateOf(0) }
+    var touchCount by remember { mutableStateOf(TouchCountType.NoTouch) }
 
     androidx.compose.foundation.Canvas(
         modifier = modifier
             .fillMaxSize()
+            .background(containerBackgroundColor)
             .onSizeChanged { newSize ->
                 val size =
                     newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
@@ -144,7 +148,7 @@ fun HandWritingNote(
             .pointerInput(true) {
                 detectTapGestures { offset ->
 
-                    when (controller.activeToolMode.value) {
+                    when (controller.currentToolMode.value) {
                         ToolMode.LassoSelectMode, ToolMode.LassoMoveMode -> {
                             onLassoTap(
                                 currentOffset = offset,
@@ -153,7 +157,7 @@ fun HandWritingNote(
                                     controller.selectHandWritingData(
                                         path = path,
 
-                                    )
+                                        )
                                 }
                             )
                         }
@@ -166,14 +170,14 @@ fun HandWritingNote(
                 detectDragGestures(
                     onDragStart = { offset ->
 
-                        if(fingerCount == 1) {
-                            when (controller.activeToolMode.value) {
+                        if (touchCount == TouchCountType.OneTouch) {
+                            when (controller.currentToolMode.value) {
                                 ToolMode.PenMode -> {
                                     onPenDragStart(
                                         canvas = canvas,
                                         offset = offset,
                                         penPathOffsets = penPathOffsets,
-                                        paint = controller.activePaint.value,
+                                        paint = controller.penPaint.value,
                                         penPath = penPath
                                     )
                                 }
@@ -190,7 +194,7 @@ fun HandWritingNote(
                                         canvas = canvas,
                                         offset = offset,
                                         lassoPathOffsets = lassoPathOffsets,
-                                        paint = controller.activePaint.value,
+                                        paint = controller.lassoPaint.value,
                                         lassoPath = lassoPath
                                     )
 
@@ -204,14 +208,13 @@ fun HandWritingNote(
                                         selectedBounds = controller.selectedBoundBox.value,
                                         isMoveAllowed = { path ->
                                             lassoMoveFlag = true
-                                            lassoMoveFirstFlag = true
                                             currentPoint = offset
                                             firstPoint = offset
 
                                             controller.refreshTick.updateTick()
                                         },
                                         isMoveNotAllowed = {
-                                            controller.updateToolMode(ToolMode.LassoSelectMode)
+                                            controller.setToolMode(ToolMode.LassoSelectMode)
 
                                         }
                                     )
@@ -226,8 +229,8 @@ fun HandWritingNote(
                         }
                     },
                     onDrag = { change, dragAmount ->
-                        if(fingerCount == 1) {
-                            when (controller.activeToolMode.value) {
+                        if (touchCount == TouchCountType.OneTouch) {
+                            when (controller.currentToolMode.value) {
                                 ToolMode.PenMode -> {
 
                                     onPenDrag(
@@ -235,7 +238,7 @@ fun HandWritingNote(
                                         previousOffset = change.previousPosition,
                                         currentOffset = change.position,
                                         penPathOffsets = penPathOffsets,
-                                        paint = controller.activePaint.value,
+                                        paint = controller.penPaint.value,
                                         penPath = penPath
                                     )
 
@@ -245,7 +248,7 @@ fun HandWritingNote(
 
                                     onEraserDrag(
                                         eraserPath = eraserPath,
-                                        eraserPointRadius = eraserPointRadius,
+                                        eraserPointRadius = controller.eraserPointRadius.value,
                                         currentOffset = currentOffset,
                                         onPathRemoved = { path ->
                                             currentOffset = change.position
@@ -263,7 +266,7 @@ fun HandWritingNote(
                                         previousOffset = change.previousPosition,
                                         currentOffset = change.position,
                                         lassoPathOffsets = lassoPathOffsets,
-                                        paint = controller.activePaint.value,
+                                        paint = controller.lassoPaint.value,
                                         lassoPath = lassoPath
                                     )
                                 }
@@ -296,12 +299,12 @@ fun HandWritingNote(
                         }
                     },
                     onDragEnd = {
-                        if(fingerCount == 1) {
-                            when (controller.activeToolMode.value) {
+                        if (touchCount == TouchCountType.OneTouch) {
+                            when (controller.currentToolMode.value) {
                                 ToolMode.PenMode -> {
                                     onPenDragEnd(
                                         canvas = canvas,
-                                        paint = controller.activePaint.value,
+                                        paint = controller.penPaint.value,
                                         penPathOffsets = penPathOffsets,
                                         penPath = penPath,
                                         onDragFinished = { path, offsets ->
@@ -361,7 +364,7 @@ fun HandWritingNote(
                         }
                     },
                     onDragCancel = {
-                        when (controller.activeToolMode.value) {
+                        when (controller.currentToolMode.value) {
                             ToolMode.PenMode -> {
                                 onPenDragCancel(
                                     penPath = penPath,
@@ -397,9 +400,8 @@ fun HandWritingNote(
                         val event = awaitPointerEvent()
                         val pointers = event.changes.count()
 
-
-                        if (pointers >= 2) {
-                            fingerCount = 2
+                        if (pointers >= 2 && controller.isNoteZoomable.value) {
+                            touchCount = TouchCountType.MultiTouch
 
                             val zoomChange = event.calculateZoom()
                             val panChange = event.calculatePan()
@@ -418,7 +420,7 @@ fun HandWritingNote(
                             )
 
                         } else {
-                            fingerCount = 1
+                            touchCount = TouchCountType.OneTouch
                         }
                     }
                 }
@@ -431,22 +433,22 @@ fun HandWritingNote(
                 canvas.drawImage(bitmap, Offset.Zero, Paint())
             }
 
-            when (controller.activeToolMode.value) {
+            when (controller.currentToolMode.value) {
                 ToolMode.EraserMode -> {
 
                     println("currentOffset: ${currentOffset}")
 
-                    if (currentOffset != Offset.Zero) {
+                    if (currentOffset != Offset.Zero && controller.isEraserPointShowed.value) {
                         canvas.drawCircle(
                             currentOffset,
-                            eraserPointRadius * 2f,
-                            controller.activePaint.value
+                            controller.eraserPointRadius.value,
+                            controller.eraserPaint.value
                         )
                     }
                 }
 
                 ToolMode.LassoSelectMode -> {
-                    canvas.drawPath(lassoPath, controller.activePaint.value)
+                    canvas.drawPath(lassoPath, controller.lassoPaint.value)
 
                     controller.handwritingDataCollection.forEach { data ->
 
@@ -457,7 +459,10 @@ fun HandWritingNote(
                         val pathWithOp = Path().apply {
                             this.op(dataPath, lassoPath, PathOperation.Intersect)
                         }
-                        canvas.drawPath(pathWithOp, defaultPaint2())
+
+                        canvas.drawPath(pathWithOp, defaultPaint().apply {
+                            this.color = Color.Red
+                        })
                     }
                 }
 
@@ -466,13 +471,13 @@ fun HandWritingNote(
 
                     canvas.drawRect(
                         controller.selectedBoundBox.value,
-                        lassoDefaultPaint()
+                        controller.selectedBoundBoxPaint.value
                     )
 
                     println("transformMatrix: transformMatrix: ${transformMatrix}")
 
                     controller.selectedDataSet.forEach { data ->
-                        canvas.drawPath(data.path, defaultPaint())
+                        canvas.drawPath(data.path, data.paint)
                     }
                 }
 
@@ -481,7 +486,6 @@ fun HandWritingNote(
                 }
 
             }
-
 
 
         }

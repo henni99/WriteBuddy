@@ -14,7 +14,7 @@ fun onEraserDragStart(
 
 fun onEraserDrag(
     eraserPath: Path,
-    eraserPointRadius: Int,
+    eraserPointRadius: Float,
     currentOffset: Offset,
     onPathRemoved: (Path) -> Unit
 ) {

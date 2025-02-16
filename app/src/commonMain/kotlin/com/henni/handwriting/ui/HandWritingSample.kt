@@ -16,13 +16,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.henni.handwriting.kmp.HandWritingNote
+import com.henni.handwriting.kmp.model.Padding
 import com.henni.handwriting.kmp.model.ToolMode
 import com.henni.handwriting.kmp.rememberHandwritingController
 
 @Composable
 fun HandWritingSample() {
 
-    val controller = rememberHandwritingController()
+    val controller = rememberHandwritingController {
+        setIsNoteZoomable(true)
+        setIsEraserPointShowed(true)
+        setEraserPointRadius(20f)
+        setLassoStrokeWidth(10f)
+        setLassoColor(Color.Black)
+        setSelectedBoxPadding(Padding(20, 20, 20, 20))
+        setSelectedBoxStrokeWidth(10f)
+        setSelectedBoxColor(Color.Black)
+    }
+
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
 
@@ -46,7 +57,7 @@ fun HandWritingSample() {
                 Button(
                     modifier = Modifier.size(50.dp),
                     onClick = {
-                        controller.updateToolMode(ToolMode.PenMode)
+                        controller.setToolMode(ToolMode.PenMode)
                     }
                 ) {
                     Text("펜")
@@ -55,7 +66,7 @@ fun HandWritingSample() {
                 Button(
                     modifier = Modifier.size(50.dp),
                     onClick = {
-                        controller.updateToolMode(ToolMode.EraserMode)
+                        controller.setToolMode(ToolMode.EraserMode)
                     }
                 ) {
                     Text("지")
@@ -64,7 +75,7 @@ fun HandWritingSample() {
                 Button(
                     modifier = Modifier.size(50.dp),
                     onClick = {
-                        controller.updateToolMode(ToolMode.LassoSelectMode)
+                        controller.setToolMode(ToolMode.LassoSelectMode)
                     }
                 ) {
                     Text("올")
@@ -91,6 +102,12 @@ fun HandWritingSample() {
                 }
 
             }
+
+            colorPicker(
+                onColorChange = { color ->
+                    controller.setPenColor(color)
+                }
+            )
         }
     }
 
