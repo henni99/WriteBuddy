@@ -9,17 +9,14 @@ class RemoveOperation constructor(
 ) : Operation {
     override fun doOperation(): Boolean {
         controller.removeHandWritingData(data)
-        controller.updateOperationState()
         return true
     }
 
     override fun undo() {
         controller.addHandWritingData(data)
-        controller.updateOperationState()
     }
 
     override fun redo() {
         controller.removeHandWritingData(data)
-        controller.updateOperationState()
     }
 }

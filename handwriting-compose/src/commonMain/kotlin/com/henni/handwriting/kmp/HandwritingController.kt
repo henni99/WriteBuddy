@@ -21,6 +21,7 @@ import com.henni.handwriting.kmp.model.HitResult
 import com.henni.handwriting.kmp.model.Padding
 import com.henni.handwriting.kmp.model.ToolMode
 import com.henni.handwriting.kmp.model.copy
+import com.henni.handwriting.kmp.model.defaultEraserPaint
 import com.henni.handwriting.kmp.model.defaultPaint
 import com.henni.handwriting.kmp.model.lassoDefaultPaint
 import com.henni.handwriting.kmp.operation.InsertOperation
@@ -53,7 +54,7 @@ class HandwritingController internal constructor(
 
     val penPaint: MutableState<Paint> = mutableStateOf(defaultPaint())
 
-    val eraserPaint: MutableState<Paint> = mutableStateOf(defaultPaint())
+    val eraserPaint: MutableState<Paint> = mutableStateOf(defaultEraserPaint())
 
     val lassoPaint: MutableState<Paint> = mutableStateOf(lassoDefaultPaint())
 
@@ -126,7 +127,6 @@ class HandwritingController internal constructor(
     }
 
 
-
     /** Sets a [Paint] to the [penPaint]. */
     fun setPenPaint(paint: Paint) {
         penPaint.value = paint
@@ -195,11 +195,11 @@ class HandwritingController internal constructor(
                 )
             )
         )
+        updateOperationState()
     }
 
     fun removeHandWritingPath(path: Path) {
         val hitResult = hitHandWritingPath(path)
-        println("hitResult: ${hitResult}")
         if (hitResult.isHit) {
             hitResult.data?.let {
                 operationManager.executeOperation(
@@ -210,6 +210,7 @@ class HandwritingController internal constructor(
                 )
             }
         }
+        updateOperationState()
     }
 
     fun selectHandWritingData(
@@ -307,6 +308,8 @@ class HandwritingController internal constructor(
                 offset = translateOffset
             )
         )
+
+        updateOperationState()
     }
 
     fun clearAllHandWritingData() {
@@ -316,14 +319,17 @@ class HandwritingController internal constructor(
 
 
     /** undo, redo **/
-    val canUndo = MutableStateFlow<Boolean>(false)
-
-    val canRedo = MutableStateFlow<Boolean>(false)
+    val canUndo: MutableState<Boolean> = mutableStateOf(false)
+    val canRedo: MutableState<Boolean> = mutableStateOf(false)
 
 
     fun updateOperationState() {
-        canUndo.update { operationManager.isUndoNotEmpty() }
-        canRedo.update { operationManager.isRedoNotEmpty() }
+        println("updateOperationState: ${operationManager.undoStack}, ${operationManager.redoStack.size}")
+
+        canUndo.value =  operationManager.isUndoNotEmpty()
+        canRedo.value =  operationManager.isRedoNotEmpty()
+
+        println("canUndo: ${canUndo}, canRedo: ${canRedo}")
     }
 
     fun undo() {

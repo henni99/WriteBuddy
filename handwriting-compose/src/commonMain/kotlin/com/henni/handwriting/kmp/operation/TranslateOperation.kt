@@ -39,7 +39,6 @@ class TranslateOperation(
         controller.selectedBoundBox.value = controller.selectedBoundBox.value.translate(
             offset.unaryMinus()
         )
-        controller.updateOperationState()
     }
 
     override fun redo() {
@@ -53,7 +52,6 @@ class TranslateOperation(
         controller.selectedBoundBox.value = controller.selectedBoundBox.value.translate(
             offset
         )
-        controller.updateOperationState()
     }
 
 }

@@ -20,6 +20,18 @@ internal fun defaultPaint(): Paint {
 }
 
 /** Returns a default [Paint]. */
+internal fun defaultEraserPaint(): Paint {
+    return Paint().apply {
+        color = Color.White
+        isAntiAlias = true
+        style = PaintingStyle.Fill
+        strokeJoin = StrokeJoin.Round
+        strokeCap = StrokeCap.Round
+    }
+}
+
+
+/** Returns a default [Paint]. */
 internal fun lassoDefaultPaint(): Paint {
     return Paint().apply {
         color = Color.Black

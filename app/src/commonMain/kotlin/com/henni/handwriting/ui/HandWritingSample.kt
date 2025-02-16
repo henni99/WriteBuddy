@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,79 +38,26 @@ fun HandWritingSample() {
     }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
-
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
 
         ) {
-            HandWritingNote(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(500.dp)
-                    .background(Color.Gray)
-                    .padding(innerPadding),
-                controller = controller
-            )
+            item {
+                HandWritingNote(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(500.dp)
+                        .background(Color.Gray)
+                        .padding(innerPadding),
+                    controller = controller
+                )
 
-            Row {
-
-                Button(
-                    modifier = Modifier.size(50.dp),
-                    onClick = {
-                        controller.setToolMode(ToolMode.PenMode)
-                    }
-                ) {
-                    Text("펜")
-                }
-
-                Button(
-                    modifier = Modifier.size(50.dp),
-                    onClick = {
-                        controller.setToolMode(ToolMode.EraserMode)
-                    }
-                ) {
-                    Text("지")
-                }
-
-                Button(
-                    modifier = Modifier.size(50.dp),
-                    onClick = {
-                        controller.setToolMode(ToolMode.LassoSelectMode)
-                    }
-                ) {
-                    Text("올")
-                }
-
-
-
-                Button(
-                    modifier = Modifier.size(50.dp),
-                    onClick = {
-                        controller.undo()
-                    }
-                ) {
-                    Text("U")
-                }
-
-                Button(
-                    modifier = Modifier.size(50.dp),
-                    onClick = {
-                       controller.redo()
-                    }
-                ) {
-                    Text("R")
-                }
-
+                ToolPicker(controller)
+                EnhancedPicker(controller)
+                ColorPicker(controller)
             }
-
-            colorPicker(
-                onColorChange = { color ->
-                    controller.setPenColor(color)
-                }
-            )
         }
     }
 

@@ -400,7 +400,7 @@ fun HandWritingNote(
                         val event = awaitPointerEvent()
                         val pointers = event.changes.count()
 
-                        if (pointers >= 2 && controller.isNoteZoomable.value) {
+                        if (pointers >= 2) {
                             touchCount = TouchCountType.MultiTouch
 
                             val zoomChange = event.calculateZoom()

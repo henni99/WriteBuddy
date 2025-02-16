@@ -11,18 +11,15 @@ class InsertOperation constructor(
 
     override fun doOperation(): Boolean {
         controller.addHandWritingData(data)
-        controller.updateOperationState()
         return true
     }
 
     override fun undo() {
         controller.removeHandWritingData(data)
-        controller.updateOperationState()
     }
 
     override fun redo() {
         controller.addHandWritingData(data)
-        controller.updateOperationState()
     }
 
 }

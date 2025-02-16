@@ -11,6 +11,7 @@ class OperationManagerImpl : OperationManager {
     }
 
     override fun isUndoNotEmpty(): Boolean {
+
         return undoStack.isNotEmpty()
     }
 
