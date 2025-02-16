@@ -29,6 +29,8 @@ fun HandWritingSample() {
         setEraserPointRadius(20f)
         setLassoStrokeWidth(10f)
         setLassoColor(Color.Black)
+        setIsSelectedDataHighlight(false)
+        setSelectedDataHighlightColor(Color.Red)
         setSelectedBoxPadding(Padding(20, 20, 20, 20))
         setSelectedBoxStrokeWidth(10f)
         setSelectedBoxColor(Color.Black)

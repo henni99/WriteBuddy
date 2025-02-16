@@ -460,9 +460,11 @@ fun HandWritingNote(
                             this.op(dataPath, lassoPath, PathOperation.Intersect)
                         }
 
-                        canvas.drawPath(pathWithOp, defaultPaint().apply {
-                            this.color = Color.Red
-                        })
+                        if(controller.isSelectedDataHighlight.value) {
+                            canvas.drawPath(pathWithOp, defaultPaint().apply {
+                                this.color = controller.selectedDataHighlightColor.value
+                            })
+                        }
                     }
                 }
 

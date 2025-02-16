@@ -66,6 +66,10 @@ class HandwritingController internal constructor(
 
     val selectedBoundBoxPadding: MutableState<Padding> = mutableStateOf(Padding.Zero)
 
+    val isSelectedDataHighlight: MutableState<Boolean> = mutableStateOf(false)
+
+    val selectedDataHighlightColor: MutableState<Color> = mutableStateOf(Color.Red)
+
     val selectedDataSet = mutableSetOf<HandwritingData>()
 
     val isNoteZoomable: MutableState<Boolean> = mutableStateOf(true)
@@ -80,7 +84,15 @@ class HandwritingController internal constructor(
     }
 
     fun setIsEraserPointShowed(isShowed: Boolean) {
-        isEraserPointShowed.value = isShowed
+        this.isEraserPointShowed.value = isShowed
+    }
+
+    fun setIsSelectedDataHighlight(isSelectedDataHighlight: Boolean) {
+        this.isSelectedDataHighlight.value = isSelectedDataHighlight
+    }
+
+    fun setSelectedDataHighlightColor(color: Color) {
+        this.selectedDataHighlightColor.value = color
     }
 
     /** Sets a eraser point radius to the [eraserPointRadius]. */
