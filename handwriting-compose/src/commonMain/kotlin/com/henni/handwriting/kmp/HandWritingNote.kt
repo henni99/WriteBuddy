@@ -80,6 +80,7 @@ fun HandWritingNote(
 
     var canvasSize: Size by remember { mutableStateOf(Size(0f, 0f)) }
 
+    var isToolUsed: Boolean by remember { mutableStateOf(false) }
 
     var currentOffset: Offset by remember { mutableStateOf(Offset.Zero) }
     var scale by remember { mutableStateOf(1f) }
@@ -154,10 +155,7 @@ fun HandWritingNote(
                                 currentOffset = offset,
                                 onTapEnd = { path ->
                                     controller.initializeSelection()
-                                    controller.selectHandWritingData(
-                                        path = path,
-
-                                        )
+                                    controller.selectHandWritingData(path)
                                 }
                             )
                         }
@@ -171,6 +169,10 @@ fun HandWritingNote(
                     onDragStart = { offset ->
 
                         if (touchCount == TouchCountType.OneTouch) {
+                            println("detectDragGestures: onDragStart")
+
+                            isToolUsed = true
+
                             when (controller.currentToolMode.value) {
                                 ToolMode.PenMode -> {
                                     onPenDragStart(
@@ -229,7 +231,9 @@ fun HandWritingNote(
                         }
                     },
                     onDrag = { change, dragAmount ->
-                        if (touchCount == TouchCountType.OneTouch) {
+
+                        if (touchCount == TouchCountType.OneTouch && isToolUsed) {
+                            println("detectDragGestures: onDrag")
                             when (controller.currentToolMode.value) {
                                 ToolMode.PenMode -> {
 
@@ -299,7 +303,9 @@ fun HandWritingNote(
                         }
                     },
                     onDragEnd = {
-                        if (touchCount == TouchCountType.OneTouch) {
+
+                        if (touchCount == TouchCountType.OneTouch && isToolUsed) {
+                            println("detectDragGestures: onDragEnd")
                             when (controller.currentToolMode.value) {
                                 ToolMode.PenMode -> {
                                     onPenDragEnd(
@@ -360,12 +366,15 @@ fun HandWritingNote(
                                 }
                             }
 
+                            isToolUsed = false
                             invalidatorTick.updateTick()
                         }
                     },
                     onDragCancel = {
+
                         when (controller.currentToolMode.value) {
                             ToolMode.PenMode -> {
+                                println("onDragCancel")
                                 onPenDragCancel(
                                     penPath = penPath,
                                     penPathOffsets = penPathOffsets
@@ -390,15 +399,23 @@ fun HandWritingNote(
                             }
                         }
 
+                        isToolUsed = false
                         invalidatorTick.updateTick()
                     }
                 )
             }
             .pointerInput(Unit) {
                 awaitPointerEventScope {
+
                     while (true) {
+
+
                         val event = awaitPointerEvent()
                         val pointers = event.changes.count()
+
+                        println("pointEvents: ${this.currentEvent.changes.size}")
+                        println("pointEvents: ${event.changes.size}")
+                        println("touchCount: ${touchCount}")
 
                         if (pointers >= 2) {
                             touchCount = TouchCountType.MultiTouch
