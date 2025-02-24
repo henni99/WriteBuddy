@@ -36,7 +36,7 @@ class TranslateOperation(
             element.path.translate(offset.unaryMinus())
         }
 
-        controller.selectedBoundBox.value = controller.selectedBoundBox.value.translate(
+        controller.selectedBoundBox = controller.selectedBoundBox.translate(
             offset.unaryMinus()
         )
     }
@@ -49,7 +49,7 @@ class TranslateOperation(
             )
             element.path.translate(offset)
         }
-        controller.selectedBoundBox.value = controller.selectedBoundBox.value.translate(
+        controller.selectedBoundBox = controller.selectedBoundBox.translate(
             offset
         )
     }

@@ -27,11 +27,11 @@ fun HandWritingSample() {
     val controller = rememberHandwritingController {
         setIsNoteZoomable(true)
         setIsEraserPointShowed(true)
-        setEraserPointRadius(20f)
+        eraserPointRadius = 20f
         setLassoStrokeWidth(10f)
         setLassoColor(Color.Black)
         setIsSelectedDataHighlight(false)
-        setSelectedDataHighlightColor(Color.Red)
+        selectedDataHighlightColor = Color.Red
         setSelectedBoxPadding(Padding(20, 20, 20, 20))
         setSelectedBoxStrokeWidth(10f)
         setSelectedBoxColor(Color.Black)
