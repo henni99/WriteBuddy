@@ -3,51 +3,30 @@ package com.henni.handwriting.kmp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.ImageBitmapConfig
-import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.IntSize
 import com.henni.handwriting.kmp.model.ToolMode
 import com.henni.handwriting.kmp.model.TouchCountType
-import com.henni.handwriting.kmp.model.defaultPaint
-import com.henni.handwriting.kmp.model.lassoDefaultPaint
-import com.henni.handwriting.kmp.tool.onEraserDrag
-import com.henni.handwriting.kmp.tool.onEraserDragEnd
-import com.henni.handwriting.kmp.tool.onEraserDragStart
-import com.henni.handwriting.kmp.tool.onLassoMoveDragStart
-import com.henni.handwriting.kmp.tool.onLassoSelectDrag
-import com.henni.handwriting.kmp.tool.onLassoSelectDragCancel
-import com.henni.handwriting.kmp.tool.onLassoSelectDragEnd
-import com.henni.handwriting.kmp.tool.onLassoSelectDragStart
-import com.henni.handwriting.kmp.tool.onLassoTap
-import com.henni.handwriting.kmp.tool.onPenDrag
-import com.henni.handwriting.kmp.tool.onPenDragCancel
-import com.henni.handwriting.kmp.tool.onPenDragEnd
-import com.henni.handwriting.kmp.tool.onPenDragStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -58,15 +37,8 @@ fun HandWritingNote(
     contentBackgroundColor: Color = Color.Black,
     containerBackgroundColor: Color = Color.Magenta,
 ) {
-    var penPath by remember { mutableStateOf(Path()) }
-    val penPathOffsets = mutableStateListOf<Offset>()
 
-    val eraserPath by remember { mutableStateOf(Path()) }
-
-    var lassoPath by remember { mutableStateOf(Path()) }
-    val lassoPathOffsets = mutableStateListOf<Offset>()
-    var isLassoTap by remember { mutableStateOf(true) }
-    var currentPoint by remember { mutableStateOf(Offset.Zero) }
+    var touchPointerType by remember { mutableStateOf(PointerType.Touch) }
 
     var canvas: Canvas? by remember { mutableStateOf(null) }
 
@@ -74,15 +46,10 @@ fun HandWritingNote(
 
     var pathBitmap: ImageBitmap? by remember { mutableStateOf(null) }
 
-    var firstPoint: Offset by remember { mutableStateOf(Offset.Zero) }
-    var lassoMoveFlag: Boolean by remember { mutableStateOf(false) }
-    var transformMatrix: Matrix by remember { mutableStateOf(Matrix()) }
-
-    var canvasSize: Size by remember { mutableStateOf(Size(0f, 0f)) }
+    var canvasSize: IntSize by remember { mutableStateOf(IntSize.Zero) }
 
     var isToolUsed: Boolean by remember { mutableStateOf(false) }
 
-    var currentOffset: Offset by remember { mutableStateOf(Offset.Zero) }
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
@@ -92,17 +59,11 @@ fun HandWritingNote(
         coroutineScope.launch(Dispatchers.Main) {
             controller.refreshTick.collect {
 
-
-                canvasSize.let {
-                    pathBitmap =
-                        ImageBitmap(it.width.toInt(), it.height.toInt(), ImageBitmapConfig.Argb8888)
-                            .also {
-                                canvas = Canvas(it)
-                            }
+                pathBitmap = getBitmap(canvasSize).also {
+                    canvas = Canvas(it)
                 }
 
-                println("handwritingDataCollectionRevise: ${controller.selectedDataSet.size}")
-
+                println("handwritingDataCollectionRevise: ${controller.handwritingDataCollection.size}")
 
                 controller.handwritingDataCollection.forEach { data ->
 
@@ -131,12 +92,9 @@ fun HandWritingNote(
                 val size =
                     newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
 
-                pathBitmap =
-                    ImageBitmap(size.width, size.height, ImageBitmapConfig.Argb8888)
-                        .also {
-                            canvas = Canvas(it)
-                        }
-
+                pathBitmap = getBitmap(size).also {
+                    canvas = Canvas(it)
+                }
             }
             .graphicsLayer {
                 scaleX = scale
@@ -144,267 +102,89 @@ fun HandWritingNote(
                 translationX = offset.x
                 translationY = offset.y
 
-                canvasSize = size
+
+                canvasSize = IntSize(size.height.toInt(), size.width.toInt())
             }
             .pointerInput(true) {
-                detectTapGestures { offset ->
-
-                    when (controller.currentToolMode.value) {
-                        ToolMode.LassoSelectMode, ToolMode.LassoMoveMode -> {
-                            onLassoTap(
-                                currentOffset = offset,
-                                onTapEnd = { path ->
-                                    controller.initializeSelection()
-                                    controller.selectHandWritingData(path)
-                                }
-                            )
-                        }
-
-                        else -> {}
-                    }
-                }
-            }
-            .pointerInput(true) {
-                detectDragGestures(
-                    onDragStart = { offset ->
-
+                detectTransformGestures(
+                    onGestureStart = { offset ->
                         if (touchCount == TouchCountType.OneTouch) {
                             println("detectDragGestures: onDragStart")
 
                             isToolUsed = true
 
-                            when (controller.currentToolMode.value) {
-                                ToolMode.PenMode -> {
-                                    onPenDragStart(
-                                        canvas = canvas,
-                                        offset = offset,
-                                        penPathOffsets = penPathOffsets,
-                                        paint = controller.penPaint.value,
-                                        penPath = penPath
-                                    )
+                            controller.curTouchEvent.onTouchStart(
+                                canvas = canvas,
+                                offset = offset,
+                                paint = when (controller.currentToolMode) {
+                                    ToolMode.PenMode -> controller.penPaint
+                                    ToolMode.LassoMoveMode -> controller.lassoPaint
+                                    else -> Paint()
                                 }
-
-                                ToolMode.EraserMode -> {
-                                    onEraserDragStart(
-                                        currentOffset = currentOffset,
-                                        offset = offset
-                                    )
-                                }
-
-                                ToolMode.LassoSelectMode -> {
-                                    onLassoSelectDragStart(
-                                        canvas = canvas,
-                                        offset = offset,
-                                        lassoPathOffsets = lassoPathOffsets,
-                                        paint = controller.lassoPaint.value,
-                                        lassoPath = lassoPath
-                                    )
-
-                                    controller.refreshTick.updateTick()
-                                }
-
-                                ToolMode.LassoMoveMode -> {
-                                    onLassoMoveDragStart(
-                                        offset = offset,
-                                        lassoPath = lassoPath,
-                                        selectedBounds = controller.selectedBoundBox.value,
-                                        isMoveAllowed = { path ->
-                                            lassoMoveFlag = true
-                                            currentPoint = offset
-                                            firstPoint = offset
-
-                                            controller.refreshTick.updateTick()
-                                        },
-                                        isMoveNotAllowed = {
-                                            controller.setToolMode(ToolMode.LassoSelectMode)
-
-                                        }
-                                    )
-                                }
-
-                                else -> {
-
-                                }
-                            }
-
-                            invalidatorTick.updateTick()
+                            )
                         }
+
+                        invalidatorTick.updateTick()
                     },
-                    onDrag = { change, dragAmount ->
+                    onGesture = { centroid: Offset, pan: Offset, zoom: Float, timeMillis: Long, change: PointerInputChange, _: Offset, isMultiTouch: Boolean ->
 
                         if (touchCount == TouchCountType.OneTouch && isToolUsed) {
                             println("detectDragGestures: onDrag")
-                            when (controller.currentToolMode.value) {
-                                ToolMode.PenMode -> {
 
-                                    onPenDrag(
-                                        canvas = canvas,
-                                        previousOffset = change.previousPosition,
-                                        currentOffset = change.position,
-                                        penPathOffsets = penPathOffsets,
-                                        paint = controller.penPaint.value,
-                                        penPath = penPath
-                                    )
-
+                            controller.curTouchEvent.onTouchMove(
+                                canvas = canvas,
+                                previousOffset = change.previousPosition,
+                                currentOffset = change.position,
+                                paint = when (controller.currentToolMode) {
+                                    ToolMode.PenMode -> controller.penPaint
+                                    ToolMode.LassoMoveMode, ToolMode.LassoSelectMode -> controller.lassoPaint
+                                    else -> Paint()
                                 }
-
-                                ToolMode.EraserMode -> {
-
-                                    onEraserDrag(
-                                        eraserPath = eraserPath,
-                                        eraserPointRadius = controller.eraserPointRadius.value,
-                                        currentOffset = currentOffset,
-                                        onPathRemoved = { path ->
-                                            currentOffset = change.position
-                                            controller.removeHandWritingPath(path)
-                                        }
-                                    )
-                                }
-
-                                ToolMode.LassoSelectMode -> {
-                                    onLassoSelectDrag(
-                                        onDragPrevious = { _ ->
-                                            isLassoTap = false
-                                        },
-                                        canvas = canvas,
-                                        previousOffset = change.previousPosition,
-                                        currentOffset = change.position,
-                                        lassoPathOffsets = lassoPathOffsets,
-                                        paint = controller.lassoPaint.value,
-                                        lassoPath = lassoPath
-                                    )
-                                }
-
-                                ToolMode.LassoMoveMode -> {
-                                    if (lassoMoveFlag) {
-
-                                        transformMatrix.reset()
-                                        transformMatrix.translate(
-                                            dragAmount.x,
-                                            dragAmount.y
-                                        )
-
-                                        currentPoint = change.position
-
-                                        println("transformMatrix: transformMatrixInLassoMoveMode: ${transformMatrix}")
-                                        controller.transformSelectedBoundBox(transformMatrix)
-                                        controller.selectedDataSet.forEach { data ->
-                                            data.path.transform(transformMatrix)
-                                        }
-                                    }
-                                }
-
-                                else -> {
-
-                                }
-                            }
-
-                            invalidatorTick.updateTick()
+                            )
                         }
-                    },
-                    onDragEnd = {
 
+                        invalidatorTick.updateTick()
+
+                    },
+                    onGestureEnd = { isMultiTouch ->
                         if (touchCount == TouchCountType.OneTouch && isToolUsed) {
                             println("detectDragGestures: onDragEnd")
-                            when (controller.currentToolMode.value) {
-                                ToolMode.PenMode -> {
-                                    onPenDragEnd(
-                                        canvas = canvas,
-                                        paint = controller.penPaint.value,
-                                        penPathOffsets = penPathOffsets,
-                                        penPath = penPath,
-                                        onDragFinished = { path, offsets ->
-                                            controller.addHandWritingPath(path, offsets)
-                                            penPath = Path()
-                                        }
-                                    )
+
+                            controller.curTouchEvent.onTouchEnd(
+                                canvas = canvas,
+                                paint = when (controller.currentToolMode) {
+                                    ToolMode.PenMode -> controller.penPaint
+                                    else -> Paint()
                                 }
-
-                                ToolMode.EraserMode -> {
-                                    onEraserDragEnd(
-                                        eraserPath = eraserPath,
-                                        onDragFinished = {
-                                            currentOffset = Offset.Zero
-                                        }
-                                    )
-                                }
-
-                                ToolMode.LassoSelectMode -> {
-                                    onLassoSelectDragEnd(
-                                        lassoPathOffsets = lassoPathOffsets,
-                                        lassoPath = lassoPath,
-                                        onDragFinished = { path, offsets ->
-                                            controller.selectHandWritingData(
-                                                path = path,
-                                            )
-                                            lassoPath = Path()
-                                            offsets.clear()
-                                        }
-                                    )
-                                }
-
-                                ToolMode.LassoMoveMode -> {
-                                    if (lassoMoveFlag) {
-
-                                        println("translateHandWritingDataSet: ${firstPoint} ${currentPoint}")
-
-                                    }
-                                    controller.translateHandWritingDataSet(
-                                        translateOffset = Offset(
-                                            x = currentPoint.x - firstPoint.x,
-                                            y = currentPoint.y - firstPoint.y
-                                        )
-                                    )
-
-                                    firstPoint = Offset.Zero
-                                    currentPoint = Offset.Zero
-                                    controller.refreshTick.updateTick()
-                                }
-
-                                else -> {
-
-                                }
-                            }
+                            )
 
                             isToolUsed = false
                             invalidatorTick.updateTick()
                         }
+
                     },
-                    onDragCancel = {
+                    canConsumeGesture = { pan: Offset, zoom: Float ->
 
-                        when (controller.currentToolMode.value) {
-                            ToolMode.PenMode -> {
-                                println("onDragCancel")
-                                onPenDragCancel(
-                                    penPath = penPath,
-                                    penPathOffsets = penPathOffsets
-                                )
+
+                        true
+                    },
+                    onTap = { offset ->
+                        when (controller.currentToolMode) {
+                            ToolMode.LassoSelectMode, ToolMode.LassoMoveMode -> {
+                                controller.curTouchEvent.onTouchTap(offset)
                             }
 
-                            ToolMode.LassoSelectMode -> {
-                                onLassoSelectDragCancel(
-                                    lassoPath = lassoPath,
-                                    lassoPathOffsets = lassoPathOffsets
-                                )
-                            }
-
-                            ToolMode.LassoMoveMode -> {
-                                controller.initializeSelection()
-                                firstPoint = Offset.Zero
-                                currentPoint = Offset.Zero
-                            }
-
-                            else -> {
-
-                            }
+                            else -> {}
                         }
 
-                        isToolUsed = false
-                        invalidatorTick.updateTick()
+                    },
+                    onDoubleTap = { offset ->
+
                     }
                 )
             }
             .pointerInput(Unit) {
+
                 awaitPointerEventScope {
 
                     while (true) {
@@ -450,65 +230,19 @@ fun HandWritingNote(
                 canvas.drawImage(bitmap, Offset.Zero, Paint())
             }
 
-            when (controller.currentToolMode.value) {
-                ToolMode.EraserMode -> {
-
-                    println("currentOffset: ${currentOffset}")
-
-                    if (currentOffset != Offset.Zero && controller.isEraserPointShowed.value) {
-                        canvas.drawCircle(
-                            currentOffset,
-                            controller.eraserPointRadius.value,
-                            controller.eraserPaint.value
-                        )
-                    }
+            controller.curTouchEvent.onDrawIntoCanvas(
+                canvas = canvas,
+                paint = when (controller.currentToolMode) {
+                    ToolMode.PenMode -> controller.penPaint
+                    ToolMode.EraserMode -> controller.eraserPaint
+                    ToolMode.LassoSelectMode -> controller.lassoPaint
+                    else -> Paint()
                 }
-
-                ToolMode.LassoSelectMode -> {
-                    canvas.drawPath(lassoPath, controller.lassoPaint.value)
-
-                    controller.handwritingDataCollection.forEach { data ->
-
-                        val dataPath = Path().apply {
-                            addPath(data.path)
-                        }
-
-                        val pathWithOp = Path().apply {
-                            this.op(dataPath, lassoPath, PathOperation.Intersect)
-                        }
-
-                        if(controller.isSelectedDataHighlight.value) {
-                            canvas.drawPath(pathWithOp, defaultPaint().apply {
-                                this.color = controller.selectedDataHighlightColor.value
-                            })
-                        }
-                    }
-                }
-
-                ToolMode.LassoMoveMode -> {
-
-
-                    canvas.drawRect(
-                        controller.selectedBoundBox.value,
-                        controller.selectedBoundBoxPaint.value
-                    )
-
-                    println("transformMatrix: transformMatrix: ${transformMatrix}")
-
-                    controller.selectedDataSet.forEach { data ->
-                        canvas.drawPath(data.path, data.paint)
-                    }
-                }
-
-                else -> {
-
-                }
-
-            }
-
+            )
 
         }
 
+        println("currentMode: ${controller.currentToolMode}")
         println("selectedDataSet: ${controller.selectedDataSet.size}")
         if (invalidatorTick.value != 0) {
 //            onRevisedListener?.invoke(controller.canUndo.value, controller.canRedo.value)

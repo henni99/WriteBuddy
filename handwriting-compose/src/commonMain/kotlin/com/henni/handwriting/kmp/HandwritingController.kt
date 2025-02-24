@@ -2,8 +2,10 @@ package com.henni.handwriting.kmp
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -15,6 +17,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.util.fastForEachReversed
 import com.henni.handwriting.kmp.model.HandwritingData
 import com.henni.handwriting.kmp.model.HitResult
@@ -29,8 +32,14 @@ import com.henni.handwriting.kmp.operation.OperationManager
 import com.henni.handwriting.kmp.operation.OperationManagerImpl
 import com.henni.handwriting.kmp.operation.RemoveOperation
 import com.henni.handwriting.kmp.operation.TranslateOperation
+import com.henni.handwriting.kmp.tool.LassoMoveTouchEvent
+import com.henni.handwriting.kmp.tool.LassoSelectTouchEvent
+import com.henni.handwriting.kmp.tool.PenTouchEvent
+import com.henni.handwriting.kmp.tool.StrokeEraserTouchEvent
+import com.henni.handwriting.kmp.tool.ToolTouchEvent
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlin.contracts.contract
+import kotlin.random.Random
 
 @Composable
 fun rememberHandwritingController(
@@ -46,34 +55,67 @@ class HandwritingController internal constructor(
 ) {
     val refreshTick = MutableStateFlow<Int>(0)
 
-    val currentToolMode: MutableState<ToolMode> = mutableStateOf(ToolMode.PenMode)
+    var currentToolMode by mutableStateOf(ToolMode.PenMode)
 
-    val eraserPointRadius: MutableState<Float> = mutableStateOf(20f)
+    var eraserPointRadius by mutableStateOf(20f)
 
-    val isEraserPointShowed: MutableState<Boolean> = mutableStateOf(true)
+    var isEraserPointShowed by mutableStateOf(true)
 
-    val penPaint: MutableState<Paint> = mutableStateOf(defaultPaint())
+    var penPaint by mutableStateOf(defaultPaint())
 
-    val eraserPaint: MutableState<Paint> = mutableStateOf(defaultEraserPaint())
+    var eraserPaint by mutableStateOf(defaultEraserPaint())
 
-    val lassoPaint: MutableState<Paint> = mutableStateOf(lassoDefaultPaint())
+    var lassoPaint by mutableStateOf(lassoDefaultPaint())
 
-    val selectedBoundBoxPaint: MutableState<Paint> = mutableStateOf(lassoDefaultPaint())
+    var selectedBoundBoxPaint by mutableStateOf(lassoDefaultPaint())
 
 
     val handwritingDataCollection = ArrayDeque<HandwritingData>()
 
-    val selectedBoundBox: MutableState<Rect> = mutableStateOf(Rect.Zero)
 
-    val selectedBoundBoxPadding: MutableState<Padding> = mutableStateOf(Padding.Zero)
+    var curTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
 
-    val isSelectedDataHighlight: MutableState<Boolean> = mutableStateOf(false)
+    init {
 
-    val selectedDataHighlightColor: MutableState<Color> = mutableStateOf(Color.Red)
+//        repeat(10000) {
+//
+//
+//            val path = Path()
+//            val random1 = Random.nextInt(100, 500)
+//            val random2 = Random.nextInt(200, 400)
+//            val random3 = Random.nextInt(200, 600)
+//            val random4 = Random.nextInt(300, 400)
+//            path.moveTo(random1.toFloat(), random2.toFloat())
+//            path.lineTo(random1.toFloat(), random2.toFloat())
+//            path.lineTo(random3.toFloat(), random4.toFloat())
+//
+//
+//            handwritingDataCollection.add(
+//                HandwritingData(
+//                    path = path,
+//                    paint = Paint().copy(penPaint.value)
+//                )
+//            )
+//
+//        }
+
+    }
+
+
+    var selectedBoundBox by mutableStateOf(Rect.Zero)
+
+    var selectedBoundBoxPadding by mutableStateOf(Padding.Zero)
+
+    var isSelectedDataHighlight by mutableStateOf(false)
+
+    var selectedDataHighlightColor by mutableStateOf(Color.Red)
 
     val selectedDataSet = mutableSetOf<HandwritingData>()
 
     val isNoteZoomable: MutableState<Boolean> = mutableStateOf(true)
+
+    val toolPointerType: MutableState<PointerType> = mutableStateOf(PointerType.Touch)
+
 
     /** Sets [Paint] to the [currentPaint]. */
     fun updateCurrentPaint() {
@@ -85,105 +127,125 @@ class HandwritingController internal constructor(
     }
 
     fun setIsEraserPointShowed(isShowed: Boolean) {
-        this.isEraserPointShowed.value = isShowed
+        this.isEraserPointShowed = isShowed
     }
 
     fun setIsSelectedDataHighlight(isSelectedDataHighlight: Boolean) {
-        this.isSelectedDataHighlight.value = isSelectedDataHighlight
+        this.isSelectedDataHighlight = isSelectedDataHighlight
     }
 
-    fun setSelectedDataHighlightColor(color: Color) {
-        this.selectedDataHighlightColor.value = color
-    }
+//    fun setSelectedDataHighlightColor(color: Color) {
+//        this.selectedDataHighlightColor = color
+//    }
 
     /** Sets a eraser point radius to the [eraserPointRadius]. */
-    fun setEraserPointRadius(radius: Float) {
-        eraserPointRadius.value = radius
-    }
+//    fun setEraserPointRadius(radius: Float) {
+//        eraserPointRadius = radius
+//    }
 
     /** Sets a lasso stroke width to the [lassoPaint]. */
     fun setLassoStrokeWidth(width: Float) {
-        lassoPaint.value.strokeWidth = width
+        lassoPaint.strokeWidth = width
     }
 
     /** Sets a lasso color to the [lassoPaint]. */
     fun setLassoColor(color: Color) {
-        lassoPaint.value.color = color
+        lassoPaint.color = color
     }
 
     /** Sets a lasso stroke width to the [lassoPaint]. */
     fun setSelectedBoxStrokeWidth(width: Float) {
-        selectedBoundBoxPaint.value.strokeWidth = width
+        selectedBoundBoxPaint.strokeWidth = width
     }
 
     /** Sets a lasso color to the [lassoPaint]. */
     fun setSelectedBoxColor(color: Color) {
-        selectedBoundBoxPaint.value.color = color
+        selectedBoundBoxPaint.color = color
     }
 
     /** Sets a lasso color to the [lassoPaint]. */
     fun setSelectedBoxPadding(padding: Padding) {
-        selectedBoundBoxPadding.value = padding
+        selectedBoundBoxPadding = padding
     }
 
 
-    /** Sets a [Paint] to the [penPaint]. */
-    fun setPenPaint(paint: Paint) {
-        penPaint.value = paint
-    }
+//    /** Sets a [Paint] to the [penPaint]. */
+//    fun setPenPaint(paint: Paint) {
+//        penPaint = paint
+//    }
 
     /** Sets a [Color] to the [penPaint]. */
     fun setPenColor(color: Color) {
-        penPaint.value.color = color
+        penPaint.color = color
     }
 
     /** Sets a stroke width to the [penPaint]. */
     fun setPenAlpha(alpha: Float) {
-        penPaint.value.alpha = alpha
+        penPaint.alpha = alpha
     }
 
     /** Sets a stroke width to the [penPaint]. */
     fun setPenStrokeWidth(width: Float) {
-        penPaint.value.strokeWidth = width
+        penPaint.strokeWidth = width
     }
 
     /** Sets a [Shader] to the [penPaint]. */
     fun setPenShader(shader: Shader?) {
-        penPaint.value.shader = shader
+        penPaint.shader = shader
     }
 
     /** Sets a [PaintingStyle] to the [penPaint]. */
     fun setPenPaintingStyle(style: PaintingStyle) {
-        penPaint.value.style = style
+        penPaint.style = style
     }
 
     /** Sets a [StrokeJoin] to the [penPaint]. */
     fun setPenStrokeJoin(strokeJoin: StrokeJoin) {
-        penPaint.value.strokeJoin = strokeJoin
+        penPaint.strokeJoin = strokeJoin
     }
 
     /** Sets a [PathEffect] to the [penPaint]. */
     fun setPenPathEffect(pathEffect: PathEffect?) {
-        penPaint.value.pathEffect = pathEffect
+        penPaint.pathEffect = pathEffect
     }
 
 
     fun transformSelectedBoundBox(matrix: Matrix) {
-        selectedBoundBox.value = selectedBoundBox.value.translate(
+        selectedBoundBox = selectedBoundBox.translate(
             matrix.values[12],
             matrix.values[13]
         )
     }
 
     fun setToolMode(toolMode: ToolMode) {
-        currentToolMode.value = toolMode
+        currentToolMode = toolMode
+
+        when(toolMode) {
+            ToolMode.PenMode -> {
+                curTouchEvent = PenTouchEvent(this)
+            }
+            ToolMode.EraserMode -> {
+
+                curTouchEvent = StrokeEraserTouchEvent(this)
+            }
+            ToolMode.LassoSelectMode -> {
+                curTouchEvent = LassoSelectTouchEvent(this)
+            }
+            ToolMode.LassoMoveMode -> {
+                curTouchEvent = LassoMoveTouchEvent(this)
+            }
+
+            else -> {}
+        }
+
+
         initializeSelection()
         updateRefreshTick()
     }
 
     fun addHandWritingPath(
         path: Path,
-        points: MutableList<Offset>
+        points: List<Offset>
     ) {
         operationManager.executeOperation(
             InsertOperation(
@@ -191,7 +253,7 @@ class HandwritingController internal constructor(
                 data = HandwritingData(
                     path = path,
                     originalOffsets = points,
-                    paint = Paint().copy(penPaint.value),
+                    paint = Paint().copy(penPaint),
                 )
             )
         )
@@ -239,15 +301,18 @@ class HandwritingController internal constructor(
             }
         }
 
+        println("tempSelectedDataSet: ${tempSelectedDataSet.size}")
 
         if (tempSelectedDataSet.isNotEmpty()) {
             selectedDataSet.clear()
             selectedDataSet.addAll(tempSelectedDataSet)
-            selectedBoundBox.value = tempRect.addPadding(selectedBoundBoxPadding.value)
-            currentToolMode.value = ToolMode.LassoMoveMode
+            selectedBoundBox = tempRect.addPadding(selectedBoundBoxPadding)
+            currentToolMode = ToolMode.LassoMoveMode
+            curTouchEvent = LassoMoveTouchEvent(this)
         } else {
-            selectedBoundBox.value = Rect.Zero
-            currentToolMode.value = ToolMode.LassoSelectMode
+            selectedBoundBox = Rect.Zero
+            currentToolMode = ToolMode.LassoSelectMode
+            curTouchEvent = LassoSelectTouchEvent(this)
         }
 
         updateRefreshTick()
@@ -345,7 +410,7 @@ class HandwritingController internal constructor(
     }
 
     fun initializeSelection() {
-        selectedBoundBox.value = Rect.Zero
+        selectedBoundBox = Rect.Zero
         selectedDataSet.clear()
     }
 
