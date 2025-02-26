@@ -3,6 +3,8 @@ package com.henni.handwriting.kmp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -12,7 +14,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
@@ -27,6 +31,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import com.henni.handwriting.kmp.model.ToolMode
 import com.henni.handwriting.kmp.model.TouchCountType
+import com.henni.handwriting.kmp.tool.isLassoUsed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -84,168 +89,156 @@ fun HandWritingNote(
 
     var touchCount by remember { mutableStateOf(TouchCountType.NoTouch) }
 
-    androidx.compose.foundation.Canvas(
+    Box(
         modifier = modifier
-            .fillMaxSize()
-            .background(containerBackgroundColor)
-            .onSizeChanged { newSize ->
-                val size =
-                    newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
+            .clipToBounds()
+    ) {
+        androidx.compose.foundation.Canvas(
+            modifier = Modifier
+                .fillMaxSize(0.8f)
+                .onSizeChanged { newSize ->
+                    val size =
+                        newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
 
-                pathBitmap = getBitmap(size).also {
-                    canvas = Canvas(it)
+                    pathBitmap = getBitmap(size).also {
+                        canvas = Canvas(it)
+                    }
                 }
-            }
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-                translationX = offset.x
-                translationY = offset.y
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    translationX = offset.x
+                    translationY = offset.y
 
+                    canvasSize = IntSize(size.height.toInt(), size.width.toInt())
+                }
+                .align(Alignment.Center)
+                .pointerInput(true) {
+                    detectTransformGestures(
+                        toolMode = controller.currentToolMode,
+                        onGestureStart = { offset ->
+                            if (touchCount == TouchCountType.OneTouch) {
+                                println("detectDragGestures: onDragStart")
 
-                canvasSize = IntSize(size.height.toInt(), size.width.toInt())
-            }
-            .pointerInput(true) {
-                detectTransformGestures(
-                    onGestureStart = { offset ->
-                        if (touchCount == TouchCountType.OneTouch) {
-                            println("detectDragGestures: onDragStart")
+                                isToolUsed = true
 
-                            isToolUsed = true
-
-                            controller.curTouchEvent.onTouchStart(
-                                canvas = canvas,
-                                offset = offset,
-                                paint = when (controller.currentToolMode) {
-                                    ToolMode.PenMode -> controller.penPaint
-                                    ToolMode.LassoMoveMode -> controller.lassoPaint
-                                    else -> Paint()
-                                }
-                            )
-                        }
-
-                        invalidatorTick.updateTick()
-                    },
-                    onGesture = { centroid: Offset, pan: Offset, zoom: Float, timeMillis: Long, change: PointerInputChange, _: Offset, isMultiTouch: Boolean ->
-
-                        if (touchCount == TouchCountType.OneTouch && isToolUsed) {
-                            println("detectDragGestures: onDrag")
-
-                            controller.curTouchEvent.onTouchMove(
-                                canvas = canvas,
-                                previousOffset = change.previousPosition,
-                                currentOffset = change.position,
-                                paint = when (controller.currentToolMode) {
-                                    ToolMode.PenMode -> controller.penPaint
-                                    ToolMode.LassoMoveMode, ToolMode.LassoSelectMode -> controller.lassoPaint
-                                    else -> Paint()
-                                }
-                            )
-                        }
-
-                        invalidatorTick.updateTick()
-
-                    },
-                    onGestureEnd = { isMultiTouch ->
-                        if (touchCount == TouchCountType.OneTouch && isToolUsed) {
-                            println("detectDragGestures: onDragEnd")
-
-                            controller.curTouchEvent.onTouchEnd(
-                                canvas = canvas,
-                                paint = when (controller.currentToolMode) {
-                                    ToolMode.PenMode -> controller.penPaint
-                                    else -> Paint()
-                                }
-                            )
-
-                            isToolUsed = false
-                            invalidatorTick.updateTick()
-                        }
-
-                    },
-                    canConsumeGesture = { pan: Offset, zoom: Float ->
-
-
-                        true
-                    },
-                    onTap = { offset ->
-                        when (controller.currentToolMode) {
-                            ToolMode.LassoSelectMode, ToolMode.LassoMoveMode -> {
-                                controller.curTouchEvent.onTouchTap(offset)
+                                controller.curTouchEvent.onTouchStart(
+                                    canvas = canvas,
+                                    offset = offset,
+                                    paint = when (controller.currentToolMode) {
+                                        ToolMode.PenMode -> controller.penPaint
+                                        ToolMode.LassoMoveMode -> controller.lassoPaint
+                                        else -> Paint()
+                                    }
+                                )
                             }
 
-                            else -> {}
+                            invalidatorTick.updateTick()
+                        },
+                        onGesture = { centroid: Offset, pan: Offset, zoom: Float, timeMillis: Long, change: PointerInputChange, _: Offset, isMultiTouch: Boolean ->
+
+                            if (touchCount == TouchCountType.OneTouch && isToolUsed) {
+                                println("detectDragGestures: onDrag")
+
+                                controller.curTouchEvent.onTouchMove(
+                                    canvas = canvas,
+                                    previousOffset = change.previousPosition,
+                                    currentOffset = change.position,
+                                    paint = when (controller.currentToolMode) {
+                                        ToolMode.PenMode -> controller.penPaint
+                                        ToolMode.LassoMoveMode, ToolMode.LassoSelectMode -> controller.lassoPaint
+                                        else -> Paint()
+                                    }
+                                )
+                            }
+
+                            invalidatorTick.updateTick()
+
+                        },
+                        onGestureEnd = { isMultiTouch ->
+                            if (touchCount == TouchCountType.OneTouch && isToolUsed) {
+                                println("detectDragGestures: onDragEnd")
+
+                                controller.curTouchEvent.onTouchEnd(
+                                    canvas = canvas,
+                                    paint = when (controller.currentToolMode) {
+                                        ToolMode.PenMode -> controller.penPaint
+                                        else -> Paint()
+                                    }
+                                )
+
+                                isToolUsed = false
+                                invalidatorTick.updateTick()
+                            }
+
+                        },
+                    )
+                }
+                .pointerInput(Unit) {
+
+                    awaitPointerEventScope {
+
+                        while (true) {
+
+
+                            val event = awaitPointerEvent()
+                            val pointers = event.changes.count()
+
+                            println("pointEvents: ${this.currentEvent.changes.size}")
+                            println("pointEvents: ${event.changes.size}")
+                            println("touchCount: ${touchCount}")
+
+                            if (pointers >= 2) {
+                                touchCount = TouchCountType.MultiTouch
+
+                                val zoomChange = event.calculateZoom()
+                                val panChange = event.calculatePan()
+
+                                scale = (scale * zoomChange).coerceIn(1f, 5f)
+
+                                val extraWidth = (scale - 1) * canvasSize.width
+                                val extraHeight = (scale - 1) * canvasSize.height
+
+                                val maxX = extraWidth / 2
+                                val maxY = extraHeight / 2
+
+                                offset = Offset(
+                                    x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
+                                    y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
+                                )
+
+                            } else {
+                                touchCount = TouchCountType.OneTouch
+                            }
                         }
+                    }
+                }
+        ) {
+            drawIntoCanvas { canvas ->
+                drawRect(controller.contentBackground)
 
-                    },
-                    onDoubleTap = { offset ->
+                // draw path bitmap on the canvas.
+                pathBitmap?.let { bitmap ->
+                    canvas.drawImage(bitmap, Offset.Zero, Paint())
+                }
 
+                controller.curTouchEvent.onDrawIntoCanvas(
+                    canvas = canvas,
+                    paint = when (controller.currentToolMode) {
+                        ToolMode.PenMode -> controller.penPaint
+                        ToolMode.EraserMode -> controller.eraserPaint
+                        ToolMode.LassoSelectMode -> controller.lassoPaint
+                        else -> Paint()
                     }
                 )
-            }
-            .pointerInput(Unit) {
 
-                awaitPointerEventScope {
-
-                    while (true) {
-
-
-                        val event = awaitPointerEvent()
-                        val pointers = event.changes.count()
-
-                        println("pointEvents: ${this.currentEvent.changes.size}")
-                        println("pointEvents: ${event.changes.size}")
-                        println("touchCount: ${touchCount}")
-
-                        if (pointers >= 2) {
-                            touchCount = TouchCountType.MultiTouch
-
-                            val zoomChange = event.calculateZoom()
-                            val panChange = event.calculatePan()
-
-                            scale = (scale * zoomChange).coerceIn(1f, 5f)
-
-                            val extraWidth = (scale - 1) * canvasSize.width
-                            val extraHeight = (scale - 1) * canvasSize.height
-
-                            val maxX = extraWidth / 2
-                            val maxY = extraHeight / 2
-
-                            offset = Offset(
-                                x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
-                                y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
-                            )
-
-                        } else {
-                            touchCount = TouchCountType.OneTouch
-                        }
-                    }
-                }
-            }
-    ) {
-        drawIntoCanvas { canvas ->
-
-            // draw path bitmap on the canvas.
-            pathBitmap?.let { bitmap ->
-                canvas.drawImage(bitmap, Offset.Zero, Paint())
             }
 
-            controller.curTouchEvent.onDrawIntoCanvas(
-                canvas = canvas,
-                paint = when (controller.currentToolMode) {
-                    ToolMode.PenMode -> controller.penPaint
-                    ToolMode.EraserMode -> controller.eraserPaint
-                    ToolMode.LassoSelectMode -> controller.lassoPaint
-                    else -> Paint()
-                }
-            )
-
-        }
-
-        println("currentMode: ${controller.currentToolMode}")
-        println("selectedDataSet: ${controller.selectedDataSet.size}")
-        if (invalidatorTick.value != 0) {
+            println("currentMode: ${controller.currentToolMode}")
+            println("selectedDataSet: ${controller.selectedDataSet.size}")
+            if (invalidatorTick.value != 0) {
 //            onRevisedListener?.invoke(controller.canUndo.value, controller.canRedo.value)
+            }
         }
     }
 }

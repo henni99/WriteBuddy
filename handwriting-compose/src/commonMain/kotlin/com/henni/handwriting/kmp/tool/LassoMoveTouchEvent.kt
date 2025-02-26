@@ -82,22 +82,6 @@ class LassoMoveTouchEvent constructor(
         controller.refreshTick.updateTick()
     }
 
-    override fun onTouchTap(
-        offset: Offset,
-        radius: Float,
-    ) {
-
-        val tapPath = Path()
-        tapPath.addOval(
-            Rect(
-                center = offset,
-                radius = radius
-            )
-        )
-        controller.initializeSelection()
-        controller.selectHandWritingData(tapPath)
-    }
-
     override fun onTouchCancel() {
         TODO("Not yet implemented")
     }

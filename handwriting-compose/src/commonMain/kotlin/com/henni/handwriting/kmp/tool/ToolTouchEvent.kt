@@ -25,11 +25,6 @@ interface ToolTouchEvent {
         paint: Paint = Paint(),
     )
 
-    fun onTouchTap(
-        offset: Offset,
-        radius: Float = 20f,
-    ) { }
-
     fun onTouchCancel(
 
     )

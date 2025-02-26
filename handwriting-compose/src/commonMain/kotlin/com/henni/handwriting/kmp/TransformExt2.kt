@@ -1,36 +1,21 @@
 package com.henni.handwriting.kmp
 
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateCentroid
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
-import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.input.pointer.positionChanged
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.MeasureResult
-import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.node.DelegatingNode
-import androidx.compose.ui.node.LayoutModifierNode
-import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.node.PointerInputModifierNode
-import androidx.compose.ui.platform.InspectorInfo
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
-import kotlinx.coroutines.launch
+import com.henni.handwriting.kmp.model.ToolMode
+import com.henni.handwriting.kmp.tool.isLassoUsed
 
 /**
  * Customized transform gesture detector.
@@ -48,30 +33,24 @@ import kotlinx.coroutines.launch
  * vertical scrolling.
  */
 suspend fun PointerInputScope.detectTransformGestures(
+    toolMode: ToolMode = ToolMode.PenMode,
     cancelIfZoomCanceled: Boolean = true,
-    canConsumeGesture: (pan: Offset, zoom: Float) -> Boolean,
     onGesture: (centroid: Offset, pan: Offset, zoom: Float, timeMillis: Long, change: PointerInputChange, dragAmount: Offset, isMultiTouch: Boolean) -> Unit,
     onGestureStart: (Offset) -> Unit = {},
     onGestureEnd: (isMultiTouch: Boolean) -> Unit = {},
-    onTap: (position: Offset) -> Unit = {},
-    onDoubleTap: (position: Offset) -> Unit = {},
-    enableOneFingerZoom: Boolean = true,
 ) = awaitEachGesture {
 
     val firstDown = awaitFirstDown(requireUnconsumed = false)
-
     firstDown.consume()
 
-    println("currentEvent: ${this.currentEvent.changes.size.toString()}")
-
-    onGestureStart(firstDown.position, )
-
+    onGestureStart(firstDown.position)
     var firstUp: PointerInputChange = firstDown
     var hasMoved = false
     var isMultiTouch = false
     var isLongPressed = false
     var isCanceled = false
     forEachPointerEventUntilReleased(
+        toolMode = toolMode,
         onCancel = { isCanceled = true },
     ) { event, isTouchSlopPast ->
         if (isTouchSlopPast) {
@@ -80,10 +59,16 @@ suspend fun PointerInputScope.detectTransformGestures(
             if (zoomChange != 1f || panChange != Offset.Zero) {
                 val centroid = event.calculateCentroid(useCurrent = true)
                 val timeMillis = event.changes[0].uptimeMillis
-                if (canConsumeGesture(panChange, zoomChange)) {
-                    onGesture(centroid, panChange, zoomChange, timeMillis, event.changes[0], event.changes[0].position, isMultiTouch)
-                    event.consumePositionChanges()
-                }
+                onGesture(
+                    centroid,
+                    panChange,
+                    zoomChange,
+                    timeMillis,
+                    event.changes[0],
+                    event.changes[0].position,
+                    isMultiTouch
+                )
+                event.consumePositionChanges()
             }
             hasMoved = true
         }
@@ -99,44 +84,6 @@ suspend fun PointerInputScope.detectTransformGestures(
         isLongPressed = true
     }
 
-    println("beforeIstap: ${hasMoved} ${isMultiTouch} ${isLongPressed} ${isCanceled}")
-    val isTap = !hasMoved && !isMultiTouch && !isLongPressed && !isCanceled
-    // Vertical scrolling following a double tap is treated as a zoom gesture.
-    if (isTap) {
-        val secondDown = awaitSecondDown(firstUp)
-        if (secondDown == null) {
-            println("onTap: ${onTap}")
-            onTap(firstUp.position)
-        } else {
-            secondDown.consume()
-            var isDoubleTap = true
-            var isSecondCanceled = false
-            var secondUp: PointerInputChange = secondDown
-            forEachPointerEventUntilReleased(
-                onCancel = { isSecondCanceled = true }
-            ) { event, isTouchSlopPast ->
-                if (isTouchSlopPast) {
-
-                    isDoubleTap = false
-                }
-                if (event.changes.size > 1) {
-                    isDoubleTap = false
-                }
-                secondUp = event.changes[0]
-                true
-            }
-
-            val secondPressedTime = secondUp.uptimeMillis - secondDown.uptimeMillis
-            if (secondPressedTime > viewConfiguration.longPressTimeoutMillis) {
-                isDoubleTap = false
-            }
-
-            if (isDoubleTap && !isSecondCanceled) {
-                onDoubleTap(secondUp.position)
-            }
-        }
-    }
-
     onGestureEnd(isMultiTouch)
 }
 
@@ -147,6 +94,7 @@ suspend fun PointerInputScope.detectTransformGestures(
  * @param action Callback function that will be called every PointerEvents occur.
  */
 private suspend fun AwaitPointerEventScope.forEachPointerEventUntilReleased(
+    toolMode: ToolMode,
     onCancel: () -> Unit,
     action: (event: PointerEvent, isTouchSlopPast: Boolean) -> Boolean,
 ) {
@@ -159,35 +107,21 @@ private suspend fun AwaitPointerEventScope.forEachPointerEventUntilReleased(
         }
 
         val isTouchSlopPast = touchSlop.isPast(mainEvent)
-        val canContinue = action(mainEvent, true)
-
-
-
-
-//        val finalEvent = awaitPointerEvent(pass = PointerEventPass.Final)
-//        if (finalEvent.changes.fastAny { it.isConsumed }) {
-//            onCancel()
-//            break
-//        }
+        val canContinue = action(mainEvent, isTouchSlopPast)
+        if (!canContinue) {
+            break
+        }
+        if (isTouchSlopPast) {
+            continue
+        }
+        if (isLassoUsed(toolMode)) {
+            val finalEvent = awaitPointerEvent(pass = PointerEventPass.Final)
+            if (finalEvent.changes.fastAny { it.isConsumed }) {
+                onCancel()
+                break
+            }
+        }
     } while (mainEvent.changes.fastAny { it.pressed })
-}
-
-/**
- * Await second down or timeout from first up
- *
- * @param firstUp The first up event
- * @return If the second down event comes before timeout, returns it. If not, returns null.
- */
-private suspend fun AwaitPointerEventScope.awaitSecondDown(
-    firstUp: PointerInputChange,
-): PointerInputChange? = withTimeoutOrNull(viewConfiguration.doubleTapTimeoutMillis) {
-    val minUptime = firstUp.uptimeMillis + viewConfiguration.doubleTapMinTimeMillis
-    var change: PointerInputChange
-    // The second tap doesn't count if it happens before DoubleTapMinTime of the first tap
-    do {
-        change = awaitFirstDown()
-    } while (change.uptimeMillis < minUptime)
-    change
 }
 
 /**
@@ -236,240 +170,3 @@ private class TouchSlop(private val threshold: Float) {
     }
 }
 
-/**
- * [ScrollGesturePropagation] defines when [Modifier.zoomable] propagates scroll gestures to the
- * parent composable element.
- */
-enum class ScrollGesturePropagation {
-
-    /**
-     * Propagates the scroll gesture to the parent composable element when the content is scrolled
-     * to the edge and attempts to scroll further.
-     */
-    ContentEdge,
-
-    /**
-     * Propagates the scroll gesture to the parent composable element when the content is not zoomed.
-     */
-    NotZoomed,
-}
-
-/**
- * A modifier function that allows content to be zoomable.
- *
- * @param zoomState A [ZoomState] object.
- * @param zoomEnabled specifies if zoom behaviour is enabled or disabled. Even if this is false,
- * [onTap] and [onDoubleTap] will be called.
- * @param enableOneFingerZoom If true, enable one finger zoom gesture, double tap followed by
- * vertical scrolling.
- * @param scrollGesturePropagation specifies when scroll gestures are propagated to the parent
- * composable element.
- * @param onTap will be called when single tap is detected on the element.
- * @param onDoubleTap will be called when double tap is detected on the element. This is a suspend
- * function and called in a coroutine scope. The default is to toggle the scale between 1.0f and
- * 2.5f with animation.
- */
-fun Modifier.zoomable(
-    zoomState: ZoomState,
-    zoomEnabled: Boolean = true,
-    enableOneFingerZoom: Boolean = false,
-    scrollGesturePropagation: ScrollGesturePropagation = ScrollGesturePropagation.ContentEdge,
-    onTap: (position: Offset) -> Unit = {},
-    onDoubleTap: suspend (
-        position: Offset,
-    ) -> Unit = { position -> if (zoomEnabled) zoomState.toggleScale(2.5f, position) },
-): Modifier = this then ZoomableElement(
-    zoomState = zoomState,
-    zoomEnabled = zoomEnabled,
-    enableOneFingerZoom = enableOneFingerZoom,
-    snapBackEnabled = false,
-    scrollGesturePropagation = scrollGesturePropagation,
-    onTap = onTap,
-    onDoubleTap = onDoubleTap,
-)
-
-private data class ZoomableElement(
-    val zoomState: ZoomState,
-    val zoomEnabled: Boolean,
-    val enableOneFingerZoom: Boolean,
-    val snapBackEnabled: Boolean,
-    val scrollGesturePropagation: ScrollGesturePropagation,
-    val onTap: (position: Offset) -> Unit,
-    val onDoubleTap: suspend (position: Offset) -> Unit,
-) : ModifierNodeElement<ZoomableNode>() {
-    override fun create(): ZoomableNode = ZoomableNode(
-        zoomState,
-        zoomEnabled,
-        enableOneFingerZoom,
-        snapBackEnabled,
-        scrollGesturePropagation,
-        onTap,
-        onDoubleTap,
-    )
-
-    override fun update(node: ZoomableNode) {
-        node.update(
-            zoomState,
-            zoomEnabled,
-            enableOneFingerZoom,
-            snapBackEnabled,
-            scrollGesturePropagation,
-            onTap,
-            onDoubleTap,
-        )
-    }
-
-    override fun InspectorInfo.inspectableProperties() {
-        name = "zoomable"
-        properties["zoomState"] = zoomState
-        properties["zoomEnabled"] = zoomEnabled
-        properties["enableOneFingerZoom"] = enableOneFingerZoom
-        properties["snapBackEnabled"] = snapBackEnabled
-        properties["scrollGesturePropagation"] = scrollGesturePropagation
-        properties["onTap"] = onTap
-        properties["onDoubleTap"] = onDoubleTap
-    }
-}
-
-private class ZoomableNode(
-    var zoomState: ZoomState,
-    var zoomEnabled: Boolean,
-    var enableOneFingerZoom: Boolean,
-    var snapBackEnabled: Boolean,
-    var scrollGesturePropagation: ScrollGesturePropagation,
-    var onTap: (position: Offset) -> Unit,
-    var onDoubleTap: suspend (position: Offset) -> Unit,
-) : PointerInputModifierNode, LayoutModifierNode, DelegatingNode() {
-    var measuredSize = Size.Zero
-
-    fun update(
-        zoomState: ZoomState,
-        zoomEnabled: Boolean,
-        enableOneFingerZoom: Boolean,
-        snapBackEnabled: Boolean,
-        scrollGesturePropagation: ScrollGesturePropagation,
-        onTap: (position: Offset) -> Unit,
-        onDoubleTap: suspend (position: Offset) -> Unit,
-    ) {
-        if (this.zoomState != zoomState) {
-            zoomState.setLayoutSize(measuredSize)
-            this.zoomState = zoomState
-        }
-        this.zoomEnabled = zoomEnabled
-        this.enableOneFingerZoom = enableOneFingerZoom
-        this.scrollGesturePropagation = scrollGesturePropagation
-        this.snapBackEnabled = snapBackEnabled
-        this.onTap = onTap
-        this.onDoubleTap = onDoubleTap
-    }
-
-    val pointerInputNode = delegate(
-        SuspendingPointerInputModifierNode {
-            detectTransformGestures(
-                cancelIfZoomCanceled = snapBackEnabled,
-                onGestureStart = {
-                    resetConsumeGesture()
-                    zoomState.startGesture()
-                },
-                canConsumeGesture = { pan, zoom ->
-                    zoomEnabled && canConsumeGesture(pan, zoom)
-                },
-                onGesture = { centroid, pan, zoom, timeMillis, _, _, _ ->
-                    if (zoomEnabled) {
-                        coroutineScope.launch {
-                            zoomState.applyGesture(
-                                pan = pan,
-                                zoom = zoom,
-                                position = centroid,
-                                timeMillis = timeMillis,
-                            )
-                        }
-                    }
-                },
-                onGestureEnd = {
-                    coroutineScope.launch {
-                        if (snapBackEnabled || zoomState.scale < 1f) {
-                            zoomState.changeScale(1f, Offset.Zero)
-                        } else {
-                            zoomState.startFling()
-                        }
-                    }
-                },
-                onTap = onTap,
-                onDoubleTap = { position ->
-                    coroutineScope.launch {
-                        onDoubleTap(position)
-                    }
-                },
-                enableOneFingerZoom = enableOneFingerZoom,
-            )
-        }
-    )
-
-    private var consumeGesture: Boolean? = null
-
-    private fun resetConsumeGesture() {
-        consumeGesture = null
-    }
-
-    private fun canConsumeGesture(pan: Offset, zoom: Float): Boolean {
-        val currentValue = consumeGesture
-        if (currentValue != null) {
-            return currentValue
-        }
-
-        val newValue = when {
-            zoom != 1f -> true
-            zoomState.scale == 1f -> false
-            scrollGesturePropagation == ScrollGesturePropagation.NotZoomed -> true
-            else -> zoomState.willChangeOffset(pan)
-        }
-        consumeGesture = newValue
-        return newValue
-    }
-
-    override fun onPointerEvent(
-        pointerEvent: PointerEvent,
-        pass: PointerEventPass,
-        bounds: IntSize,
-    ) {
-        pointerInputNode.onPointerEvent(pointerEvent, pass, bounds)
-    }
-
-    override fun onCancelPointerInput() {
-        pointerInputNode.onCancelPointerInput()
-    }
-
-    override fun MeasureScope.measure(
-        measurable: Measurable,
-        constraints: Constraints,
-    ): MeasureResult {
-        val placeable = measurable.measure(constraints)
-        measuredSize = IntSize(placeable.measuredWidth, placeable.measuredHeight).toSize()
-        zoomState.setLayoutSize(measuredSize)
-        return layout(placeable.width, placeable.height) {
-            placeable.placeWithLayer(x = 0, y = 0) {
-                scaleX = zoomState.scale
-                scaleY = zoomState.scale
-                translationX = zoomState.offsetX
-                translationY = zoomState.offsetY
-            }
-        }
-    }
-}
-
-/**
- * Toggle the scale between [targetScale] and 1.0f.
- *
- * @param targetScale Scale to be set if this function is called when the scale is 1.0f.
- * @param position Zoom around this point.
- * @param animationSpec The animation configuration.
- */
-suspend fun ZoomState.toggleScale(
-    targetScale: Float,
-    position: Offset,
-    animationSpec: AnimationSpec<Float> = spring(),
-) {
-    val newScale = if (scale == 1f) targetScale else 1f
-    changeScale(newScale, position, animationSpec)
-}

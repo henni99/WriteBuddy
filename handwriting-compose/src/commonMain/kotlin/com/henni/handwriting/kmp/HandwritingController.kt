@@ -69,6 +69,7 @@ class HandwritingController internal constructor(
 
     var selectedBoundBoxPaint by mutableStateOf(lassoDefaultPaint())
 
+    var contentBackground by mutableStateOf(Color.Red)
 
     val handwritingDataCollection = ArrayDeque<HandwritingData>()
 

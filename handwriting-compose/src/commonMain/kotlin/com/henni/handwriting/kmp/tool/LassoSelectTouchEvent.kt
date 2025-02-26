@@ -21,8 +21,9 @@ class LassoSelectTouchEvent constructor(
 
     var lassoPath by mutableStateOf(Path())
 
-    var offsets = mutableListOf<Offset>()
+    var isTap = true
 
+    var firstPoint by mutableStateOf(Offset.Zero)
 
     override fun onTouchStart(
         canvas: Canvas?,
@@ -30,13 +31,11 @@ class LassoSelectTouchEvent constructor(
         paint: Paint,
     ) {
         println("LassoSelectTouchEvent onTouchStart ${offset}")
-
-        offsets.clear()
-
+        isTap = true
+        lassoPath = Path()
         lassoPath.moveTo(offset.x, offset.y)
         lassoPath.lineTo(offset.x, offset.y)
-        offsets.add(offset)
-        controller.refreshTick.updateTick()
+        firstPoint = offset
     }
 
     override fun onTouchMove(
@@ -45,6 +44,7 @@ class LassoSelectTouchEvent constructor(
         currentOffset: Offset,
         paint: Paint,
     ) {
+        isTap = false
         if(lassoPath.isEmpty) {
             lassoPath.moveTo(currentOffset.x, currentOffset.y )
         }
@@ -56,46 +56,44 @@ class LassoSelectTouchEvent constructor(
             (currentOffset.x + previousOffset.x) / 2,
             (currentOffset.y + previousOffset.y) / 2
         )
-        offsets.add(currentOffset)
     }
 
     override fun onTouchEnd(
         canvas: Canvas?,
         paint: Paint,
     ) {
+        println("LassoSelectTouchEvent onTouchEnd ")
+        if(isTap) {
+            lassoPath.addOval(
+                Rect(
+                    center = firstPoint,
+                    radius = 10f
+                )
+            )
+        }
+
         controller.selectHandWritingData(
             path = lassoPath,
         )
-
-        offsets.clear()
     }
 
     override fun onTouchCancel() {
         TODO("Not yet implemented")
     }
 
-    override fun onTouchTap(
-        offset: Offset,
-        radius: Float,
-    ) {
-        val tapPath = Path()
-        tapPath.addOval(
-            Rect(
-                center = offset,
-                radius = radius
-            )
-        )
-        controller.initializeSelection()
-        controller.selectHandWritingData(tapPath)
-    }
-
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {
-        canvas.drawPath(lassoPath, paint)
 
-        canvas.drawRect(
-            controller.selectedBoundBox,
-            controller.selectedBoundBoxPaint
-        )
+        println("onDrawIntoCanvas: ${lassoPath.isEmpty}")
+        if(!lassoPath.isEmpty) {
+            canvas.drawPath(lassoPath, paint)
+        }
+
+        if(!controller.selectedBoundBox.isEmpty) {
+            canvas.drawRect(
+                controller.selectedBoundBox,
+                controller.selectedBoundBoxPaint
+            )
+        }
 
         controller.selectedDataSet.forEach { data ->
             canvas.drawPath(data.path, data.paint)
