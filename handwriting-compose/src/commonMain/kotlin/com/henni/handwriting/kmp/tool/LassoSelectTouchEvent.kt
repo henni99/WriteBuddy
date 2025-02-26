@@ -78,7 +78,9 @@ class LassoSelectTouchEvent constructor(
     }
 
     override fun onTouchCancel() {
-        TODO("Not yet implemented")
+        lassoPath = Path()
+        isTap = true
+        firstPoint = Offset.Zero
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {

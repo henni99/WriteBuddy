@@ -55,7 +55,8 @@ class StrokeEraserTouchEvent constructor(
     }
 
     override fun onTouchCancel() {
-        TODO("Not yet implemented")
+        eraserPath = Path()
+        eraserOffset = Offset.Zero
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {

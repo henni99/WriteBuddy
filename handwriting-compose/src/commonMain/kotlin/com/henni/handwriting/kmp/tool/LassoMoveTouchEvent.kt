@@ -83,7 +83,10 @@ class LassoMoveTouchEvent constructor(
     }
 
     override fun onTouchCancel() {
-        TODO("Not yet implemented")
+        canSelectBoxMoved = false
+        firstOffset = Offset.Zero
+        offset =  Offset.Zero
+        transformMatrix = Matrix()
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {

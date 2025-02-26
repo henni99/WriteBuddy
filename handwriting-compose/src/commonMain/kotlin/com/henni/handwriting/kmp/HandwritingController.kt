@@ -74,31 +74,31 @@ class HandwritingController internal constructor(
 
     var curTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
 
-    init {
-
-//        repeat(10000) {
+//    init {
 //
+////        repeat(10000) {
+////
+////
+////            val path = Path()
+////            val random1 = Random.nextInt(100, 500)
+////            val random2 = Random.nextInt(200, 400)
+////            val random3 = Random.nextInt(200, 600)
+////            val random4 = Random.nextInt(300, 400)
+////            path.moveTo(random1.toFloat(), random2.toFloat())
+////            path.lineTo(random1.toFloat(), random2.toFloat())
+////            path.lineTo(random3.toFloat(), random4.toFloat())
+////
+////
+////            handwritingDataCollection.add(
+////                HandwritingData(
+////                    path = path,
+////                    paint = Paint().copy(penPaint.value)
+////                )
+////            )
+////
+////        }
 //
-//            val path = Path()
-//            val random1 = Random.nextInt(100, 500)
-//            val random2 = Random.nextInt(200, 400)
-//            val random3 = Random.nextInt(200, 600)
-//            val random4 = Random.nextInt(300, 400)
-//            path.moveTo(random1.toFloat(), random2.toFloat())
-//            path.lineTo(random1.toFloat(), random2.toFloat())
-//            path.lineTo(random3.toFloat(), random4.toFloat())
-//
-//
-//            handwritingDataCollection.add(
-//                HandwritingData(
-//                    path = path,
-//                    paint = Paint().copy(penPaint.value)
-//                )
-//            )
-//
-//        }
-
-    }
+//    }
 
 
     var selectedBoundBox by mutableStateOf(Rect.Zero)

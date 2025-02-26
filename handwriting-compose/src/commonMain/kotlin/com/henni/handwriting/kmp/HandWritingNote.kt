@@ -158,6 +158,10 @@ fun HandWritingNote(
                             }
 
                         },
+                        onGestureCancel = {
+                            controller.curTouchEvent.onTouchCancel()
+                            invalidatorTick.updateTick()
+                        }
                     )
                 }
                 .pointerInput(Unit) {

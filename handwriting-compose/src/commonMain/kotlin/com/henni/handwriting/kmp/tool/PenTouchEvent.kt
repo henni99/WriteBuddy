@@ -57,7 +57,8 @@ class PenTouchEvent constructor(
     }
 
     override fun onTouchCancel() {
-
+        penPath = Path()
+        offsets.clear()
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {
