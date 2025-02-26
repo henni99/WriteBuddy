@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Matrix
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.util.fastForEachReversed
 import com.henni.handwriting.kmp.model.HandwritingData
@@ -38,6 +40,7 @@ import com.henni.handwriting.kmp.tool.PenTouchEvent
 import com.henni.handwriting.kmp.tool.StrokeEraserTouchEvent
 import com.henni.handwriting.kmp.tool.ToolTouchEvent
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlin.random.Random
 
 @Composable
 fun rememberHandwritingController(
@@ -74,38 +77,58 @@ class HandwritingController internal constructor(
 
     var curTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
 
-//    init {
+    init {
+
+//        repeat(100) {
+//            val path = Path()
+//            val random1 = Random.nextInt(100, 500).toFloat()
+//            val random2 = Random.nextInt(200, 400).toFloat()
+//            val random3 = Random.nextInt(200, 600).toFloat()
+//            val random4 = Random.nextInt(300, 400).toFloat()
+//            val random5 = Random.nextInt(200, 600).toFloat()
+//            val random6 = Random.nextInt(300, 400).toFloat()
 //
-////        repeat(10000) {
-////
-////
-////            val path = Path()
-////            val random1 = Random.nextInt(100, 500)
-////            val random2 = Random.nextInt(200, 400)
-////            val random3 = Random.nextInt(200, 600)
-////            val random4 = Random.nextInt(300, 400)
-////            path.moveTo(random1.toFloat(), random2.toFloat())
-////            path.lineTo(random1.toFloat(), random2.toFloat())
-////            path.lineTo(random3.toFloat(), random4.toFloat())
-////
-////
-////            handwritingDataCollection.add(
-////                HandwritingData(
-////                    path = path,
-////                    paint = Paint().copy(penPaint.value)
-////                )
-////            )
-////
-////        }
+//            val offsets = mutableListOf<Offset>(
+//                Offset(random1.toFloat(), random2.toFloat()),
+//                Offset(random3.toFloat(), random4.toFloat())
+//            )
 //
-//    }
+//            path.moveTo(random1, random2)
+//            path.quadraticBezierTo(random1, random2, (random1 + random3) / 2, (random3 + random4)/ 2)
+//
+//            val last = offsets.last()
+////            path.lineTo(last.x + 3, last.y + 3)
+////            path.lineTo(last.x - 6, last.y + 3)
+////            path.lineTo(last.x + 3, last.y - 6)
+////            path.lineTo(last.x - 6, last.y - 6)
+//
+//            offsets.fastForEachReversed {
+//                path.lineTo(it.x, it.y)
+//            }
+//
+//            val first = offsets.first()
+//            path.lineTo(first.x + 3, first.y + 3)
+//            path.lineTo(first.x - 6, first.y + 3)
+//            path.lineTo(first.x + 3, first.y - 6)
+//            path.lineTo(first.x - 6, first.y - 6)
+//
+//
+//
+//            handwritingDataCollection.add(
+//                HandwritingData(
+//                    path = path,
+//                    paint = Paint().copy(penPaint)
+//                )
+//            )
+//        }
+    }
 
 
     var selectedBoundBox by mutableStateOf(Rect.Zero)
 
     var selectedBoundBoxPadding by mutableStateOf(Padding.Zero)
 
-    var isSelectedDataHighlight by mutableStateOf(false)
+    var isSelectedDataHighlight by mutableStateOf(true)
 
     var selectedDataHighlightColor by mutableStateOf(Color.Red)
 
@@ -247,6 +270,7 @@ class HandwritingController internal constructor(
 
     fun addHandWritingPath(
         path: Path,
+        deformationPath: Path,
         points: List<Offset>
     ) {
         operationManager.executeOperation(
@@ -254,6 +278,7 @@ class HandwritingController internal constructor(
                 controller = this@HandwritingController,
                 data = HandwritingData(
                     path = path,
+                    deformationPath = deformationPath,
                     originalOffsets = points,
                     paint = Paint().copy(penPaint),
                 )
@@ -287,12 +312,14 @@ class HandwritingController internal constructor(
         val lassoBounds = path.getBounds()
 
         handwritingDataCollection.fastForEachReversed { data ->
-            var dataBounds = data.path.getBounds()
-            if(dataBounds.isEmpty) {
+            println("isConvex: ${data.path.isConvex}")
+
+            var dataBounds = data.deformationPath.getBounds()
+            if (dataBounds.isEmpty) {
                 dataBounds = Rect(dataBounds.center, 5f)
             }
 
-            if(!lassoBounds.overlaps(dataBounds)) {
+            if (!lassoBounds.overlaps(dataBounds)) {
                 return@fastForEachReversed
             }
 
@@ -303,7 +330,7 @@ class HandwritingController internal constructor(
                 return@fastForEachReversed
             }
 
-            if (overlaps(data.path, path)) {
+            if (overlaps(data.deformationPath, path)) {
                 tempSelectedDataSet.add(data)
                 tempRect = tempRect.unions(dataBounds)
 
@@ -337,11 +364,15 @@ class HandwritingController internal constructor(
 
         handwritingDataCollection.fastForEachReversed { data ->
 
-            val dataBounds = data.path.getBounds()
+            var dataBounds = data.deformationPath.getBounds()
+            if (dataBounds.isEmpty) {
+                dataBounds = Rect(dataBounds.center, 5f)
+            }
 
-            if (hitBounds.overlaps(dataBounds) || dataBounds.isEmpty) {
+            if (hitBounds.overlaps(dataBounds)) {
+
                 val pathWithOp = Path().apply {
-                    this.op(data.path, hitPath, PathOperation.Intersect)
+                    this.op(data.deformationPath, hitPath, PathOperation.Intersect)
                 }
 
                 val isIntersect = pathWithOp.isEmpty.not()
@@ -353,6 +384,7 @@ class HandwritingController internal constructor(
                 }
 
             }
+
         }
 
         return HitResult(

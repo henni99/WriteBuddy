@@ -12,6 +12,7 @@ import kotlin.uuid.Uuid
 data class HandwritingData @OptIn(ExperimentalUuidApi::class) constructor(
     val id: String = Uuid.random().toString(),
     val path: Path,
+    val deformationPath: Path,
     val paint: Paint,
     val matrix: Matrix = Matrix(),
     val originalOffsets: List<Offset> = emptyList()

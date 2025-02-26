@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.util.fastForEachReversed
 import com.henni.handwriting.kmp.HandwritingController
+import com.henni.handwriting.kmp.addDeformationPoint
 import com.henni.handwriting.kmp.updateTick
 
 class PenTouchEvent constructor(
@@ -16,6 +17,8 @@ class PenTouchEvent constructor(
 ) : ToolTouchEvent {
 
     private var penPath by mutableStateOf(Path())
+
+    private var deformationPenPath by mutableStateOf(Path())
 
     private val offsets = mutableListOf<Offset>()
 
@@ -25,9 +28,13 @@ class PenTouchEvent constructor(
         paint: Paint,
     ) {
         penPath = Path()
+        deformationPenPath = Path()
+
         offsets.clear()
 
+        offsets.add(offset)
         penPath.moveTo(offset.x, offset.y)
+        deformationPenPath.moveTo(offset.x, offset.y)
     }
 
     override fun onTouchMove(
@@ -42,6 +49,14 @@ class PenTouchEvent constructor(
             (currentOffset.x + previousOffset.x) / 2,
             (currentOffset.y + previousOffset.y) / 2
         )
+        deformationPenPath.quadraticBezierTo(
+            previousOffset.x,
+            previousOffset.y,
+            (currentOffset.x + previousOffset.x) / 2,
+            (currentOffset.y + previousOffset.y) / 2
+        )
+        deformationPenPath.addDeformationPoint(currentOffset)
+
         offsets.add(currentOffset)
     }
 
@@ -49,15 +64,15 @@ class PenTouchEvent constructor(
         canvas: Canvas?,
         paint: Paint,
     ) {
-        offsets.fastForEachReversed {
-            penPath.lineTo(it.x, it.y)
-        }
-        controller.addHandWritingPath(penPath, offsets)
+
+        controller.addHandWritingPath(penPath, deformationPenPath, offsets)
         controller.refreshTick.updateTick()
     }
 
     override fun onTouchCancel() {
         penPath = Path()
+        deformationPenPath = Path()
+
         offsets.clear()
     }
 

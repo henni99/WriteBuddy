@@ -30,7 +30,7 @@ fun HandWritingSample() {
         eraserPointRadius = 20f
         setLassoStrokeWidth(10f)
         setLassoColor(Color.Black)
-        setIsSelectedDataHighlight(false)
+        setIsSelectedDataHighlight(true)
         selectedDataHighlightColor = Color.Red
         setSelectedBoxPadding(Padding(20, 20, 20, 20))
         setSelectedBoxStrokeWidth(10f)

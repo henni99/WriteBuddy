@@ -90,10 +90,13 @@ class LassoMoveTouchEvent constructor(
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {
-        canvas.drawRect(
-            controller.selectedBoundBox,
-            controller.selectedBoundBoxPaint
-        )
+
+        if(controller.selectedBoundBox.center != Offset.Zero) {
+            canvas.drawRect(
+                controller.selectedBoundBox,
+                controller.selectedBoundBoxPaint
+            )
+        }
 
         controller.selectedDataSet.forEach { data ->
             canvas.drawPath(data.path, data.paint)

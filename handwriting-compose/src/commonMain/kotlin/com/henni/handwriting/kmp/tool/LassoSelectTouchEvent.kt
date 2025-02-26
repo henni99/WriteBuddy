@@ -85,12 +85,12 @@ class LassoSelectTouchEvent constructor(
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {
 
-        println("onDrawIntoCanvas: ${lassoPath.isEmpty}")
+
         if(!lassoPath.isEmpty) {
             canvas.drawPath(lassoPath, paint)
         }
 
-        if(!controller.selectedBoundBox.isEmpty) {
+        if(controller.selectedBoundBox.center != Offset.Zero) {
             canvas.drawRect(
                 controller.selectedBoundBox,
                 controller.selectedBoundBoxPaint
@@ -101,22 +101,23 @@ class LassoSelectTouchEvent constructor(
             canvas.drawPath(data.path, data.paint)
         }
 
-//        controller.handwritingDataCollection.forEach { data ->
-//
-//            val dataPath = Path().apply {
-//                addPath(data.path)
-//            }
-//
-//            val pathWithOp = Path().apply {
-//                this.op(dataPath, lassoPath, PathOperation.Intersect)
-//            }
-//
-//            if (controller.isSelectedDataHighlight) {
-//                canvas.drawPath(pathWithOp, defaultPaint().apply {
-//                    this.color = controller.selectedDataHighlightColor
-//                })
-//            }
-//        }
+        println("onDrawIntoCanvas: ${controller.handwritingDataCollection.size}")
+        controller.handwritingDataCollection.forEach { data ->
+
+            val dataPath = Path().apply {
+                addPath(data.path)
+            }
+
+            val pathWithOp = Path().apply {
+                this.op(dataPath, lassoPath, PathOperation.Intersect)
+            }
+
+            if (controller.isSelectedDataHighlight) {
+                canvas.drawPath(pathWithOp, defaultPaint().apply {
+                    this.color = controller.selectedDataHighlightColor
+                })
+            }
+        }
 
     }
 }
