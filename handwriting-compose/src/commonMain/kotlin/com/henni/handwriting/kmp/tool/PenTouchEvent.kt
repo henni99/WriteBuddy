@@ -28,8 +28,6 @@ class PenTouchEvent constructor(
         offsets.clear()
 
         penPath.moveTo(offset.x, offset.y)
-        penPath.lineTo(offset.x, offset.y)
-        offsets.add(offset)
     }
 
     override fun onTouchMove(
@@ -54,7 +52,7 @@ class PenTouchEvent constructor(
         offsets.fastForEachReversed {
             penPath.lineTo(it.x, it.y)
         }
-        controller.addHandWritingPath(penPath, offsets ?: listOf())
+        controller.addHandWritingPath(penPath, offsets)
         controller.refreshTick.updateTick()
     }
 

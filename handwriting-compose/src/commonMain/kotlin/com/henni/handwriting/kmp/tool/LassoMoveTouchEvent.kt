@@ -17,20 +17,20 @@ class LassoMoveTouchEvent constructor(
     private val controller: HandwritingController
 ) : ToolTouchEvent {
 
-    var canSelectBoxMoved by mutableStateOf(false)
+    private var canSelectBoxMoved by mutableStateOf(false)
 
-    var firstOffset by mutableStateOf(Offset.Zero)
+    private var firstOffset by mutableStateOf(Offset.Zero)
 
-    var offset by mutableStateOf(Offset.Zero)
+    private var offset by mutableStateOf(Offset.Zero)
 
-    var transformMatrix by mutableStateOf(Matrix())
+    private var transformMatrix by mutableStateOf(Matrix())
 
     override fun onTouchStart(
         canvas: Canvas?,
         offset: Offset,
         paint: Paint,
     ) {
-        println("LassoMoveTouchEvent onTouchStart")
+        println("LassoMoveTouchEvent onTouchStart: ${controller.selectedBoundBox} ${controller.selectedBoundBox.contains(offset)}")
         canSelectBoxMoved = true
         firstOffset = offset
         this.offset = offset

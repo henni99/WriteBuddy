@@ -1,9 +1,7 @@
 package com.henni.handwriting.kmp
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -30,8 +28,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import com.henni.handwriting.kmp.model.ToolMode
-import com.henni.handwriting.kmp.model.TouchCountType
-import com.henni.handwriting.kmp.tool.isLassoUsed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -52,8 +48,6 @@ fun HandWritingNote(
     var pathBitmap: ImageBitmap? by remember { mutableStateOf(null) }
 
     var canvasSize: IntSize by remember { mutableStateOf(IntSize.Zero) }
-
-    var isToolUsed: Boolean by remember { mutableStateOf(false) }
 
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
@@ -86,9 +80,6 @@ fun HandWritingNote(
         }
     }
 
-
-    var touchCount by remember { mutableStateOf(TouchCountType.NoTouch) }
-
     Box(
         modifier = modifier
             .clipToBounds()
@@ -117,28 +108,22 @@ fun HandWritingNote(
                     detectTransformGestures(
                         toolMode = controller.currentToolMode,
                         onGestureStart = { offset ->
-                            if (touchCount == TouchCountType.OneTouch) {
-                                println("detectDragGestures: onDragStart")
-
-                                isToolUsed = true
-
-                                controller.curTouchEvent.onTouchStart(
-                                    canvas = canvas,
-                                    offset = offset,
-                                    paint = when (controller.currentToolMode) {
-                                        ToolMode.PenMode -> controller.penPaint
-                                        ToolMode.LassoMoveMode -> controller.lassoPaint
-                                        else -> Paint()
-                                    }
-                                )
-                            }
+                            controller.curTouchEvent.onTouchStart(
+                                canvas = canvas,
+                                offset = offset,
+                                paint = when (controller.currentToolMode) {
+                                    ToolMode.PenMode -> controller.penPaint
+                                    ToolMode.LassoMoveMode -> controller.lassoPaint
+                                    else -> Paint()
+                                }
+                            )
 
                             invalidatorTick.updateTick()
                         },
                         onGesture = { centroid: Offset, pan: Offset, zoom: Float, timeMillis: Long, change: PointerInputChange, _: Offset, isMultiTouch: Boolean ->
+                            println("detectDragGestures: onDrag ${isMultiTouch}")
 
-                            if (touchCount == TouchCountType.OneTouch && isToolUsed) {
-                                println("detectDragGestures: onDrag")
+                            if (!isMultiTouch) {
 
                                 controller.curTouchEvent.onTouchMove(
                                     canvas = canvas,
@@ -156,8 +141,10 @@ fun HandWritingNote(
 
                         },
                         onGestureEnd = { isMultiTouch ->
-                            if (touchCount == TouchCountType.OneTouch && isToolUsed) {
-                                println("detectDragGestures: onDragEnd")
+
+                            println("detectDragGestures: onDragEnd ${isMultiTouch}")
+
+                            if (!isMultiTouch) {
 
                                 controller.curTouchEvent.onTouchEnd(
                                     canvas = canvas,
@@ -167,7 +154,6 @@ fun HandWritingNote(
                                     }
                                 )
 
-                                isToolUsed = false
                                 invalidatorTick.updateTick()
                             }
 
@@ -186,10 +172,8 @@ fun HandWritingNote(
 
                             println("pointEvents: ${this.currentEvent.changes.size}")
                             println("pointEvents: ${event.changes.size}")
-                            println("touchCount: ${touchCount}")
 
                             if (pointers >= 2) {
-                                touchCount = TouchCountType.MultiTouch
 
                                 val zoomChange = event.calculateZoom()
                                 val panChange = event.calculatePan()
@@ -207,8 +191,6 @@ fun HandWritingNote(
                                     y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
                                 )
 
-                            } else {
-                                touchCount = TouchCountType.OneTouch
                             }
                         }
                     }

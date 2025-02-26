@@ -15,9 +15,9 @@ class StrokeEraserTouchEvent constructor(
 
 ): ToolTouchEvent {
 
-    var eraserPath by mutableStateOf(Path())
+    private var eraserPath by mutableStateOf(Path())
 
-    var eraserOffset by mutableStateOf(Offset.Zero)
+    private var eraserOffset by mutableStateOf(Offset.Zero)
 
     override fun onTouchStart(
         canvas: Canvas?,

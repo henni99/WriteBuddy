@@ -27,31 +27,24 @@ import com.henni.handwriting.kmp.tool.isLassoUsed
  * @param onGesture This lambda is called when [canConsumeGesture] returns true.
  * @param onGestureStart This lambda is called when a gesture starts.
  * @param onGestureEnd This lambda is called when a gesture ends.
- * @param onTap will be called when single tap is detected.
- * @param onDoubleTap will be called when double tap is detected.
- * @param enableOneFingerZoom If true, enable one finger zoom gesture, double tap followed by
  * vertical scrolling.
  */
 suspend fun PointerInputScope.detectTransformGestures(
     toolMode: ToolMode = ToolMode.PenMode,
-    cancelIfZoomCanceled: Boolean = true,
     onGesture: (centroid: Offset, pan: Offset, zoom: Float, timeMillis: Long, change: PointerInputChange, dragAmount: Offset, isMultiTouch: Boolean) -> Unit,
     onGestureStart: (Offset) -> Unit = {},
     onGestureEnd: (isMultiTouch: Boolean) -> Unit = {},
+    onGestureCancel: () -> Unit = {}
 ) = awaitEachGesture {
 
     val firstDown = awaitFirstDown(requireUnconsumed = false)
     firstDown.consume()
 
     onGestureStart(firstDown.position)
-    var firstUp: PointerInputChange = firstDown
-    var hasMoved = false
     var isMultiTouch = false
-    var isLongPressed = false
-    var isCanceled = false
     forEachPointerEventUntilReleased(
         toolMode = toolMode,
-        onCancel = { isCanceled = true },
+        onCancel = { onGestureCancel() },
     ) { event, isTouchSlopPast ->
         if (isTouchSlopPast) {
             val zoomChange = event.calculateZoom()
@@ -70,18 +63,12 @@ suspend fun PointerInputScope.detectTransformGestures(
                 )
                 event.consumePositionChanges()
             }
-            hasMoved = true
         }
         if (event.changes.size > 1) {
             isMultiTouch = true
         }
-        firstUp = event.changes[0]
-        val cancelGesture = cancelIfZoomCanceled && isMultiTouch && event.changes.size == 1
+        val cancelGesture = isMultiTouch && event.changes.size == 1
         !cancelGesture
-    }
-
-    if (firstUp.uptimeMillis - firstDown.uptimeMillis > viewConfiguration.longPressTimeoutMillis) {
-        isLongPressed = true
     }
 
     onGestureEnd(isMultiTouch)

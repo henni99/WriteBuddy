@@ -19,11 +19,11 @@ class LassoSelectTouchEvent constructor(
     private val controller: HandwritingController
 ): ToolTouchEvent {
 
-    var lassoPath by mutableStateOf(Path())
+    private var lassoPath by mutableStateOf(Path())
 
-    var isTap = true
+    private var isTap = true
 
-    var firstPoint by mutableStateOf(Offset.Zero)
+    private var firstPoint by mutableStateOf(Offset.Zero)
 
     override fun onTouchStart(
         canvas: Canvas?,
@@ -34,7 +34,6 @@ class LassoSelectTouchEvent constructor(
         isTap = true
         lassoPath = Path()
         lassoPath.moveTo(offset.x, offset.y)
-        lassoPath.lineTo(offset.x, offset.y)
         firstPoint = offset
     }
 
@@ -44,6 +43,7 @@ class LassoSelectTouchEvent constructor(
         currentOffset: Offset,
         paint: Paint,
     ) {
+        firstPoint = Offset.Zero
         isTap = false
         if(lassoPath.isEmpty) {
             lassoPath.moveTo(currentOffset.x, currentOffset.y )

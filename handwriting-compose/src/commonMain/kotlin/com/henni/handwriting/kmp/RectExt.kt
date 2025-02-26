@@ -4,9 +4,9 @@ import androidx.compose.ui.geometry.Rect
 import com.henni.handwriting.kmp.model.Padding
 
 fun Rect.contains(other: Rect): Boolean {
-    return (this.left >= other.left) &&
+    return (this.left <= other.left) &&
             (this.right >= other.right) &&
-            (this.top >= other.top) &&
+            (this.top <= other.top) &&
             (this.bottom >= other.bottom)
 }
 

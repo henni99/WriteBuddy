@@ -38,8 +38,6 @@ import com.henni.handwriting.kmp.tool.PenTouchEvent
 import com.henni.handwriting.kmp.tool.StrokeEraserTouchEvent
 import com.henni.handwriting.kmp.tool.ToolTouchEvent
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlin.contracts.contract
-import kotlin.random.Random
 
 @Composable
 fun rememberHandwritingController(
@@ -221,17 +219,20 @@ class HandwritingController internal constructor(
     fun setToolMode(toolMode: ToolMode) {
         currentToolMode = toolMode
 
-        when(toolMode) {
+        when (toolMode) {
             ToolMode.PenMode -> {
                 curTouchEvent = PenTouchEvent(this)
             }
+
             ToolMode.EraserMode -> {
 
                 curTouchEvent = StrokeEraserTouchEvent(this)
             }
+
             ToolMode.LassoSelectMode -> {
                 curTouchEvent = LassoSelectTouchEvent(this)
             }
+
             ToolMode.LassoMoveMode -> {
                 curTouchEvent = LassoMoveTouchEvent(this)
             }
@@ -286,20 +287,29 @@ class HandwritingController internal constructor(
         val lassoBounds = path.getBounds()
 
         handwritingDataCollection.fastForEachReversed { data ->
-            val dataBounds = data.path.getBounds()
-
-            if (lassoBounds.overlaps(dataBounds) || dataBounds.isEmpty) {
-
-                if (lassoBounds.contains(dataBounds) || dataBounds.contains(lassoBounds)) {
-                    tempSelectedDataSet.add(data)
-                    tempRect = tempRect.unions(dataBounds)
-                }
-
-                if (overlaps(data.path, path)) {
-                    tempSelectedDataSet.add(data)
-                    tempRect = tempRect.unions(dataBounds)
-                }
+            var dataBounds = data.path.getBounds()
+            if(dataBounds.isEmpty) {
+                dataBounds = Rect(dataBounds.center, 5f)
             }
+
+            if(!lassoBounds.overlaps(dataBounds)) {
+                return@fastForEachReversed
+            }
+
+            if (lassoBounds.contains(dataBounds)) {
+                tempSelectedDataSet.add(data)
+                tempRect = tempRect.unions(dataBounds)
+
+                return@fastForEachReversed
+            }
+
+            if (overlaps(data.path, path)) {
+                tempSelectedDataSet.add(data)
+                tempRect = tempRect.unions(dataBounds)
+
+                return@fastForEachReversed
+            }
+
         }
 
         println("tempSelectedDataSet: ${tempSelectedDataSet.size}")
@@ -392,8 +402,8 @@ class HandwritingController internal constructor(
     fun updateOperationState() {
         println("updateOperationState: ${operationManager.undoStack}, ${operationManager.redoStack.size}")
 
-        canUndo.value =  operationManager.isUndoNotEmpty()
-        canRedo.value =  operationManager.isRedoNotEmpty()
+        canUndo.value = operationManager.isUndoNotEmpty()
+        canRedo.value = operationManager.isRedoNotEmpty()
 
         println("canUndo: ${canUndo}, canRedo: ${canRedo}")
     }
