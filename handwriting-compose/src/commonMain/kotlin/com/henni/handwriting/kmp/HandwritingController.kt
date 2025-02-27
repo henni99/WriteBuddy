@@ -60,12 +60,14 @@ class HandwritingController internal constructor(
     var eraserPointRadius by mutableStateOf(20f)
 
     var isEraserPointShowed by mutableStateOf(true)
-
+    
     var penPaint by mutableStateOf(defaultPaint())
 
     var eraserPaint by mutableStateOf(defaultEraserPaint())
 
     var lassoPaint by mutableStateOf(lassoDefaultPaint())
+
+    var currentPaint by mutableStateOf(penPaint)
 
     var selectedBoundBoxPaint by mutableStateOf(lassoDefaultPaint())
 
@@ -73,7 +75,7 @@ class HandwritingController internal constructor(
 
     val handwritingDataCollection = ArrayDeque<HandwritingData>()
 
-    var curTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
+    var currentTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
 
     init {
 
@@ -230,21 +232,25 @@ class HandwritingController internal constructor(
 
     fun setToolMode(toolMode: ToolMode) {
 
-        curTouchEvent = when (toolMode) {
+         when (toolMode) {
             ToolMode.PenMode -> {
-                PenTouchEvent(this)
+                currentPaint = penPaint
+                currentTouchEvent = PenTouchEvent(this)
             }
 
             ToolMode.EraserMode -> {
-                StrokeEraserTouchEvent(this)
+                currentPaint = eraserPaint
+                currentTouchEvent = StrokeEraserTouchEvent(this)
             }
 
             ToolMode.LassoSelectMode -> {
-                LassoSelectTouchEvent(this)
+                currentPaint = lassoPaint
+                currentTouchEvent = LassoSelectTouchEvent(this)
             }
 
             ToolMode.LassoMoveMode -> {
-                LassoMoveTouchEvent(this)
+                currentPaint = lassoPaint
+                currentTouchEvent = LassoMoveTouchEvent(this)
             }
         }
 
@@ -330,10 +336,10 @@ class HandwritingController internal constructor(
             selectedDataSet.clear()
             selectedDataSet.addAll(tempSelectedDataSet)
             selectedBoundBox = tempRect.addPadding(selectedBoundBoxPadding)
-            curTouchEvent = LassoMoveTouchEvent(this)
+            currentTouchEvent = LassoMoveTouchEvent(this)
         } else {
             selectedBoundBox = Rect.Zero
-            curTouchEvent = LassoSelectTouchEvent(this)
+            currentTouchEvent = LassoSelectTouchEvent(this)
         }
 
         updateRefreshTick()
@@ -458,7 +464,7 @@ class HandwritingController internal constructor(
             redoOperations.add(operation)
         }
 
-        curTouchEvent.onTouchCancel()
+        currentTouchEvent.onTouchCancel()
 
         initializeSelection()
         updateRefreshTick()
@@ -472,7 +478,7 @@ class HandwritingController internal constructor(
             undoOperations.add(operation)
         }
 
-        curTouchEvent.onTouchCancel()
+        currentTouchEvent.onTouchCancel()
 
         initializeSelection()
         updateRefreshTick()

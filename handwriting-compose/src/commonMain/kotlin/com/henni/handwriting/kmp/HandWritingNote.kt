@@ -123,14 +123,10 @@ fun HandWritingNote(
                         onGestureStart = { offset ->
                             println("detectDragGestures: onGestureStart ${offset}")
 
-                            controller.curTouchEvent.onTouchStart(
+                            controller.currentTouchEvent.onTouchStart(
                                 canvas = canvas,
                                 offset = offset,
-                                paint = when (controller.curTouchEvent) {
-                                    is PenTouchEvent -> controller.penPaint
-                                    is LassoMoveTouchEvent -> controller.lassoPaint
-                                    else -> Paint()
-                                }
+                                paint = controller.currentPaint
                             )
 
                             invalidatorTick.updateTick()
@@ -158,15 +154,11 @@ fun HandWritingNote(
 
                             } else {
 
-                                controller.curTouchEvent.onTouchMove(
+                                controller.currentTouchEvent.onTouchMove(
                                     canvas = canvas,
                                     previousOffset = change.previousPosition,
                                     currentOffset = change.position,
-                                    paint = when (controller.curTouchEvent) {
-                                        is PenTouchEvent -> controller.penPaint
-                                        is LassoMoveTouchEvent, is LassoSelectTouchEvent -> controller.lassoPaint
-                                        else -> Paint()
-                                    }
+                                    paint = controller.currentPaint
                                 )
 
                             }
@@ -181,12 +173,9 @@ fun HandWritingNote(
                             multiTouch = isMultiTouch
                             if (!isMultiTouch) {
 
-                                controller.curTouchEvent.onTouchEnd(
+                                controller.currentTouchEvent.onTouchEnd(
                                     canvas = canvas,
-                                    paint = when (controller.curTouchEvent) {
-                                        is PenTouchEvent -> controller.penPaint
-                                        else -> Paint()
-                                    }
+                                    paint = controller.currentPaint
                                 )
 
                                 invalidatorTick.updateTick()
@@ -194,7 +183,7 @@ fun HandWritingNote(
 
                         },
                         onGestureCancel = {
-                            controller.curTouchEvent.onTouchCancel()
+                            controller.currentTouchEvent.onTouchCancel()
                             invalidatorTick.updateTick()
                         }
                     )
@@ -208,21 +197,16 @@ fun HandWritingNote(
                     canvas.drawImage(bitmap, Offset.Zero, Paint())
                 }
 
-                controller.curTouchEvent.onDrawIntoCanvas(
+                controller.currentTouchEvent.onDrawIntoCanvas(
                     canvas = canvas,
-                    paint = when (controller.curTouchEvent) {
-                        is PenTouchEvent -> controller.penPaint
-                        is StrokeEraserTouchEvent -> controller.eraserPaint
-                        is LassoSelectTouchEvent -> controller.lassoPaint
-                        else -> Paint()
-                    },
+                    paint = controller.currentPaint,
                     isMultiTouch = multiTouch
                 )
 
             }
 
 
-            println("currentMode: ${controller.curTouchEvent}")
+            println("currentMode: ${controller.currentTouchEvent}")
             println("selectedDataSet: ${controller.selectedDataSet.size}")
             if (invalidatorTick.value != 0) {
 //            onRevisedListener?.invoke(controller.canUndo.value, controller.canRedo.value)
