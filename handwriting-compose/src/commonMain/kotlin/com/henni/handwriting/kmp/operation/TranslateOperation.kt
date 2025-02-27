@@ -5,7 +5,7 @@ import com.henni.handwriting.kmp.HandwritingController
 import com.henni.handwriting.kmp.model.HandwritingData
 
 
-class TranslateOperation(
+class TranslateOperation internal constructor(
     private val controller: HandwritingController,
     private val dataSet: MutableSet<HandwritingData>,
     private val offset: Offset
@@ -21,7 +21,7 @@ class TranslateOperation(
         return true
     }
 
-    override fun undo() {
+    override fun undo() = with(controller) {
 
         println("undo: ${dataSet}")
         println("undo: ${offset}")
@@ -37,12 +37,10 @@ class TranslateOperation(
             element.deformationPath.translate(offset.unaryMinus())
         }
 
-        controller.selectedBoundBox = controller.selectedBoundBox.translate(
-            offset.unaryMinus()
-        )
+        selectedBoundBox = selectedBoundBox.translate(offset.unaryMinus())
     }
 
-    override fun redo() {
+    override fun redo() = with(controller) {
         dataSet.forEach { element ->
             element.matrix.translate(
                 offset.x,
@@ -51,9 +49,7 @@ class TranslateOperation(
             element.path.translate(offset)
             element.deformationPath.translate(offset)
         }
-        controller.selectedBoundBox = controller.selectedBoundBox.translate(
-            offset
-        )
+        selectedBoundBox = selectedBoundBox.translate(offset)
     }
 
 }

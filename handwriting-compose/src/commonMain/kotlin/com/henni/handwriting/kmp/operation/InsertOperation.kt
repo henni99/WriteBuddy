@@ -4,7 +4,7 @@ import com.henni.handwriting.kmp.HandwritingController
 import com.henni.handwriting.kmp.model.HandwritingData
 
 
-class InsertOperation constructor(
+class InsertOperation internal constructor(
     private val controller: HandwritingController,
     private val data: HandwritingData,
 ) : Operation {
@@ -14,12 +14,12 @@ class InsertOperation constructor(
         return true
     }
 
-    override fun undo() {
-        controller.removeHandWritingData(data)
+    override fun undo() = with(controller) {
+        removeHandWritingData(data)
     }
 
-    override fun redo() {
-        controller.addHandWritingData(data)
+    override fun redo() = with(controller) {
+        addHandWritingData(data)
     }
 
 }

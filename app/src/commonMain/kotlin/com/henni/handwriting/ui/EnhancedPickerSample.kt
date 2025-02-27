@@ -59,7 +59,7 @@ fun EnhancedPicker(
 
                 Text(
                     text = "Undo",
-                    color = if (controller.canUndo.value) Color.Black else Color.Red
+                    color = if (controller.canUndo) Color.Black else Color.Red
                 )
             }
         }
@@ -78,7 +78,7 @@ fun EnhancedPicker(
             ) {
                 Text(
                     text = "Redo",
-                    color = if (controller.canRedo.value) Color.Black else Color.Red
+                    color = if (controller.canRedo) Color.Black else Color.Red
                 )
             }
         }

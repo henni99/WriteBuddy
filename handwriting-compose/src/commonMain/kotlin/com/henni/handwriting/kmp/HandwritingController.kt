@@ -18,8 +18,11 @@ import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.input.pointer.PointerType
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachReversed
+import com.henni.handwriting.kmp.operation.InsertOperation
+import com.henni.handwriting.kmp.operation.Operation
+import com.henni.handwriting.kmp.operation.RemoveOperation
+import com.henni.handwriting.kmp.operation.TranslateOperation
 import com.henni.handwriting.kmp.model.HandwritingData
 import com.henni.handwriting.kmp.model.HitResult
 import com.henni.handwriting.kmp.model.Padding
@@ -28,11 +31,6 @@ import com.henni.handwriting.kmp.model.copy
 import com.henni.handwriting.kmp.model.defaultEraserPaint
 import com.henni.handwriting.kmp.model.defaultPaint
 import com.henni.handwriting.kmp.model.lassoDefaultPaint
-import com.henni.handwriting.kmp.operation.InsertOperation
-import com.henni.handwriting.kmp.operation.Operation
-import com.henni.handwriting.kmp.operation.OperationManager
-import com.henni.handwriting.kmp.operation.RemoveOperation
-import com.henni.handwriting.kmp.operation.TranslateOperation
 import com.henni.handwriting.kmp.tool.LassoMoveTouchEvent
 import com.henni.handwriting.kmp.tool.LassoSelectTouchEvent
 import com.henni.handwriting.kmp.tool.PenTouchEvent
@@ -50,9 +48,8 @@ fun rememberHandwritingController(
 }
 
 class HandwritingController internal constructor(
-): OperationManager {
+) {
     val refreshTick = MutableStateFlow<Int>(0)
-
 
     var eraserPointRadius by mutableStateOf(20f)
 
@@ -132,12 +129,6 @@ class HandwritingController internal constructor(
     val isNoteZoomable: MutableState<Boolean> = mutableStateOf(true)
 
     val toolPointerType: MutableState<PointerType> = mutableStateOf(PointerType.Touch)
-
-
-    /** Sets [Paint] to the [currentPaint]. */
-    fun updateCurrentPaint() {
-
-    }
 
     fun setIsNoteZoomable(sZoomable: Boolean) {
         this.isNoteZoomable.value = sZoomable
@@ -228,103 +219,40 @@ class HandwritingController internal constructor(
 
 
     fun transformSelectedBoundBox(matrix: Matrix) {
-        selectedBoundBox = selectedBoundBox.translate(
-            matrix.values[12],
-            matrix.values[13]
-        )
+        selectedBoundBox = selectedBoundBox.translate(matrix)
     }
 
     fun setToolMode(toolMode: ToolMode) {
 
         curTouchEvent = when (toolMode) {
-            ToolMode.PenMode -> {  PenTouchEvent(this) }
-            ToolMode.EraserMode -> { StrokeEraserTouchEvent(this) }
-            ToolMode.LassoSelectMode -> { LassoSelectTouchEvent(this) }
-            ToolMode.LassoMoveMode -> { LassoMoveTouchEvent(this) }
+            ToolMode.PenMode -> {
+                PenTouchEvent(this)
+            }
+
+            ToolMode.EraserMode -> {
+                StrokeEraserTouchEvent(this)
+            }
+
+            ToolMode.LassoSelectMode -> {
+                LassoSelectTouchEvent(this)
+            }
+
+            ToolMode.LassoMoveMode -> {
+                LassoMoveTouchEvent(this)
+            }
         }
 
 
         initializeSelection()
         updateRefreshTick()
     }
-
-    /** undo, redo **/
-    val canUndo: MutableState<Boolean> = mutableStateOf(false)
-    val canRedo: MutableState<Boolean> = mutableStateOf(false)
-
-    override val undoStack: ArrayDeque<Operation> = ArrayDeque()
-
-    override val redoStack: ArrayDeque<Operation> = ArrayDeque()
-
-    override fun isUndoEmpty(): Boolean {
-        return undoStack.isEmpty()
-    }
-
-    override fun isUndoNotEmpty(): Boolean {
-        return undoStack.isNotEmpty()
-    }
-
-    override fun isRedoEmpty(): Boolean {
-        return redoStack.isEmpty()
-    }
-
-    override fun isRedoNotEmpty(): Boolean {
-        return redoStack.isNotEmpty()
-    }
-
-    override fun executeOperation(operation: Operation) {
-
-        if (operation.doOperation()) {
-            undoStack.add(operation)
-            redoStack.clear()
-        }
-    }
-
-
-    override fun undo() {
-        if (undoStack.isNotEmpty()) {
-            val operation = undoStack.removeLast()
-            operation.undo()
-            redoStack.add(operation)
-        }
-
-        curTouchEvent.onTouchCancel()
-
-        initializeSelection()
-        updateRefreshTick()
-        updateOperationState()
-    }
-
-    override fun redo() {
-        if (redoStack.isNotEmpty()) {
-            val operation = redoStack.removeLast()
-            operation.redo()
-            undoStack.add(operation)
-        }
-
-        curTouchEvent.onTouchCancel()
-
-        initializeSelection()
-        updateRefreshTick()
-        updateOperationState()
-    }
-
-    override fun updateOperationState() {
-
-        canUndo.value = isUndoNotEmpty()
-        canRedo.value = isRedoNotEmpty()
-
-        println("canUndo: ${canUndo}, canRedo: ${canRedo}")
-    }
-
-
 
     fun addHandWritingPath(
         path: Path,
         deformationPath: Path,
         points: List<Offset>
     ) {
-        executeOperation(
+        execute(
             InsertOperation(
                 controller = this@HandwritingController,
                 data = HandwritingData(
@@ -335,14 +263,14 @@ class HandwritingController internal constructor(
                 )
             )
         )
-        updateOperationState()
+        updateUndoRedoState()
     }
 
     fun removeHandWritingPath(path: Path) {
         val hitResult = hitHandWritingPath(path)
         if (hitResult.isHit) {
             hitResult.data?.let {
-                executeOperation(
+                execute(
                     RemoveOperation(
                         controller = this@HandwritingController,
                         data = it
@@ -350,7 +278,7 @@ class HandwritingController internal constructor(
                 )
             }
         }
-        updateOperationState()
+        updateUndoRedoState()
     }
 
     fun selectHandWritingData(
@@ -444,20 +372,19 @@ class HandwritingController internal constructor(
 
     fun addHandWritingData(data: HandwritingData) {
         handwritingDataCollection.add(data)
-        refreshTick.updateTick()
+        updateRefreshTick()
     }
 
     fun removeHandWritingData(data: HandwritingData) {
         if (handwritingDataCollection.remove(data)) {
-            refreshTick.updateTick()
-
+            updateRefreshTick()
         }
     }
 
     fun translateHandWritingDataSet(
         translateOffset: Offset
     ) {
-        executeOperation(
+        execute(
             TranslateOperation(
                 controller = this@HandwritingController,
                 dataSet = mutableSetOf<HandwritingData>().apply {
@@ -467,7 +394,7 @@ class HandwritingController internal constructor(
             )
         )
 
-        updateOperationState()
+        updateUndoRedoState()
     }
 
     fun clearAllHandWritingData() {
@@ -475,7 +402,7 @@ class HandwritingController internal constructor(
         updateRefreshTick()
     }
 
-    fun initializeSelection() {
+    private fun initializeSelection() {
         selectedBoundBox = Rect.Zero
         selectedDataSet.clear()
     }
@@ -490,4 +417,69 @@ class HandwritingController internal constructor(
     private fun updateRefreshTick() {
         refreshTick.updateTick()
     }
+
+    /**
+     * Operation
+     **/
+
+    var canUndo by mutableStateOf(false)
+
+    var canRedo by mutableStateOf(false)
+
+    private val undoOperations: ArrayDeque<Operation> = ArrayDeque()
+
+    private val redoOperations: ArrayDeque<Operation> = ArrayDeque()
+
+    fun isUndoAvailable(): Boolean {
+        return undoOperations.isEmpty()
+    }
+
+    fun isRedoAvailable(): Boolean {
+        return redoOperations.isEmpty()
+    }
+
+    private fun execute(operation: Operation) {
+        if (operation.doOperation()) {
+            undoOperations.add(operation)
+            redoOperations.clear()
+        }
+    }
+
+    fun undo() {
+        if (undoOperations.isNotEmpty()) {
+            val operation = undoOperations.removeLast()
+            operation.undo()
+            redoOperations.add(operation)
+        }
+
+        curTouchEvent.onTouchCancel()
+
+        initializeSelection()
+        updateRefreshTick()
+        updateUndoRedoState()
+    }
+
+    fun redo() {
+        if (redoOperations.isNotEmpty()) {
+            val operation = redoOperations.removeLast()
+            operation.redo()
+            undoOperations.add(operation)
+        }
+
+        curTouchEvent.onTouchCancel()
+
+        initializeSelection()
+        updateRefreshTick()
+        updateUndoRedoState()
+    }
+
+    private fun updateUndoRedoState() {
+
+        canUndo = !isUndoAvailable()
+        canRedo = !isRedoAvailable()
+
+        println("canUndo: ${canUndo}, canRedo: ${canRedo}")
+    }
+
+
 }

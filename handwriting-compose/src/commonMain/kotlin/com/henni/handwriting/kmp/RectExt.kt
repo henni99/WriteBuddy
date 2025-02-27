@@ -1,6 +1,7 @@
 package com.henni.handwriting.kmp
 
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Matrix
 import com.henni.handwriting.kmp.model.Padding
 
 fun Rect.contains(other: Rect): Boolean {
@@ -49,5 +50,12 @@ fun Rect.addPadding(padding: Padding): Rect {
         this.top - padding.top,
         this.right + padding.right,
         this.bottom + padding.bottom
+    )
+}
+
+fun Rect.translate(matrix: Matrix): Rect {
+    return this.translate(
+        matrix.values[12],
+        matrix.values[13]
     )
 }
