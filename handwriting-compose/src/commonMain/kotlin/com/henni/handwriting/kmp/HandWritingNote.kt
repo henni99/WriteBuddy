@@ -4,6 +4,7 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -27,6 +29,8 @@ import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.center
+import androidx.compose.ui.unit.dp
 import com.henni.handwriting.kmp.model.ToolMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,6 +56,8 @@ fun HandWritingNote(
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
+    var multiTouch by remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
 
     SideEffect {
@@ -63,6 +69,8 @@ fun HandWritingNote(
                 }
 
                 println("handwritingDataCollectionRevise: ${controller.handwritingDataCollection.size}")
+
+                println("onSizeChanged: ${canvasSize} refreshTick")
 
                 controller.handwritingDataCollection.forEach { data ->
 
@@ -86,10 +94,12 @@ fun HandWritingNote(
     ) {
         androidx.compose.foundation.Canvas(
             modifier = Modifier
-                .fillMaxSize(0.8f)
+                .size(300.dp)
                 .onSizeChanged { newSize ->
                     val size =
                         newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
+
+                    println("onSizeChanged: ${size} onSizeChanged")
 
                     pathBitmap = getBitmap(size).also {
                         canvas = Canvas(it)
@@ -103,11 +113,14 @@ fun HandWritingNote(
 
                     canvasSize = IntSize(size.height.toInt(), size.width.toInt())
                 }
+                .clipToBounds()
                 .align(Alignment.Center)
-                .pointerInput(true) {
+                .pointerInput(Unit) {
+
                     detectTransformGestures(
-                        toolMode = controller.currentToolMode,
                         onGestureStart = { offset ->
+                            println("detectDragGestures: onGestureStart ${offset}")
+
                             controller.curTouchEvent.onTouchStart(
                                 canvas = canvas,
                                 offset = offset,
@@ -120,8 +133,13 @@ fun HandWritingNote(
 
                             invalidatorTick.updateTick()
                         },
-                        onGesture = { centroid: Offset, pan: Offset, zoom: Float, timeMillis: Long, change: PointerInputChange, _: Offset, isMultiTouch: Boolean ->
-                            println("detectDragGestures: onDrag ${isMultiTouch}")
+                        onGesture = { change: PointerInputChange, _: Offset, isMultiTouch: Boolean ->
+                            println("detectDragGestures: onGesture ${change.position} ${change.previousPosition}")
+
+                            println("isMultiTouch :${isMultiTouch}")
+
+                            multiTouch = isMultiTouch
+
 
                             if (!isMultiTouch) {
 
@@ -139,11 +157,12 @@ fun HandWritingNote(
 
                             invalidatorTick.updateTick()
 
+
                         },
                         onGestureEnd = { isMultiTouch ->
 
                             println("detectDragGestures: onDragEnd ${isMultiTouch}")
-
+                            multiTouch = isMultiTouch
                             if (!isMultiTouch) {
 
                                 controller.curTouchEvent.onTouchEnd(
@@ -208,17 +227,20 @@ fun HandWritingNote(
                     canvas.drawImage(bitmap, Offset.Zero, Paint())
                 }
 
-                controller.curTouchEvent.onDrawIntoCanvas(
-                    canvas = canvas,
-                    paint = when (controller.currentToolMode) {
-                        ToolMode.PenMode -> controller.penPaint
-                        ToolMode.EraserMode -> controller.eraserPaint
-                        ToolMode.LassoSelectMode -> controller.lassoPaint
-                        else -> Paint()
-                    }
-                )
+                if(!multiTouch) {
+                    controller.curTouchEvent.onDrawIntoCanvas(
+                        canvas = canvas,
+                        paint = when (controller.currentToolMode) {
+                            ToolMode.PenMode -> controller.penPaint
+                            ToolMode.EraserMode -> controller.eraserPaint
+                            ToolMode.LassoSelectMode -> controller.lassoPaint
+                            else -> Paint()
+                        }
+                    )
+                }
 
             }
+
 
             println("currentMode: ${controller.currentToolMode}")
             println("selectedDataSet: ${controller.selectedDataSet.size}")

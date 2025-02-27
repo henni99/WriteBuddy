@@ -15,5 +15,4 @@ fun Path.addDeformationPoint(offset: Offset) {
     this.lineTo(offset.x - 6, offset.y + 3)
     this.lineTo(offset.x + 3, offset.y - 6)
     this.lineTo(offset.x - 6, offset.y - 6)
-    this.lineTo(offset.x, offset.y)
 }

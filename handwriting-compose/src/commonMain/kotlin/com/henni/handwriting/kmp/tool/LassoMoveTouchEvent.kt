@@ -61,6 +61,7 @@ class LassoMoveTouchEvent constructor(
             controller.transformSelectedBoundBox(transformMatrix)
             controller.selectedDataSet.forEach { data ->
                 data.path.transform(transformMatrix)
+                data.deformationPath.transform(transformMatrix)
             }
         }
     }

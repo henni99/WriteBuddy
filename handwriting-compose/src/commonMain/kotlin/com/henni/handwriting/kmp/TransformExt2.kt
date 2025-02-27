@@ -6,12 +6,17 @@ import androidx.compose.foundation.gestures.calculateCentroid
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.positionChanged
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.center
+import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
 import com.henni.handwriting.kmp.model.ToolMode
@@ -30,8 +35,7 @@ import com.henni.handwriting.kmp.tool.isLassoUsed
  * vertical scrolling.
  */
 suspend fun PointerInputScope.detectTransformGestures(
-    toolMode: ToolMode = ToolMode.PenMode,
-    onGesture: (centroid: Offset, pan: Offset, zoom: Float, timeMillis: Long, change: PointerInputChange, dragAmount: Offset, isMultiTouch: Boolean) -> Unit,
+    onGesture: (change: PointerInputChange, dragAmount: Offset, isMultiTouch: Boolean) -> Unit,
     onGestureStart: (Offset) -> Unit = {},
     onGestureEnd: (isMultiTouch: Boolean) -> Unit = {},
     onGestureCancel: () -> Unit = {}
@@ -43,23 +47,17 @@ suspend fun PointerInputScope.detectTransformGestures(
     onGestureStart(firstDown.position)
     var isMultiTouch = false
     forEachPointerEventUntilReleased(
-        toolMode = toolMode,
         onCancel = { onGestureCancel() },
     ) { event, isTouchSlopPast ->
         if (isTouchSlopPast) {
             val zoomChange = event.calculateZoom()
             val panChange = event.calculatePan()
             if (zoomChange != 1f || panChange != Offset.Zero) {
-                val centroid = event.calculateCentroid(useCurrent = true)
-                val timeMillis = event.changes[0].uptimeMillis
+
                 onGesture(
-                    centroid,
-                    panChange,
-                    zoomChange,
-                    timeMillis,
                     event.changes[0],
                     event.changes[0].position,
-                    isMultiTouch
+                    isMultiTouch,
                 )
                 event.consumePositionChanges()
             }
@@ -81,7 +79,6 @@ suspend fun PointerInputScope.detectTransformGestures(
  * @param action Callback function that will be called every PointerEvents occur.
  */
 private suspend fun AwaitPointerEventScope.forEachPointerEventUntilReleased(
-    toolMode: ToolMode,
     onCancel: () -> Unit,
     action: (event: PointerEvent, isTouchSlopPast: Boolean) -> Boolean,
 ) {
@@ -101,13 +98,7 @@ private suspend fun AwaitPointerEventScope.forEachPointerEventUntilReleased(
         if (isTouchSlopPast) {
             continue
         }
-        if (isLassoUsed(toolMode)) {
-            val finalEvent = awaitPointerEvent(pass = PointerEventPass.Final)
-            if (finalEvent.changes.fastAny { it.isConsumed }) {
-                onCancel()
-                break
-            }
-        }
+
     } while (mainEvent.changes.fastAny { it.pressed })
 }
 
