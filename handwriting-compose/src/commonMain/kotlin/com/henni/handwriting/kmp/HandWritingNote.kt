@@ -142,15 +142,28 @@ fun HandWritingNote(
 
                             invalidatorTick.updateTick()
                         },
-                        onGesture = { change: PointerInputChange, _: Offset, isMultiTouch: Boolean ->
+                        onGesture = { zoomChange: Float, panChange: Offset, change: PointerInputChange, _: Offset, isMultiTouch: Boolean ->
                             println("detectDragGestures: onGesture ${change.position} ${change.previousPosition}")
-
                             println("isMultiTouch :${isMultiTouch}")
 
                             multiTouch = isMultiTouch
 
+                            if (isMultiTouch) {
 
-                            if (!isMultiTouch) {
+                                scale = (scale * zoomChange).coerceIn(1f, 5f)
+
+                                val extraWidth = (scale - 1) * canvasSize.width
+                                val extraHeight = (scale - 1) * canvasSize.height
+
+                                val maxX = extraWidth / 2
+                                val maxY = extraHeight / 2
+
+                                offset = Offset(
+                                    x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
+                                    y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
+                                )
+
+                            } else {
 
                                 controller.curTouchEvent.onTouchMove(
                                     canvas = canvas,
@@ -162,6 +175,7 @@ fun HandWritingNote(
                                         else -> Paint()
                                     }
                                 )
+
                             }
 
                             invalidatorTick.updateTick()
@@ -191,41 +205,6 @@ fun HandWritingNote(
                             invalidatorTick.updateTick()
                         }
                     )
-                }
-                .pointerInput(Unit) {
-
-                    awaitPointerEventScope {
-
-                        while (true) {
-
-
-                            val event = awaitPointerEvent()
-                            val pointers = event.changes.count()
-
-                            println("pointEvents: ${this.currentEvent.changes.size}")
-                            println("pointEvents: ${event.changes.size}")
-
-                            if (pointers >= 2) {
-
-                                val zoomChange = event.calculateZoom()
-                                val panChange = event.calculatePan()
-
-                                scale = (scale * zoomChange).coerceIn(1f, 5f)
-
-                                val extraWidth = (scale - 1) * canvasSize.width
-                                val extraHeight = (scale - 1) * canvasSize.height
-
-                                val maxX = extraWidth / 2
-                                val maxY = extraHeight / 2
-
-                                offset = Offset(
-                                    x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
-                                    y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
-                                )
-
-                            }
-                        }
-                    }
                 }
         ) {
             drawIntoCanvas { canvas ->

@@ -27,7 +27,7 @@ import androidx.compose.ui.util.fastForEach
  * vertical scrolling.
  */
 suspend fun PointerInputScope.detectTransformGestures(
-    onGesture: (change: PointerInputChange, dragAmount: Offset, isMultiTouch: Boolean) -> Unit,
+    onGesture: (zoomChange: Float, panChange: Offset, change: PointerInputChange, dragAmount: Offset, isMultiTouch: Boolean) -> Unit,
     onGestureStart: (Offset) -> Unit = {},
     onGestureEnd: (isMultiTouch: Boolean) -> Unit = {},
     onGestureCancel: () -> Unit = {}
@@ -47,6 +47,8 @@ suspend fun PointerInputScope.detectTransformGestures(
             if (zoomChange != 1f || panChange != Offset.Zero) {
 
                 onGesture(
+                    zoomChange,
+                    panChange,
                     event.changes[0],
                     event.changes[0].position,
                     isMultiTouch,
@@ -140,3 +142,8 @@ private class TouchSlop(private val threshold: Float) {
     }
 }
 
+
+suspend fun PointerInputScope.detectTransformGestures(
+) {
+
+}
