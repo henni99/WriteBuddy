@@ -2,25 +2,17 @@ package com.henni.handwriting.kmp
 
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.calculateCentroid
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.positionChanged
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.center
-import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
-import com.henni.handwriting.kmp.model.ToolMode
-import com.henni.handwriting.kmp.tool.isLassoUsed
 
 /**
  * Customized transform gesture detector.

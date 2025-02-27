@@ -64,14 +64,7 @@ class PenTouchEvent constructor(
         canvas: Canvas?,
         paint: Paint,
     ) {
-
         controller.addHandWritingPath(penPath, deformationPenPath, offsets)
-        controller.refreshTick.updateTick()
-
-        penPath = Path()
-        deformationPenPath = Path()
-
-        offsets.clear()
     }
 
     override fun onTouchCancel() {

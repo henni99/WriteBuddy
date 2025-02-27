@@ -32,6 +32,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import com.henni.handwriting.kmp.model.ToolMode
+import com.henni.handwriting.kmp.tool.LassoMoveTouchEvent
+import com.henni.handwriting.kmp.tool.LassoSelectTouchEvent
+import com.henni.handwriting.kmp.tool.PenTouchEvent
+import com.henni.handwriting.kmp.tool.StrokeEraserTouchEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -39,8 +43,6 @@ import kotlinx.coroutines.launch
 fun HandWritingNote(
     modifier: Modifier = Modifier,
     controller: HandwritingController,
-    contentBackgroundColor: Color = Color.Black,
-    containerBackgroundColor: Color = Color.Magenta,
 ) {
 
     var touchPointerType by remember { mutableStateOf(PointerType.Touch) }
@@ -124,9 +126,9 @@ fun HandWritingNote(
                             controller.curTouchEvent.onTouchStart(
                                 canvas = canvas,
                                 offset = offset,
-                                paint = when (controller.currentToolMode) {
-                                    ToolMode.PenMode -> controller.penPaint
-                                    ToolMode.LassoMoveMode -> controller.lassoPaint
+                                paint = when (controller.curTouchEvent) {
+                                    is PenTouchEvent -> controller.penPaint
+                                    is LassoMoveTouchEvent -> controller.lassoPaint
                                     else -> Paint()
                                 }
                             )
@@ -147,9 +149,9 @@ fun HandWritingNote(
                                     canvas = canvas,
                                     previousOffset = change.previousPosition,
                                     currentOffset = change.position,
-                                    paint = when (controller.currentToolMode) {
-                                        ToolMode.PenMode -> controller.penPaint
-                                        ToolMode.LassoMoveMode, ToolMode.LassoSelectMode -> controller.lassoPaint
+                                    paint = when (controller.curTouchEvent) {
+                                        is PenTouchEvent -> controller.penPaint
+                                        is LassoMoveTouchEvent, is LassoSelectTouchEvent -> controller.lassoPaint
                                         else -> Paint()
                                     }
                                 )
@@ -167,8 +169,8 @@ fun HandWritingNote(
 
                                 controller.curTouchEvent.onTouchEnd(
                                     canvas = canvas,
-                                    paint = when (controller.currentToolMode) {
-                                        ToolMode.PenMode -> controller.penPaint
+                                    paint = when (controller.curTouchEvent) {
+                                        is PenTouchEvent -> controller.penPaint
                                         else -> Paint()
                                     }
                                 )
@@ -229,10 +231,10 @@ fun HandWritingNote(
 
                 controller.curTouchEvent.onDrawIntoCanvas(
                     canvas = canvas,
-                    paint = when (controller.currentToolMode) {
-                        ToolMode.PenMode -> controller.penPaint
-                        ToolMode.EraserMode -> controller.eraserPaint
-                        ToolMode.LassoSelectMode -> controller.lassoPaint
+                    paint = when (controller.curTouchEvent) {
+                        is PenTouchEvent -> controller.penPaint
+                        is StrokeEraserTouchEvent -> controller.eraserPaint
+                        is LassoSelectTouchEvent -> controller.lassoPaint
                         else -> Paint()
                     },
                     isMultiTouch = multiTouch
@@ -241,7 +243,7 @@ fun HandWritingNote(
             }
 
 
-            println("currentMode: ${controller.currentToolMode}")
+            println("currentMode: ${controller.curTouchEvent}")
             println("selectedDataSet: ${controller.selectedDataSet.size}")
             if (invalidatorTick.value != 0) {
 //            onRevisedListener?.invoke(controller.canUndo.value, controller.canRedo.value)

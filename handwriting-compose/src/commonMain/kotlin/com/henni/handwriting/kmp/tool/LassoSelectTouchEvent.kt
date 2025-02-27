@@ -84,16 +84,21 @@ class LassoSelectTouchEvent constructor(
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
+
         if(!lassoPath.isEmpty && !isMultiTouch) {
+
             canvas.drawPath(lassoPath, paint)
         }
 
-        if(controller.selectedBoundBox.center != Offset.Zero) {
+        if(controller.selectedBoundBox.center != Offset.Zero && !controller.selectedBoundBox.isEmpty) {
             canvas.drawRect(
                 controller.selectedBoundBox,
                 controller.selectedBoundBoxPaint
             )
         }
+
+        println("onDrawIntoCanvas lassoSelect ${lassoPath.isEmpty}")
+        println("onDrawIntoCanvas lassoSelect ${controller.selectedBoundBox}")
 
         controller.selectedDataSet.forEach { data ->
             canvas.drawPath(data.path, data.paint)

@@ -1,6 +1,8 @@
 package com.henni.handwriting.kmp.operation
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
+import kotlinx.coroutines.flow.MutableStateFlow
 
 interface OperationManager {
 
@@ -21,4 +23,6 @@ interface OperationManager {
     fun undo()
 
     fun redo()
+
+    fun updateOperationState()
 }
