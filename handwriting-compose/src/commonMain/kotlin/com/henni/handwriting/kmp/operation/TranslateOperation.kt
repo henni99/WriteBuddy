@@ -34,6 +34,7 @@ class TranslateOperation(
             )
 
             element.path.translate(offset.unaryMinus())
+            element.deformationPath.translate(offset.unaryMinus())
         }
 
         controller.selectedBoundBox = controller.selectedBoundBox.translate(
@@ -48,6 +49,7 @@ class TranslateOperation(
                 offset.y
             )
             element.path.translate(offset)
+            element.deformationPath.translate(offset)
         }
         controller.selectedBoundBox = controller.selectedBoundBox.translate(
             offset
