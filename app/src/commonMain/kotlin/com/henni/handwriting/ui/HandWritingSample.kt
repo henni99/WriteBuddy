@@ -35,6 +35,7 @@ fun HandWritingSample() {
         setSelectedBoxPadding(Padding(20, 20, 20, 20))
         setSelectedBoxStrokeWidth(10f)
         setSelectedBoxColor(Color.Black)
+
     }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -51,7 +52,9 @@ fun HandWritingSample() {
                         .height(500.dp)
                         .background(Color.Gray)
                         .padding(innerPadding),
-                    controller = controller
+                    controller = controller,
+                    contentWidth = 300.dp,
+                    contentHeight = 300.dp
                 )
 
                 ToolPicker(controller)

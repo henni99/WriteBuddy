@@ -10,7 +10,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Matrix
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
@@ -18,8 +17,8 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.input.pointer.PointerType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachReversed
 import com.henni.handwriting.kmp.model.HandwritingData
 import com.henni.handwriting.kmp.model.HitResult
@@ -40,7 +39,6 @@ import com.henni.handwriting.kmp.tool.PenTouchEvent
 import com.henni.handwriting.kmp.tool.StrokeEraserTouchEvent
 import com.henni.handwriting.kmp.tool.ToolTouchEvent
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlin.random.Random
 
 @Composable
 fun rememberHandwritingController(
@@ -71,7 +69,6 @@ class HandwritingController internal constructor(
     var contentBackground by mutableStateOf(Color.Red)
 
     val handwritingDataCollection = ArrayDeque<HandwritingData>()
-
 
     var curTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
 
@@ -239,25 +236,11 @@ class HandwritingController internal constructor(
 
     fun setToolMode(toolMode: ToolMode) {
 
-        when (toolMode) {
-            ToolMode.PenMode -> {
-                curTouchEvent = PenTouchEvent(this)
-            }
-
-            ToolMode.EraserMode -> {
-
-                curTouchEvent = StrokeEraserTouchEvent(this)
-            }
-
-            ToolMode.LassoSelectMode -> {
-                curTouchEvent = LassoSelectTouchEvent(this)
-            }
-
-            ToolMode.LassoMoveMode -> {
-                curTouchEvent = LassoMoveTouchEvent(this)
-            }
-
-            else -> {}
+        curTouchEvent = when (toolMode) {
+            ToolMode.PenMode -> {  PenTouchEvent(this) }
+            ToolMode.EraserMode -> { StrokeEraserTouchEvent(this) }
+            ToolMode.LassoSelectMode -> { LassoSelectTouchEvent(this) }
+            ToolMode.LassoMoveMode -> { LassoMoveTouchEvent(this) }
         }
 
 

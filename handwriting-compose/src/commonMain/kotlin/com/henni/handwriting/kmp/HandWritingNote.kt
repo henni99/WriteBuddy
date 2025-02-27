@@ -3,8 +3,11 @@ package com.henni.handwriting.kmp
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -28,6 +31,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
@@ -43,6 +47,8 @@ import kotlinx.coroutines.launch
 fun HandWritingNote(
     modifier: Modifier = Modifier,
     controller: HandwritingController,
+    contentWidth: Dp,
+    contentHeight: Dp
 ) {
 
     var touchPointerType by remember { mutableStateOf(PointerType.Touch) }
@@ -96,7 +102,8 @@ fun HandWritingNote(
     ) {
         androidx.compose.foundation.Canvas(
             modifier = Modifier
-                .size(300.dp)
+                .width(contentWidth)
+                .height(contentHeight)
                 .onSizeChanged { newSize ->
                     val size =
                         newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
