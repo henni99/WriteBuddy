@@ -227,17 +227,16 @@ fun HandWritingNote(
                     canvas.drawImage(bitmap, Offset.Zero, Paint())
                 }
 
-                if(!multiTouch) {
-                    controller.curTouchEvent.onDrawIntoCanvas(
-                        canvas = canvas,
-                        paint = when (controller.currentToolMode) {
-                            ToolMode.PenMode -> controller.penPaint
-                            ToolMode.EraserMode -> controller.eraserPaint
-                            ToolMode.LassoSelectMode -> controller.lassoPaint
-                            else -> Paint()
-                        }
-                    )
-                }
+                controller.curTouchEvent.onDrawIntoCanvas(
+                    canvas = canvas,
+                    paint = when (controller.currentToolMode) {
+                        ToolMode.PenMode -> controller.penPaint
+                        ToolMode.EraserMode -> controller.eraserPaint
+                        ToolMode.LassoSelectMode -> controller.lassoPaint
+                        else -> Paint()
+                    },
+                    isMultiTouch = multiTouch
+                )
 
             }
 

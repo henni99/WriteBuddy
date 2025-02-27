@@ -67,6 +67,11 @@ class PenTouchEvent constructor(
 
         controller.addHandWritingPath(penPath, deformationPenPath, offsets)
         controller.refreshTick.updateTick()
+
+        penPath = Path()
+        deformationPenPath = Path()
+
+        offsets.clear()
     }
 
     override fun onTouchCancel() {
@@ -76,8 +81,9 @@ class PenTouchEvent constructor(
         offsets.clear()
     }
 
-    override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {
-        canvas.drawPath(penPath, paint)
+    override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
+        if(!isMultiTouch) {
+            canvas.drawPath(penPath, paint)
+        }
     }
-
 }

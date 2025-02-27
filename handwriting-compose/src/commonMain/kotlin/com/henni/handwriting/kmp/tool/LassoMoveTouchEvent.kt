@@ -90,8 +90,7 @@ class LassoMoveTouchEvent constructor(
         transformMatrix = Matrix()
     }
 
-    override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {
-
+    override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
         if(controller.selectedBoundBox.center != Offset.Zero) {
             canvas.drawRect(
                 controller.selectedBoundBox,

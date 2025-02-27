@@ -59,9 +59,9 @@ class StrokeEraserTouchEvent constructor(
         eraserOffset = Offset.Zero
     }
 
-    override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint) {
+    override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
 
-        if (eraserOffset != Offset.Zero && controller.isEraserPointShowed) {
+        if (!isMultiTouch && eraserOffset != Offset.Zero && controller.isEraserPointShowed) {
             canvas.drawCircle(
                 eraserOffset,
                 controller.eraserPointRadius,

@@ -29,5 +29,9 @@ interface ToolTouchEvent {
 
     )
 
-    fun onDrawIntoCanvas(canvas: Canvas, paint: Paint = Paint())
+    fun onDrawIntoCanvas(
+        canvas: Canvas,
+        paint: Paint = Paint(),
+        isMultiTouch: Boolean = false
+    )
 }
