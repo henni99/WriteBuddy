@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp
+package com.henni.handwriting.kmp.ext
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Matrix

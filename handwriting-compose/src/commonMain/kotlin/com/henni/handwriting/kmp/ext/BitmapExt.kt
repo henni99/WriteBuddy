@@ -1,7 +1,5 @@
-package com.henni.handwriting.kmp
+package com.henni.handwriting.kmp.ext
 
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
 import androidx.compose.ui.unit.IntSize

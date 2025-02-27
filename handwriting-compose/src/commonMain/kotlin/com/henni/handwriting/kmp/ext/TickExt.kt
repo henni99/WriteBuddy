@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp
+package com.henni.handwriting.kmp.ext
 
 import androidx.compose.runtime.MutableState
 import kotlinx.coroutines.flow.MutableStateFlow

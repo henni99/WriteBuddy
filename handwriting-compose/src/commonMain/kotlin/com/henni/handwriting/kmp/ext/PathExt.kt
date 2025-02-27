@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp
+package com.henni.handwriting.kmp.ext
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path

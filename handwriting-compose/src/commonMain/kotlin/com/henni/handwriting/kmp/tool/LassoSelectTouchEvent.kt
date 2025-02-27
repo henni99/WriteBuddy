@@ -6,14 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.model.HandwritingData
 import com.henni.handwriting.kmp.model.defaultPaint
-import com.henni.handwriting.kmp.updateTick
 
 class LassoSelectTouchEvent constructor(
     private val controller: HandwritingController

@@ -19,6 +19,12 @@ import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.util.fastForEachReversed
+import com.henni.handwriting.kmp.ext.addPadding
+import com.henni.handwriting.kmp.ext.contains
+import com.henni.handwriting.kmp.ext.overlaps
+import com.henni.handwriting.kmp.ext.translate
+import com.henni.handwriting.kmp.ext.unions
+import com.henni.handwriting.kmp.ext.updateTick
 import com.henni.handwriting.kmp.operation.InsertOperation
 import com.henni.handwriting.kmp.operation.Operation
 import com.henni.handwriting.kmp.operation.RemoveOperation

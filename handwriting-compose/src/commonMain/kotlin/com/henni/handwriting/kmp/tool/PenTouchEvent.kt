@@ -7,10 +7,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.util.fastForEachReversed
 import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.addDeformationPoint
-import com.henni.handwriting.kmp.updateTick
+import com.henni.handwriting.kmp.ext.addDeformationPoint
 
 class PenTouchEvent constructor(
     private val controller: HandwritingController

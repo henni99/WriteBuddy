@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.tool
+package com.henni.handwriting.kmp.ext
 
 import com.henni.handwriting.kmp.model.ToolMode
 

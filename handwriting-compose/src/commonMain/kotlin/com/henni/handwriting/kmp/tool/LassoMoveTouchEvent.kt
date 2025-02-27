@@ -4,14 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.Path
 import com.henni.handwriting.kmp.HandwritingController
 import com.henni.handwriting.kmp.model.ToolMode
-import com.henni.handwriting.kmp.updateTick
+import com.henni.handwriting.kmp.ext.updateTick
 
 class LassoMoveTouchEvent constructor(
     private val controller: HandwritingController
