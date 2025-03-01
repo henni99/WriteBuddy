@@ -82,7 +82,7 @@ internal class LassoSelectTouchEvent internal constructor(
             )
         }
 
-        controller.selectHandWritingData(
+        controller.selectHandWritingPath(
             path = lassoPath,
         )
     }
@@ -104,8 +104,8 @@ internal class LassoSelectTouchEvent internal constructor(
             )
         }
 
-        controller.selectedDataSet.forEach { data ->
-            canvas.drawPath(data.renderedPath, data.paint)
+        controller.selectedHandwritingPaths.forEach { path ->
+            canvas.drawPath(path.renderedPath, path.paint)
         }
 
 

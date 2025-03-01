@@ -26,34 +26,49 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.util.fastForEach
 import com.henni.handwriting.kmp.extension.detectTransformGestures
+import com.henni.handwriting.kmp.extension.findId
 import com.henni.handwriting.kmp.extension.getBitmap
 import com.henni.handwriting.kmp.extension.updateTick
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
+/**
+ * A Composable function that represents a handwriting note.
+ *
+ * This Composable listens for touch events and allows the user to draw on the canvas.
+ * It handles multi-touch gestures like pinch-to-zoom and panning, and it renders the drawn paths
+ * on a custom Canvas.
+ *
+ * @param modifier The modifier to be applied to the outer Box.
+ * @param controller The HandwritingController that manages the drawing and state of paths.
+ * @param contentWidth The width of the content area.
+ * @param contentHeight The height of the content area.
+ * @param onInvalidateListener A callback invoked when the canvas is invalidated and needs to be redrawn.
+ */
 
 @Composable
 fun HandWritingNote(
     modifier: Modifier = Modifier,
     controller: HandwritingController,
     contentWidth: Dp,
-    contentHeight: Dp
+    contentHeight: Dp,
+    onInvalidateListener: () -> Unit = {}
 ) {
-
-    var touchPointerType by remember { mutableStateOf(PointerType.Touch) }
+    val invalidateTick: MutableState<Int> = remember { mutableStateOf(0) }
 
     var canvas: Canvas? by remember { mutableStateOf(null) }
 
-    val invalidatorTick: MutableState<Int> = remember { mutableStateOf(0) }
-
-    var pathBitmap: ImageBitmap? by remember { mutableStateOf(null) }
-
     var canvasSize: IntSize by remember { mutableStateOf(IntSize.Zero) }
 
+    var canvasImageBitmap: ImageBitmap? by remember { mutableStateOf(null) }
+
     var scale by remember { mutableStateOf(1f) }
+
     var offset by remember { mutableStateOf(Offset.Zero) }
 
-    var multiTouch by remember { mutableStateOf(false) }
+    var isMultiTouched by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -61,26 +76,20 @@ fun HandWritingNote(
         coroutineScope.launch(Dispatchers.Main) {
             controller.refreshTick.collect {
 
-                pathBitmap = getBitmap(canvasSize).also {
+                canvasImageBitmap = getBitmap(canvasSize).also {
                     canvas = Canvas(it)
                 }
 
-                println("handwritingDataCollectionRevise: ${controller.handwritingPathCollection.size}")
-
-                println("onSizeChanged: ${canvasSize} refreshTick")
-
-                controller.handwritingPathCollection.forEach { data ->
-
-                    if (!controller.isDataSelected(data)) {
-
+                controller.handwritingPaths.fastForEach { path ->
+                    if (!controller.selectedHandwritingPaths.findId(path.id)) {
                         canvas?.drawPath(
-                            path = data.renderedPath,
-                            paint = data.paint
+                            path = path.renderedPath,
+                            paint = path.paint
                         )
                     }
                 }
 
-                invalidatorTick.updateTick()
+                invalidateTick.updateTick()
             }
         }
     }
@@ -97,9 +106,7 @@ fun HandWritingNote(
                     val size =
                         newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
 
-                    println("onSizeChanged: ${size} onSizeChanged")
-
-                    pathBitmap = getBitmap(size).also {
+                    canvasImageBitmap = getBitmap(size).also {
                         canvas = Canvas(it)
                     }
                 }
@@ -114,10 +121,8 @@ fun HandWritingNote(
                 .clipToBounds()
                 .align(Alignment.Center)
                 .pointerInput(Unit) {
-
                     detectTransformGestures(
                         onGestureStart = { offset ->
-                            println("detectDragGestures: onGestureStart ${offset}")
 
                             controller.currentTouchEvent.onTouchStart(
                                 canvas = canvas,
@@ -125,13 +130,10 @@ fun HandWritingNote(
                                 paint = controller.currentPaint
                             )
 
-                            invalidatorTick.updateTick()
+                            invalidateTick.updateTick()
                         },
                         onGesture = { zoomChange: Float, panChange: Offset, change: PointerInputChange, isMultiTouch: Boolean ->
-                            println("detectDragGestures: onGesture ${change.position} ${change.previousPosition}")
-                            println("isMultiTouch :${isMultiTouch}")
-
-                            multiTouch = isMultiTouch
+                            isMultiTouched = isMultiTouch
 
                             if (isMultiTouch) {
 
@@ -159,28 +161,24 @@ fun HandWritingNote(
 
                             }
 
-                            invalidatorTick.updateTick()
+                            invalidateTick.updateTick()
 
 
                         },
                         onGestureEnd = { isMultiTouch ->
+                            isMultiTouched = isMultiTouch
 
-                            println("detectDragGestures: onDragEnd ${isMultiTouch}")
-                            multiTouch = isMultiTouch
                             if (!isMultiTouch) {
-
                                 controller.currentTouchEvent.onTouchEnd(
                                     canvas = canvas,
                                     paint = controller.currentPaint
                                 )
-
-                                invalidatorTick.updateTick()
+                                invalidateTick.updateTick()
                             }
-
                         },
                         onGestureCancel = {
                             controller.currentTouchEvent.onTouchInitialize()
-                            invalidatorTick.updateTick()
+                            invalidateTick.updateTick()
                         }
                     )
                 }
@@ -188,24 +186,19 @@ fun HandWritingNote(
             drawIntoCanvas { canvas ->
                 drawRect(controller.contentBackground)
 
-                // draw path bitmap on the canvas.
-                pathBitmap?.let { bitmap ->
+                canvasImageBitmap?.let { bitmap ->
                     canvas.drawImage(bitmap, Offset.Zero, Paint())
                 }
 
                 controller.currentTouchEvent.onDrawIntoCanvas(
                     canvas = canvas,
                     paint = controller.currentPaint,
-                    isMultiTouch = multiTouch
+                    isMultiTouch = isMultiTouched
                 )
-
             }
 
-
-            println("currentMode: ${controller.currentTouchEvent}")
-            println("selectedDataSet: ${controller.selectedDataSet.size}")
-            if (invalidatorTick.value != 0) {
-//            onRevisedListener?.invoke(controller.canUndo.value, controller.canRedo.value)
+            if (invalidateTick.value != 0) {
+                onInvalidateListener()
             }
         }
     }

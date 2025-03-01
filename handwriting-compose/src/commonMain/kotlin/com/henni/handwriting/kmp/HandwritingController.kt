@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.input.pointer.PointerType
@@ -53,111 +52,55 @@ fun rememberHandwritingController(
     }
 }
 
-class HandwritingController internal constructor(
-) {
+/**
+ * Controller for managing handwriting data, such as pen strokes, eraser actions,
+ * and lasso selection. It supports undo/redo functionality, tool modes, and manages
+ * the state for various elements like strokes, selected paths, and the lasso area.
+ */
+
+class HandwritingController {
+
+    /**
+     * Mutable state to track refresh ticks for UI updates
+     */
     val refreshTick = MutableStateFlow<Int>(0)
 
-    var eraserPointRadius by mutableStateOf(20f)
-
-    var isEraserPointShowed by mutableStateOf(true)
-
+    /**
+     * Pen-related properties and settings
+     */
     var penPaint by mutableStateOf(defaultPenPaint())
 
+    /**
+     * Eraser-related properties and settings
+     */
     var eraserPaint by mutableStateOf(defaultStrokeEraserPaint())
+    var eraserPointRadius by mutableStateOf(20f)
+    var isEraserPointShowed by mutableStateOf(true)
 
+    /**
+     * Lasso selection properties and settings
+     */
     var lassoPaint by mutableStateOf(lassoDefaultPaint())
-
-    var currentPaint by mutableStateOf(penPaint)
-
-    var lassoBoundBoxPaint by mutableStateOf(lassoDefaultPaint())
-
-    var contentBackground by mutableStateOf(Color.Red)
-
-    val handwritingPathCollection = ArrayDeque<HandwritingPath>()
-
-    var currentTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
-
-    init {
-
-//        repeat(100) {
-//            val path = Path()
-//            val random1 = Random.nextInt(100, 500).toFloat()
-//            val random2 = Random.nextInt(200, 400).toFloat()
-//            val random3 = Random.nextInt(200, 600).toFloat()
-//            val random4 = Random.nextInt(300, 400).toFloat()
-//            val random5 = Random.nextInt(200, 600).toFloat()
-//            val random6 = Random.nextInt(300, 400).toFloat()
-//
-//            val offsets = mutableListOf<Offset>(
-//                Offset(random1.toFloat(), random2.toFloat()),
-//                Offset(random3.toFloat(), random4.toFloat())
-//            )
-//
-//            path.moveTo(random1, random2)
-//            path.quadraticBezierTo(random1, random2, (random1 + random3) / 2, (random3 + random4)/ 2)
-//
-//            val last = offsets.last()
-////            path.lineTo(last.x + 3, last.y + 3)
-////            path.lineTo(last.x - 6, last.y + 3)
-////            path.lineTo(last.x + 3, last.y - 6)
-////            path.lineTo(last.x - 6, last.y - 6)
-//
-//            offsets.fastForEachReversed {
-//                path.lineTo(it.x, it.y)
-//            }
-//
-//            val first = offsets.first()
-//            path.lineTo(first.x + 3, first.y + 3)
-//            path.lineTo(first.x - 6, first.y + 3)
-//            path.lineTo(first.x + 3, first.y - 6)
-//            path.lineTo(first.x - 6, first.y - 6)
-//
-//
-//
-//            handwritingDataCollection.add(
-//                HandwritingData(
-//                    path = path,
-//                    paint = Paint().copy(penPaint)
-//                )
-//            )
-//        }
-    }
-
-
     var lassoBoundBox by mutableStateOf(Rect.Zero)
-
+    var lassoBoundBoxPaint by mutableStateOf(lassoDefaultPaint())
     var lassoBoundBoxPadding by mutableStateOf(Padding.Zero)
 
-    var isSelectedDataHighlight by mutableStateOf(true)
+    /**
+     * Current tool-related properties
+     */
+    var currentPaint by mutableStateOf(penPaint)
+    var currentTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
+    val currentPointerType: MutableState<PointerType> = mutableStateOf(PointerType.Touch)
+    var contentBackground by mutableStateOf(Color.Red)
+    var isZoomable by mutableStateOf(true)
 
-    var selectedDataHighlightColor by mutableStateOf(Color.Red)
+    /**
+     * Collections to store paths and selected paths
+     */
 
-    val selectedDataSet = mutableSetOf<HandwritingPath>()
+    val handwritingPaths = ArrayDeque<HandwritingPath>()
+    val selectedHandwritingPaths = mutableSetOf<HandwritingPath>()
 
-    val isNoteZoomable: MutableState<Boolean> = mutableStateOf(true)
-
-    val toolPointerType: MutableState<PointerType> = mutableStateOf(PointerType.Touch)
-
-    fun setIsNoteZoomable(sZoomable: Boolean) {
-        this.isNoteZoomable.value = sZoomable
-    }
-
-    fun setIsEraserPointShowed(isShowed: Boolean) {
-        this.isEraserPointShowed = isShowed
-    }
-
-    fun setIsSelectedDataHighlight(isSelectedDataHighlight: Boolean) {
-        this.isSelectedDataHighlight = isSelectedDataHighlight
-    }
-
-//    fun setSelectedDataHighlightColor(color: Color) {
-//        this.selectedDataHighlightColor = color
-//    }
-
-    /** Sets a eraser point radius to the [eraserPointRadius]. */
-//    fun setEraserPointRadius(radius: Float) {
-//        eraserPointRadius = radius
-//    }
 
     /** Sets a lasso stroke width to the [lassoPaint]. */
     fun setLassoStrokeWidth(width: Float) {
@@ -169,67 +112,52 @@ class HandwritingController internal constructor(
         lassoPaint.color = color
     }
 
-    /** Sets a lasso stroke width to the [lassoPaint]. */
-    fun setSelectedBoxStrokeWidth(width: Float) {
+    /** Sets a lassoBoundBox stroke width to the [lassoPaint]. */
+    fun setLassoBoundBoxStrokeWidth(width: Float) {
         lassoBoundBoxPaint.strokeWidth = width
     }
 
-    /** Sets a lasso color to the [lassoPaint]. */
-    fun setSelectedBoxColor(color: Color) {
+    /** Sets a lassoBoundBox [Color] to the [lassoPaint]. */
+    fun setLassoBoundBoxColor(color: Color) {
         lassoBoundBoxPaint.color = color
     }
-
-    /** Sets a lasso color to the [lassoPaint]. */
-    fun setSelectedBoxPadding(padding: Padding) {
-        lassoBoundBoxPadding = padding
-    }
-
-
-//    /** Sets a [Paint] to the [penPaint]. */
-//    fun setPenPaint(paint: Paint) {
-//        penPaint = paint
-//    }
 
     /** Sets a [Color] to the [penPaint]. */
     fun setPenColor(color: Color) {
         penPaint.color = color
     }
 
-    /** Sets a stroke width to the [penPaint]. */
+    /** Sets a pen alpha to the [penPaint]. */
     fun setPenAlpha(alpha: Float) {
         penPaint.alpha = alpha
     }
 
-    /** Sets a stroke width to the [penPaint]. */
+    /** Sets a pen stroke width to the [penPaint]. */
     fun setPenStrokeWidth(width: Float) {
         penPaint.strokeWidth = width
     }
 
-    /** Sets a [Shader] to the [penPaint]. */
+    /** Sets a pen [Shader] to the [penPaint]. */
     fun setPenShader(shader: Shader?) {
         penPaint.shader = shader
     }
 
-    /** Sets a [PaintingStyle] to the [penPaint]. */
-    fun setPenPaintingStyle(style: PaintingStyle) {
+    /** Sets a pen [PaintingStyle] to the [penPaint]. */
+    fun setPenStyle(style: PaintingStyle) {
         penPaint.style = style
     }
 
-    /** Sets a [StrokeJoin] to the [penPaint]. */
+    /** Sets a pen [StrokeJoin] to the [penPaint]. */
     fun setPenStrokeJoin(strokeJoin: StrokeJoin) {
         penPaint.strokeJoin = strokeJoin
     }
 
-    /** Sets a [PathEffect] to the [penPaint]. */
+    /** Sets a pen [PathEffect] to the [penPaint]. */
     fun setPenPathEffect(pathEffect: PathEffect?) {
         penPaint.pathEffect = pathEffect
     }
 
-
-    fun transformlassoBoundBox(matrix: Matrix) {
-        lassoBoundBox = lassoBoundBox.translate(matrix)
-    }
-
+    /** Sets [Paint], [PenTouchEvent] to the [toolMode]. */
     fun setToolMode(toolMode: ToolMode) {
 
         when (toolMode) {
@@ -254,23 +182,54 @@ class HandwritingController internal constructor(
             }
         }
 
-
         initializeSelection()
+    }
+
+    /**
+     * Adds a new handwriting path to the list of recorded paths.
+     * This method updates the list of handwriting paths and triggers a refresh tick
+     * to notify the UI about the change.
+     *
+     * @param path The handwriting path to be added to the list.
+     */
+    fun addHandWritingPath(path: HandwritingPath) {
+        handwritingPaths.add(path)
         updateRefreshTick()
     }
 
+    /**
+     * Adds a list of handwriting paths to the existing list.
+     * This method appends all the provided paths to the `handwritingPaths` collection.
+     * It also updates the refresh tick after the paths are added.
+     *
+     * @param paths A list of [HandwritingPath] objects to be added to the collection.
+     */
+    fun addHandWritingPaths(paths: List<HandwritingPath>) {
+        handwritingPaths.addAll(paths)
+        updateRefreshTick()
+    }
+
+    /**
+     * Adds a new handwriting path to the list with the provided rendered path, hit area, and points.
+     * This method creates a new `HandwritingPath` object and performs an insert operation to add it to the list.
+     * It also updates the undo/redo state after the operation.
+     *
+     * @param renderedPath The path representing the drawn handwriting.
+     * @param hitAreaPath The path used for collision detection or interaction with the rendered path.
+     * @param offsets The list of initial points that represent the path's drawing trajectory.
+     */
     fun addHandWritingPath(
-        path: Path,
-        deformationPath: Path,
-        points: List<Offset>
+        renderedPath: Path,
+        hitAreaPath: Path,
+        offsets: List<Offset>
     ) {
         execute(
             InsertOperation(
                 controller = this@HandwritingController,
                 path = HandwritingPath(
-                    renderedPath = path,
-                    hitAreaPath = deformationPath,
-                    initialPoints = points,
+                    renderedPath = renderedPath,
+                    hitAreaPath = hitAreaPath,
+                    initialPoints = offsets,
                     paint = Paint().copy(penPaint),
                 )
             )
@@ -278,6 +237,27 @@ class HandwritingController internal constructor(
         updateUndoRedoState()
     }
 
+    /**
+     * Removes the specified handwriting path from the collection.
+     * If the path is found and successfully removed from the `handwritingPaths` collection,
+     * the refresh tick is updated to trigger necessary UI updates.
+     *
+     * @param path The [HandwritingPath] to be removed from the collection.
+     */
+    fun removeHandWritingPath(path: HandwritingPath) {
+        if (handwritingPaths.remove(path)) {
+            updateRefreshTick()
+        }
+    }
+
+    /**
+     * Removes a handwriting path by matching it with a provided `Path` object.
+     * If the provided `Path` overlaps any existing handwriting path, the matched handwriting path
+     * is removed through an `Operation` (remove).
+     * The undo/redo state is updated after removal.
+     *
+     * @param path The [Path] to check for overlap and remove the corresponding `HandwritingPath`.
+     */
     fun removeHandWritingPath(path: Path) {
         val hitResult = hitHandWritingPath(path)
         if (hitResult.isHit) {
@@ -293,18 +273,75 @@ class HandwritingController internal constructor(
         updateUndoRedoState()
     }
 
-    fun selectHandWritingData(
+    /**
+     *
+     * Checks if the provided `hitPath` overlaps with any existing handwriting paths.
+     * The function iterates through the `handwritingPaths` collection in reverse order,
+     * and for each path, it checks whether the bounding box of the `hitPath` overlaps with the
+     * bounding box of the handwriting path. If an overlap is detected, it further checks if the
+     * paths truly overlap and returns the matching `HandwritingPath` for Eraser.
+     *
+     * If no overlap is found, it returns a `HitResult` indicating no match.
+     *
+     * @param hitPath The `Path` to check for overlap with existing handwriting paths.
+     * @return A `HitResult` object that contains whether a hit was found and the corresponding path if a hit is detected.
+     */
+    private fun hitHandWritingPath(
+        hitPath: Path,
+    ): HitResult {
+
+        val hitBounds = hitPath.getBounds()
+
+        handwritingPaths.fastForEachReversed { data ->
+
+            var dataBounds = data.hitAreaPath.getBounds()
+            if (dataBounds.isEmpty) {
+                dataBounds = Rect(dataBounds.center, 5f)
+            }
+
+            if (!hitBounds.overlaps(dataBounds)) {
+                return@fastForEachReversed
+            }
+
+            if (overlaps(data.hitAreaPath, hitPath)) {
+                return HitResult(
+                    isHit = true,
+                    path = data
+                )
+            }
+        }
+
+        return HitResult(
+            isHit = false,
+            path = null
+        )
+    }
+
+    /**
+     * Selects handwriting paths that are within or overlapping the given `path`, typically used
+     * for lasso selection. The function first calculates the bounding box of the provided `path`
+     * and checks each handwriting path in the `handwritingPaths` collection to see if its hit area
+     * overlaps with or is completely contained within the bounding box of the lasso selection.
+     *
+     * If a handwriting path is selected, it adds it to a temporary set of selected paths and updates
+     * the bounding box to encompass all selected paths. The function then transitions the current touch event
+     * to a `LassoMoveTouchEvent` to allow further manipulation of the selected paths.
+     *
+     * If no paths are selected, the lasso bounding box is reset and the current touch event is set to
+     * `LassoSelectTouchEvent` to enable a new selection.
+     *
+     * @param path The `Path` representing the lasso selection, typically drawn by the user.
+     */
+    fun selectHandWritingPath(
         path: Path,
     ) {
 
-        val tempSelectedDataSet = mutableSetOf<HandwritingPath>()
-        var tempRect = Rect.Zero
+        val tempSelectedPaths = mutableSetOf<HandwritingPath>()
+        var tempBounds = Rect.Zero
 
         val lassoBounds = path.getBounds()
 
-        handwritingPathCollection.fastForEachReversed { data ->
-            println("isConvex: ${data.renderedPath.isConvex}")
-
+        handwritingPaths.fastForEachReversed { data ->
             var dataBounds = data.hitAreaPath.getBounds()
             if (dataBounds.isEmpty) {
                 dataBounds = Rect(dataBounds.center, 5f)
@@ -315,27 +352,24 @@ class HandwritingController internal constructor(
             }
 
             if (lassoBounds.contains(dataBounds)) {
-                tempSelectedDataSet.add(data)
-                tempRect = tempRect.unions(dataBounds)
+                tempSelectedPaths.add(data)
+                tempBounds = tempBounds.unions(dataBounds)
 
                 return@fastForEachReversed
             }
 
             if (overlaps(data.hitAreaPath, path)) {
-                tempSelectedDataSet.add(data)
-                tempRect = tempRect.unions(dataBounds)
+                tempSelectedPaths.add(data)
+                tempBounds = tempBounds.unions(dataBounds)
 
                 return@fastForEachReversed
             }
-
         }
 
-        println("tempSelectedDataSet: ${tempSelectedDataSet.size}")
-
-        if (tempSelectedDataSet.isNotEmpty()) {
-            selectedDataSet.clear()
-            selectedDataSet.addAll(tempSelectedDataSet)
-            lassoBoundBox = tempRect.addPadding(lassoBoundBoxPadding)
+        if (tempSelectedPaths.isNotEmpty()) {
+            selectedHandwritingPaths.clear()
+            selectedHandwritingPaths.addAll(tempSelectedPaths)
+            lassoBoundBox = tempBounds.addPadding(lassoBoundBoxPadding)
             currentTouchEvent = LassoMoveTouchEvent(this)
         } else {
             lassoBoundBox = Rect.Zero
@@ -345,61 +379,24 @@ class HandwritingController internal constructor(
         updateRefreshTick()
     }
 
-    private fun hitHandWritingPath(
-        hitPath: Path,
-    ): HitResult {
-
-        val hitBounds = hitPath.getBounds()
-
-        handwritingPathCollection.fastForEachReversed { data ->
-
-            var dataBounds = data.hitAreaPath.getBounds()
-            if (dataBounds.isEmpty) {
-                dataBounds = Rect(dataBounds.center, 5f)
-            }
-
-            if (hitBounds.overlaps(dataBounds)) {
-
-                val pathWithOp = Path().apply {
-                    this.op(data.hitAreaPath, hitPath, PathOperation.Intersect)
-                }
-
-                val isIntersect = pathWithOp.isEmpty.not()
-                if (isIntersect) {
-                    return HitResult(
-                        isHit = true,
-                        path = data
-                    )
-                }
-
-            }
-
-        }
-
-        return HitResult(
-            isHit = false,
-            path = null
-        )
-    }
-
-    fun addHandWritingPath(path: HandwritingPath) {
-        handwritingPathCollection.add(path)
-        updateRefreshTick()
-    }
-
-    fun removeHandWritingPath(path: HandwritingPath) {
-        if (handwritingPathCollection.remove(path)) {
-            updateRefreshTick()
-        }
-    }
-
-    fun translateHandWritingDataSet(
+    /**
+     * Translates (moves) the selected handwriting paths by the specified offset.
+     * This operation applies a translation to the selected paths and updates the internal state
+     * to reflect the changes. The paths are moved by the given `translateOffset`.
+     *
+     * The function uses the [TranslateOperation] to perform the translation and ensure that the
+     * operation is recorded for undo/redo functionality. Once the translation is applied, it also
+     * updates the undo/redo state.
+     *
+     * @param translateOffset The offset by which to move the selected handwriting paths.
+     */
+    fun translateHandWritingPaths(
         translateOffset: Offset
     ) {
         execute(
             TranslateOperation(
                 controller = this@HandwritingController,
-                paths = selectedDataSet.toMutableSet(),
+                paths = selectedHandwritingPaths.toMutableSet(),
                 offset = translateOffset
             )
         )
@@ -407,23 +404,44 @@ class HandwritingController internal constructor(
         updateUndoRedoState()
     }
 
-    fun clearAllHandWritingData() {
-        handwritingPathCollection.clear()
+    /**
+     * Translates the lasso bounding box by applying the given transformation matrix.
+     * The function modifies the current `lassoBoundBox` by translating it using the provided
+     * `matrix`. This is typically used for moving the lasso selection on the canvas.
+     *
+     * @param matrix The matrix containing the transformation values to apply to the lasso bounding box.
+     */
+    fun translateLassoBoundBox(matrix: Matrix) {
+        lassoBoundBox = lassoBoundBox.translate(matrix)
+    }
+
+    /**
+     * Clears all handwriting paths from the canvas.
+     * This function removes all paths from the `handwritingPaths` list and resets the state.
+     * It is typically used when the user wants to start with a fresh canvas or clear the drawing.
+     */
+    fun clearAllHandWritingPaths() {
+        handwritingPaths.clear()
         updateRefreshTick()
     }
 
+    /**
+     * Initializes the selection state by clearing the lasso bounding box and selected handwriting paths.
+     * This function resets the selection, ensuring that no paths are currently selected, and the lasso
+     * bounding box is cleared.
+     * It is typically used when starting a new selection or when resetting the current selection state.
+     */
     private fun initializeSelection() {
         lassoBoundBox = Rect.Zero
-        selectedDataSet.clear()
+        selectedHandwritingPaths.clear()
+        updateRefreshTick()
     }
 
-    fun isDataSelected(data: HandwritingPath): Boolean {
-        return selectedDataSet.find {
-            it.id == data.id
-        } != null
-    }
-
-
+    /**
+     * Updates the refresh tick by triggering the `updateTick` method on the `refreshTick` state.
+     * This function is used to signal that a change has occurred and the UI may need to be refreshed.
+     * Typically used after modifying any data that impacts the display of handwriting paths or selection state.
+     */
     private fun updateRefreshTick() {
         refreshTick.updateTick()
     }
@@ -432,22 +450,37 @@ class HandwritingController internal constructor(
      * Operation
      **/
 
+    /**
+     * Flag to indicate whether an undo operation can be performed.
+     */
     var canUndo by mutableStateOf(false)
 
+    /**
+     * Flag to indicate whether a redo operation can be performed.
+     */
     var canRedo by mutableStateOf(false)
 
+    /**
+     * A deque (double-ended queue) holding the operations for undoing.
+     * Stores the sequence of operations that can be reverted.
+     */
     private val undoOperations: ArrayDeque<Operation> = ArrayDeque()
 
+    /**
+     * A deque (double-ended queue) holding the operations for redoing.
+     * Stores the sequence of operations that can be reapplied after an undo.
+     */
     private val redoOperations: ArrayDeque<Operation> = ArrayDeque()
 
-    fun isUndoAvailable(): Boolean {
-        return undoOperations.isEmpty()
-    }
 
-    fun isRedoAvailable(): Boolean {
-        return redoOperations.isEmpty()
-    }
-
+    /**
+     * Executes the given operation.
+     *
+     * If the operation is successful, it is added to the undo stack, and the redo stack is cleared.
+     * This is done to maintain the correct state for undo/redo functionality.
+     *
+     * @param operation The operation to be executed.
+     */
     private fun execute(operation: Operation) {
         if (operation.doOperation()) {
             undoOperations.add(operation)
@@ -455,6 +488,13 @@ class HandwritingController internal constructor(
         }
     }
 
+    /**
+     * Performs the undo operation.
+     *
+     * If there are operations in the undo stack, the most recent operation is undone,
+     * and then added to the redo stack. Afterward, the current touch event is reinitialized
+     * and the selection is reset.
+     */
     fun undo() {
         if (undoOperations.isNotEmpty()) {
             val operation = undoOperations.removeLast()
@@ -465,10 +505,16 @@ class HandwritingController internal constructor(
         currentTouchEvent.onTouchInitialize()
 
         initializeSelection()
-        updateRefreshTick()
         updateUndoRedoState()
     }
 
+    /**
+     * Performs the redo operation.
+     *
+     * If there are operations in the redo stack, the most recent redo operation is reapplied,
+     * and then added back to the undo stack. Afterward, the current touch event is reinitialized
+     * and the selection is reset.
+     */
     fun redo() {
         if (redoOperations.isNotEmpty()) {
             val operation = redoOperations.removeLast()
@@ -479,17 +525,17 @@ class HandwritingController internal constructor(
         currentTouchEvent.onTouchInitialize()
 
         initializeSelection()
-        updateRefreshTick()
         updateUndoRedoState()
     }
 
+    /**
+     * Updates the state of the undo and redo flags (`canUndo` and `canRedo`).
+     * Sets `canUndo` to true if there are operations in the undo stack,
+     * and `canRedo` to true if there are operations in the redo stack.
+     */
     private fun updateUndoRedoState() {
-
-        canUndo = !isUndoAvailable()
-        canRedo = !isRedoAvailable()
-
-        println("canUndo: ${canUndo}, canRedo: ${canRedo}")
+        canUndo = !undoOperations.isEmpty()
+        canRedo = !redoOperations.isEmpty()
     }
-
 
 }

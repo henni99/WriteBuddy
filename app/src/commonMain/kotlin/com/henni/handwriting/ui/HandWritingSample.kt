@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.unit.dp
 import com.henni.handwriting.kmp.HandWritingNote
 import com.henni.handwriting.kmp.model.Padding
@@ -25,17 +26,10 @@ import com.henni.handwriting.kmp.rememberHandwritingController
 fun HandWritingSample() {
 
     val controller = rememberHandwritingController {
-        setIsNoteZoomable(true)
-        setIsEraserPointShowed(true)
+        isZoomable = true
+        isEraserPointShowed = true
         eraserPointRadius = 20f
-        setLassoStrokeWidth(10f)
-        setLassoColor(Color.Black)
-        setIsSelectedDataHighlight(true)
-        selectedDataHighlightColor = Color.Red
-        setSelectedBoxPadding(Padding(20, 20, 20, 20))
-        setSelectedBoxStrokeWidth(10f)
-        setSelectedBoxColor(Color.Black)
-
+        lassoBoundBoxPadding = Padding(20, 20, 20, 20)
     }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

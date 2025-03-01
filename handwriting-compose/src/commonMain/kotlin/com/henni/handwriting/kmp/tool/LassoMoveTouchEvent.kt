@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
 import com.henni.handwriting.kmp.HandwritingController
+import com.henni.handwriting.kmp.extension.translate
 import com.henni.handwriting.kmp.extension.updateTick
 import com.henni.handwriting.kmp.model.ToolMode
 
@@ -59,18 +60,18 @@ internal class LassoMoveTouchEvent internal constructor(
     ) {
         if (isLassoBoundBoxMovable) {
 
+            val translateX = currentOffset.x - previousOffset.x
+            val translateY = currentOffset.y - previousOffset.y
+
             transformMatrix.reset()
-            transformMatrix.translate(
-                currentOffset.x - previousOffset.x,
-                currentOffset.y - previousOffset.y
-            )
+            transformMatrix.translate(translateX, translateY)
 
             this.currentOffset = currentOffset
 
-            controller.transformlassoBoundBox(transformMatrix)
-            controller.selectedDataSet.forEach { data ->
-                data.renderedPath.transform(transformMatrix)
-                data.hitAreaPath.transform(transformMatrix)
+            controller.translateLassoBoundBox(transformMatrix)
+            controller.selectedHandwritingPaths.forEach { path ->
+                path.renderedPath.transform(transformMatrix)
+                path.hitAreaPath.transform(transformMatrix)
             }
         }
     }
@@ -83,7 +84,7 @@ internal class LassoMoveTouchEvent internal constructor(
         val translateX = currentOffset.x - firstOffset.x
         val translateY = currentOffset.y - firstOffset.y
 
-        controller.translateHandWritingDataSet(
+        controller.translateHandWritingPaths(
             translateOffset = Offset(
                 x = translateX,
                 y = translateY
@@ -114,8 +115,8 @@ internal class LassoMoveTouchEvent internal constructor(
             )
         }
 
-        controller.selectedDataSet.forEach { data ->
-            canvas.drawPath(data.renderedPath, data.paint)
+        controller.selectedHandwritingPaths.forEach { path ->
+            canvas.drawPath(path.renderedPath, path.paint)
         }
     }
 }
