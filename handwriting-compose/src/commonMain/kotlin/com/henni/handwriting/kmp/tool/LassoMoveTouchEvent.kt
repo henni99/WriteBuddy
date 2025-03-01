@@ -58,8 +58,8 @@ class LassoMoveTouchEvent constructor(
 
             controller.transformSelectedBoundBox(transformMatrix)
             controller.selectedDataSet.forEach { data ->
-                data.path.transform(transformMatrix)
-                data.deformationPath.transform(transformMatrix)
+                data.renderedPath.transform(transformMatrix)
+                data.hitAreaPath.transform(transformMatrix)
             }
         }
     }
@@ -97,7 +97,7 @@ class LassoMoveTouchEvent constructor(
         }
 
         controller.selectedDataSet.forEach { data ->
-            canvas.drawPath(data.path, data.paint)
+            canvas.drawPath(data.renderedPath, data.paint)
         }
     }
 }

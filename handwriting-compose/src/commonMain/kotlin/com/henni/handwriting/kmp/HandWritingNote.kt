@@ -29,10 +29,6 @@ import androidx.compose.ui.unit.IntSize
 import com.henni.handwriting.kmp.ext.detectTransformGestures
 import com.henni.handwriting.kmp.ext.getBitmap
 import com.henni.handwriting.kmp.ext.updateTick
-import com.henni.handwriting.kmp.tool.LassoMoveTouchEvent
-import com.henni.handwriting.kmp.tool.LassoSelectTouchEvent
-import com.henni.handwriting.kmp.tool.PenTouchEvent
-import com.henni.handwriting.kmp.tool.StrokeEraserTouchEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -69,16 +65,16 @@ fun HandWritingNote(
                     canvas = Canvas(it)
                 }
 
-                println("handwritingDataCollectionRevise: ${controller.handwritingDataCollection.size}")
+                println("handwritingDataCollectionRevise: ${controller.handwritingPathCollection.size}")
 
                 println("onSizeChanged: ${canvasSize} refreshTick")
 
-                controller.handwritingDataCollection.forEach { data ->
+                controller.handwritingPathCollection.forEach { data ->
 
                     if (!controller.isDataSelected(data)) {
 
                         canvas?.drawPath(
-                            path = data.path,
+                            path = data.renderedPath,
                             paint = data.paint
                         )
                     }

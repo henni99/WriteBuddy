@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.model.defaultPaint
+import com.henni.handwriting.kmp.model.defaultPenPaint
 
 class LassoSelectTouchEvent constructor(
     private val controller: HandwritingController
@@ -98,15 +98,15 @@ class LassoSelectTouchEvent constructor(
         println("onDrawIntoCanvas lassoSelect ${controller.selectedBoundBox}")
 
         controller.selectedDataSet.forEach { data ->
-            canvas.drawPath(data.path, data.paint)
+            canvas.drawPath(data.renderedPath, data.paint)
         }
 
         if(!isMultiTouch) {
-            println("onDrawIntoCanvas: ${controller.handwritingDataCollection.size}")
-            controller.handwritingDataCollection.forEach { data ->
+            println("onDrawIntoCanvas: ${controller.handwritingPathCollection.size}")
+            controller.handwritingPathCollection.forEach { data ->
 
                 val dataPath = Path().apply {
-                    addPath(data.path)
+                    addPath(data.renderedPath)
                 }
 
                 val pathWithOp = Path().apply {
@@ -114,7 +114,7 @@ class LassoSelectTouchEvent constructor(
                 }
 
                 if (controller.isSelectedDataHighlight) {
-                    canvas.drawPath(pathWithOp, defaultPaint().apply {
+                    canvas.drawPath(pathWithOp, defaultPenPaint().apply {
                         this.color = controller.selectedDataHighlightColor
                     })
                 }

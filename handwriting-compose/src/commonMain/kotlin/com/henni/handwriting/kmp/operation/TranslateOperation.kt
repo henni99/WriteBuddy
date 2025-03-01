@@ -2,12 +2,12 @@ package com.henni.handwriting.kmp.operation
 
 import androidx.compose.ui.geometry.Offset
 import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.model.HandwritingData
+import com.henni.handwriting.kmp.model.HandwritingPath
 
 
 class TranslateOperation internal constructor(
     private val controller: HandwritingController,
-    private val dataSet: MutableSet<HandwritingData>,
+    private val dataSet: MutableSet<HandwritingPath>,
     private val offset: Offset
 ) : Operation {
     override fun doOperation(): Boolean {
@@ -33,8 +33,8 @@ class TranslateOperation internal constructor(
                 -offset.y
             )
 
-            element.path.translate(offset.unaryMinus())
-            element.deformationPath.translate(offset.unaryMinus())
+            element.renderedPath.translate(offset.unaryMinus())
+            element.hitAreaPath.translate(offset.unaryMinus())
         }
 
         selectedBoundBox = selectedBoundBox.translate(offset.unaryMinus())
@@ -46,8 +46,8 @@ class TranslateOperation internal constructor(
                 offset.x,
                 offset.y
             )
-            element.path.translate(offset)
-            element.deformationPath.translate(offset)
+            element.renderedPath.translate(offset)
+            element.hitAreaPath.translate(offset)
         }
         selectedBoundBox = selectedBoundBox.translate(offset)
     }

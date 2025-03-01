@@ -10,6 +10,7 @@ enum class ToolMode {
      * Allow users to freely draw or write.
      */
     PenMode,
+
     /**
      * Allow users to erase existing lines or content.
      */

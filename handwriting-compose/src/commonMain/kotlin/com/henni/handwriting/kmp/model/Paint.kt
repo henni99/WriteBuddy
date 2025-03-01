@@ -7,8 +7,8 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 
-/** Returns a default [Paint]. */
-internal fun defaultPaint(): Paint {
+/** Returns a default pen [Paint]. */
+internal fun defaultPenPaint(): Paint {
     return Paint().apply {
         color = Color.White
         strokeWidth = 14f
@@ -19,8 +19,8 @@ internal fun defaultPaint(): Paint {
     }
 }
 
-/** Returns a default [Paint]. */
-internal fun defaultEraserPaint(): Paint {
+/** Returns a default stroke eraser [Paint]. */
+internal fun defaultStrokeEraserPaint(): Paint {
     return Paint().apply {
         color = Color.White
         isAntiAlias = true

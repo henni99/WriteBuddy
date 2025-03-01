@@ -1,12 +1,12 @@
 package com.henni.handwriting.kmp.operation
 
 import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.model.HandwritingData
+import com.henni.handwriting.kmp.model.HandwritingPath
 
 
 class InsertOperation internal constructor(
     private val controller: HandwritingController,
-    private val data: HandwritingData,
+    private val data: HandwritingPath,
 ) : Operation {
 
     override fun doOperation(): Boolean {

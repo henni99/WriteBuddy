@@ -25,18 +25,18 @@ import com.henni.handwriting.kmp.ext.overlaps
 import com.henni.handwriting.kmp.ext.translate
 import com.henni.handwriting.kmp.ext.unions
 import com.henni.handwriting.kmp.ext.updateTick
-import com.henni.handwriting.kmp.operation.InsertOperation
-import com.henni.handwriting.kmp.operation.Operation
-import com.henni.handwriting.kmp.operation.RemoveOperation
-import com.henni.handwriting.kmp.operation.TranslateOperation
-import com.henni.handwriting.kmp.model.HandwritingData
+import com.henni.handwriting.kmp.model.HandwritingPath
 import com.henni.handwriting.kmp.model.HitResult
 import com.henni.handwriting.kmp.model.Padding
 import com.henni.handwriting.kmp.model.ToolMode
 import com.henni.handwriting.kmp.model.copy
-import com.henni.handwriting.kmp.model.defaultEraserPaint
-import com.henni.handwriting.kmp.model.defaultPaint
+import com.henni.handwriting.kmp.model.defaultPenPaint
+import com.henni.handwriting.kmp.model.defaultStrokeEraserPaint
 import com.henni.handwriting.kmp.model.lassoDefaultPaint
+import com.henni.handwriting.kmp.operation.InsertOperation
+import com.henni.handwriting.kmp.operation.Operation
+import com.henni.handwriting.kmp.operation.RemoveOperation
+import com.henni.handwriting.kmp.operation.TranslateOperation
 import com.henni.handwriting.kmp.tool.LassoMoveTouchEvent
 import com.henni.handwriting.kmp.tool.LassoSelectTouchEvent
 import com.henni.handwriting.kmp.tool.PenTouchEvent
@@ -60,10 +60,10 @@ class HandwritingController internal constructor(
     var eraserPointRadius by mutableStateOf(20f)
 
     var isEraserPointShowed by mutableStateOf(true)
-    
-    var penPaint by mutableStateOf(defaultPaint())
 
-    var eraserPaint by mutableStateOf(defaultEraserPaint())
+    var penPaint by mutableStateOf(defaultPenPaint())
+
+    var eraserPaint by mutableStateOf(defaultStrokeEraserPaint())
 
     var lassoPaint by mutableStateOf(lassoDefaultPaint())
 
@@ -73,7 +73,7 @@ class HandwritingController internal constructor(
 
     var contentBackground by mutableStateOf(Color.Red)
 
-    val handwritingDataCollection = ArrayDeque<HandwritingData>()
+    val handwritingPathCollection = ArrayDeque<HandwritingPath>()
 
     var currentTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
 
@@ -132,7 +132,7 @@ class HandwritingController internal constructor(
 
     var selectedDataHighlightColor by mutableStateOf(Color.Red)
 
-    val selectedDataSet = mutableSetOf<HandwritingData>()
+    val selectedDataSet = mutableSetOf<HandwritingPath>()
 
     val isNoteZoomable: MutableState<Boolean> = mutableStateOf(true)
 
@@ -232,7 +232,7 @@ class HandwritingController internal constructor(
 
     fun setToolMode(toolMode: ToolMode) {
 
-         when (toolMode) {
+        when (toolMode) {
             ToolMode.PenMode -> {
                 currentPaint = penPaint
                 currentTouchEvent = PenTouchEvent(this)
@@ -267,10 +267,10 @@ class HandwritingController internal constructor(
         execute(
             InsertOperation(
                 controller = this@HandwritingController,
-                data = HandwritingData(
-                    path = path,
-                    deformationPath = deformationPath,
-                    originalOffsets = points,
+                data = HandwritingPath(
+                    renderedPath = path,
+                    hitAreaPath = deformationPath,
+                    initialPoints = points,
                     paint = Paint().copy(penPaint),
                 )
             )
@@ -281,7 +281,7 @@ class HandwritingController internal constructor(
     fun removeHandWritingPath(path: Path) {
         val hitResult = hitHandWritingPath(path)
         if (hitResult.isHit) {
-            hitResult.data?.let {
+            hitResult.path?.let {
                 execute(
                     RemoveOperation(
                         controller = this@HandwritingController,
@@ -297,15 +297,15 @@ class HandwritingController internal constructor(
         path: Path,
     ) {
 
-        val tempSelectedDataSet = mutableSetOf<HandwritingData>()
+        val tempSelectedDataSet = mutableSetOf<HandwritingPath>()
         var tempRect = Rect.Zero
 
         val lassoBounds = path.getBounds()
 
-        handwritingDataCollection.fastForEachReversed { data ->
-            println("isConvex: ${data.path.isConvex}")
+        handwritingPathCollection.fastForEachReversed { data ->
+            println("isConvex: ${data.renderedPath.isConvex}")
 
-            var dataBounds = data.deformationPath.getBounds()
+            var dataBounds = data.hitAreaPath.getBounds()
             if (dataBounds.isEmpty) {
                 dataBounds = Rect(dataBounds.center, 5f)
             }
@@ -321,7 +321,7 @@ class HandwritingController internal constructor(
                 return@fastForEachReversed
             }
 
-            if (overlaps(data.deformationPath, path)) {
+            if (overlaps(data.hitAreaPath, path)) {
                 tempSelectedDataSet.add(data)
                 tempRect = tempRect.unions(dataBounds)
 
@@ -351,9 +351,9 @@ class HandwritingController internal constructor(
 
         val hitBounds = hitPath.getBounds()
 
-        handwritingDataCollection.fastForEachReversed { data ->
+        handwritingPathCollection.fastForEachReversed { data ->
 
-            var dataBounds = data.deformationPath.getBounds()
+            var dataBounds = data.hitAreaPath.getBounds()
             if (dataBounds.isEmpty) {
                 dataBounds = Rect(dataBounds.center, 5f)
             }
@@ -361,14 +361,14 @@ class HandwritingController internal constructor(
             if (hitBounds.overlaps(dataBounds)) {
 
                 val pathWithOp = Path().apply {
-                    this.op(data.deformationPath, hitPath, PathOperation.Intersect)
+                    this.op(data.hitAreaPath, hitPath, PathOperation.Intersect)
                 }
 
                 val isIntersect = pathWithOp.isEmpty.not()
                 if (isIntersect) {
                     return HitResult(
                         isHit = true,
-                        data = data
+                        path = data
                     )
                 }
 
@@ -378,17 +378,17 @@ class HandwritingController internal constructor(
 
         return HitResult(
             isHit = false,
-            data = null
+            path = null
         )
     }
 
-    fun addHandWritingData(data: HandwritingData) {
-        handwritingDataCollection.add(data)
+    fun addHandWritingData(data: HandwritingPath) {
+        handwritingPathCollection.add(data)
         updateRefreshTick()
     }
 
-    fun removeHandWritingData(data: HandwritingData) {
-        if (handwritingDataCollection.remove(data)) {
+    fun removeHandWritingData(data: HandwritingPath) {
+        if (handwritingPathCollection.remove(data)) {
             updateRefreshTick()
         }
     }
@@ -399,7 +399,7 @@ class HandwritingController internal constructor(
         execute(
             TranslateOperation(
                 controller = this@HandwritingController,
-                dataSet = mutableSetOf<HandwritingData>().apply {
+                dataSet = mutableSetOf<HandwritingPath>().apply {
                     addAll(selectedDataSet)
                 },
                 offset = translateOffset
@@ -410,7 +410,7 @@ class HandwritingController internal constructor(
     }
 
     fun clearAllHandWritingData() {
-        handwritingDataCollection.clear()
+        handwritingPathCollection.clear()
         updateRefreshTick()
     }
 
@@ -419,7 +419,7 @@ class HandwritingController internal constructor(
         selectedDataSet.clear()
     }
 
-    fun isDataSelected(data: HandwritingData): Boolean {
+    fun isDataSelected(data: HandwritingPath): Boolean {
         return selectedDataSet.find {
             it.id == data.id
         } != null
