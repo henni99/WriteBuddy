@@ -10,29 +10,45 @@ import androidx.compose.ui.graphics.Path
 import com.henni.handwriting.kmp.HandwritingController
 import com.henni.handwriting.kmp.extension.addDeformationPoint
 
-class PenTouchEvent constructor(
+/**
+ * A class representing the touch event handling for a pen tool. This class handles the touch interactions,
+ *
+ * @param controller The handwriting controller used to manage the drawing paths.
+ */
+
+internal class PenTouchEvent internal constructor(
     private val controller: HandwritingController
 ) : ToolTouchEvent {
 
-    private var penPath by mutableStateOf(Path())
+    // Stores the path that will be rendered on the canvas
+    private var renderedPenPath by mutableStateOf(Path())
 
-    private var deformationPenPath by mutableStateOf(Path())
+    // Stores the hit area path for touch detection purposes
+    private var hitAreaPath by mutableStateOf(Path())
 
+    // List of touch offsets to track the movement during drawing
     private val offsets = mutableListOf<Offset>()
+
+    override fun onTouchInitialize() {
+        renderedPenPath = Path()
+        hitAreaPath = Path()
+
+        offsets.clear()
+    }
 
     override fun onTouchStart(
         canvas: Canvas?,
         offset: Offset,
         paint: Paint,
     ) {
-        penPath = Path()
-        deformationPenPath = Path()
+        renderedPenPath = Path()
+        renderedPenPath.moveTo(offset.x, offset.y)
+
+        hitAreaPath = Path()
+        hitAreaPath.moveTo(offset.x, offset.y)
 
         offsets.clear()
-
         offsets.add(offset)
-        penPath.moveTo(offset.x, offset.y)
-        deformationPenPath.moveTo(offset.x, offset.y)
     }
 
     override fun onTouchMove(
@@ -41,19 +57,19 @@ class PenTouchEvent constructor(
         currentOffset: Offset,
         paint: Paint,
     ) {
-        penPath.quadraticBezierTo(
+        renderedPenPath.quadraticBezierTo(
             previousOffset.x,
             previousOffset.y,
             (currentOffset.x + previousOffset.x) / 2,
             (currentOffset.y + previousOffset.y) / 2
         )
-        deformationPenPath.quadraticBezierTo(
+        hitAreaPath.quadraticBezierTo(
             previousOffset.x,
             previousOffset.y,
             (currentOffset.x + previousOffset.x) / 2,
             (currentOffset.y + previousOffset.y) / 2
         )
-        deformationPenPath.addDeformationPoint(currentOffset)
+        hitAreaPath.addDeformationPoint(currentOffset)
 
         offsets.add(currentOffset)
     }
@@ -62,19 +78,12 @@ class PenTouchEvent constructor(
         canvas: Canvas?,
         paint: Paint,
     ) {
-        controller.addHandWritingPath(penPath, deformationPenPath, offsets)
-    }
-
-    override fun onTouchCancel() {
-        penPath = Path()
-        deformationPenPath = Path()
-
-        offsets.clear()
+        controller.addHandWritingPath(renderedPenPath, hitAreaPath, offsets)
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
         if(!isMultiTouch) {
-            canvas.drawPath(penPath, paint)
+            canvas.drawPath(renderedPenPath, paint)
         }
     }
 }

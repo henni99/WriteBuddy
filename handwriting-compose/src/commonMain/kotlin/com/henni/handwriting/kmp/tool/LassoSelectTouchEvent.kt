@@ -8,30 +8,44 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathOperation
 import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.model.defaultPenPaint
 
-class LassoSelectTouchEvent constructor(
+/**
+ * A class representing the touch event handling for the lasso selection tool.
+ * This class tracks touch interactions for selecting paths on the canvas by drawing a lasso path
+ * and allowing the user to select handwriting data enclosed by the lasso.
+ *
+ * @param controller The handwriting controller responsible for managing selection data.
+ */
+
+internal class LassoSelectTouchEvent internal constructor(
     private val controller: HandwritingController
-): ToolTouchEvent {
+) : ToolTouchEvent {
 
+    // Stores the path of the lasso selection
     private var lassoPath by mutableStateOf(Path())
 
+    // Flag to indicate whether the user performed a tap or a lasso selection
     private var isTap = true
 
-    private var firstPoint by mutableStateOf(Offset.Zero)
+    // Stores the first offset (starting point of the selection)
+    private var firstOffset by mutableStateOf(Offset.Zero)
+
+    override fun onTouchInitialize() {
+        lassoPath = Path()
+        isTap = true
+        firstOffset = Offset.Zero
+    }
 
     override fun onTouchStart(
         canvas: Canvas?,
         offset: Offset,
         paint: Paint,
     ) {
-        println("LassoSelectTouchEvent onTouchStart ${offset}")
         isTap = true
         lassoPath = Path()
         lassoPath.moveTo(offset.x, offset.y)
-        firstPoint = offset
+        firstOffset = offset
     }
 
     override fun onTouchMove(
@@ -40,13 +54,13 @@ class LassoSelectTouchEvent constructor(
         currentOffset: Offset,
         paint: Paint,
     ) {
-        firstPoint = Offset.Zero
+        firstOffset = Offset.Zero
         isTap = false
-        if(lassoPath.isEmpty) {
-            lassoPath.moveTo(currentOffset.x, currentOffset.y )
+
+        if (lassoPath.isEmpty) {
+            lassoPath.moveTo(currentOffset.x, currentOffset.y)
         }
 
-        println("LassoSelectTouchEvent onTouchMove ${previousOffset} ${currentOffset}")
         lassoPath.quadraticBezierTo(
             previousOffset.x,
             previousOffset.y,
@@ -59,11 +73,10 @@ class LassoSelectTouchEvent constructor(
         canvas: Canvas?,
         paint: Paint,
     ) {
-        println("LassoSelectTouchEvent onTouchEnd ")
-        if(isTap) {
+        if (isTap) {
             lassoPath.addOval(
                 Rect(
-                    center = firstPoint,
+                    center = firstOffset,
                     radius = 10f
                 )
             )
@@ -74,52 +87,27 @@ class LassoSelectTouchEvent constructor(
         )
     }
 
-    override fun onTouchCancel() {
-        lassoPath = Path()
-        isTap = true
-        firstPoint = Offset.Zero
-    }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
 
-        if(!lassoPath.isEmpty && !isMultiTouch) {
-
+        if (!lassoPath.isEmpty && !isMultiTouch) {
             canvas.drawPath(lassoPath, paint)
         }
 
-        if(controller.lassoBoundBox.center != Offset.Zero && !controller.lassoBoundBox.isEmpty) {
+        val lassoBoundBox = controller.lassoBoundBox
+        val lassoBoundBoxPaint = controller.lassoBoundBoxPaint
+
+        if (lassoBoundBox.center != Offset.Zero && !lassoBoundBox.isEmpty) {
             canvas.drawRect(
-                controller.lassoBoundBox,
-                controller.lassoBoundBoxPaint
+                lassoBoundBox,
+                lassoBoundBoxPaint
             )
         }
-
-        println("onDrawIntoCanvas lassoSelect ${lassoPath.isEmpty}")
-        println("onDrawIntoCanvas lassoSelect ${controller.lassoBoundBox}")
 
         controller.selectedDataSet.forEach { data ->
             canvas.drawPath(data.renderedPath, data.paint)
         }
 
-        if(!isMultiTouch) {
-            println("onDrawIntoCanvas: ${controller.handwritingPathCollection.size}")
-            controller.handwritingPathCollection.forEach { data ->
-
-                val dataPath = Path().apply {
-                    addPath(data.renderedPath)
-                }
-
-                val pathWithOp = Path().apply {
-                    this.op(dataPath, lassoPath, PathOperation.Intersect)
-                }
-
-                if (controller.isSelectedDataHighlight) {
-                    canvas.drawPath(pathWithOp, defaultPenPaint().apply {
-                        this.color = controller.selectedDataHighlightColor
-                    })
-                }
-            }
-        }
 
     }
 }

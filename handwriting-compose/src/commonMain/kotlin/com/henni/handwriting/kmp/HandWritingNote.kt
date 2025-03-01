@@ -179,7 +179,7 @@ fun HandWritingNote(
 
                         },
                         onGestureCancel = {
-                            controller.currentTouchEvent.onTouchCancel()
+                            controller.currentTouchEvent.onTouchInitialize()
                             invalidatorTick.updateTick()
                         }
                     )

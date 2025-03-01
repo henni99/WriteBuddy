@@ -462,7 +462,7 @@ class HandwritingController internal constructor(
             redoOperations.add(operation)
         }
 
-        currentTouchEvent.onTouchCancel()
+        currentTouchEvent.onTouchInitialize()
 
         initializeSelection()
         updateRefreshTick()
@@ -476,7 +476,7 @@ class HandwritingController internal constructor(
             undoOperations.add(operation)
         }
 
-        currentTouchEvent.onTouchCancel()
+        currentTouchEvent.onTouchInitialize()
 
         initializeSelection()
         updateRefreshTick()

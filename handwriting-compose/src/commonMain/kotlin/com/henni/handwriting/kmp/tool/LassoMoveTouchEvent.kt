@@ -8,19 +8,31 @@ import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
 import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.model.ToolMode
 import com.henni.handwriting.kmp.extension.updateTick
+import com.henni.handwriting.kmp.model.ToolMode
 
-class LassoMoveTouchEvent constructor(
+/**
+ * A class representing the touch event handling for moving a lasso-bound selection.
+ * This allows the user to drag and move the lasso bounding box and the selected handwriting data within it.
+ * The controller is responsible for managing the state of the handwriting data and the lasso selection.
+ *
+ * @param controller The handwriting controller responsible for managing selection and transformation of data.
+ */
+
+internal class LassoMoveTouchEvent internal constructor(
     private val controller: HandwritingController
 ) : ToolTouchEvent {
 
-    private var canSelectBoxMoved by mutableStateOf(false)
+    // Flag to determine if the lasso bounding box can be moved
+    private var isLassoBoundBoxMovable by mutableStateOf(false)
 
+    // Stores the initial touch position
     private var firstOffset by mutableStateOf(Offset.Zero)
 
-    private var offset by mutableStateOf(Offset.Zero)
+    // Tracks the current offset during the touch interaction
+    private var currentOffset by mutableStateOf(Offset.Zero)
 
+    // Transformation matrix used to apply translations to the bounding box and selected data
     private var transformMatrix by mutableStateOf(Matrix())
 
     override fun onTouchStart(
@@ -28,10 +40,9 @@ class LassoMoveTouchEvent constructor(
         offset: Offset,
         paint: Paint,
     ) {
-        println("LassoMoveTouchEvent onTouchStart: ${controller.lassoBoundBox} ${controller.lassoBoundBox.contains(offset)}")
-        canSelectBoxMoved = true
+        isLassoBoundBoxMovable = true
         firstOffset = offset
-        this.offset = offset
+        this.currentOffset = offset
 
         if (controller.lassoBoundBox.contains(offset)) {
             controller.refreshTick.updateTick()
@@ -46,7 +57,7 @@ class LassoMoveTouchEvent constructor(
         currentOffset: Offset,
         paint: Paint,
     ) {
-        if (canSelectBoxMoved) {
+        if (isLassoBoundBoxMovable) {
 
             transformMatrix.reset()
             transformMatrix.translate(
@@ -54,7 +65,7 @@ class LassoMoveTouchEvent constructor(
                 currentOffset.y - previousOffset.y
             )
 
-            offset = currentOffset
+            this.currentOffset = currentOffset
 
             controller.transformlassoBoundBox(transformMatrix)
             controller.selectedDataSet.forEach { data ->
@@ -69,30 +80,37 @@ class LassoMoveTouchEvent constructor(
         paint: Paint,
     ) {
 
+        val translateX = currentOffset.x - firstOffset.x
+        val translateY = currentOffset.y - firstOffset.y
+
         controller.translateHandWritingDataSet(
             translateOffset = Offset(
-                x = offset.x - firstOffset.x,
-                y = offset.y - firstOffset.y
+                x = translateX,
+                y = translateY
             )
         )
 
         firstOffset = Offset.Zero
-        offset = Offset.Zero
+        currentOffset = Offset.Zero
         controller.refreshTick.updateTick()
     }
 
-    override fun onTouchCancel() {
-        canSelectBoxMoved = false
+    override fun onTouchInitialize() {
+        isLassoBoundBoxMovable = false
         firstOffset = Offset.Zero
-        offset =  Offset.Zero
+        currentOffset =  Offset.Zero
         transformMatrix = Matrix()
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
-        if(controller.lassoBoundBox.center != Offset.Zero) {
+
+        val lassoBoundBox = controller.lassoBoundBox
+        val lassoBoundBoxPaint = controller.lassoBoundBoxPaint
+
+        if(lassoBoundBox.center != Offset.Zero) {
             canvas.drawRect(
-                controller.lassoBoundBox,
-                controller.lassoBoundBoxPaint
+                lassoBoundBox,
+                lassoBoundBoxPaint
             )
         }
 

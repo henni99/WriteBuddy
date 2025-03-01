@@ -10,14 +10,26 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import com.henni.handwriting.kmp.HandwritingController
 
-class StrokeEraserTouchEvent constructor(
-    private val controller: HandwritingController
+/**
+ * A class representing the touch event handling for the eraser tool. This class handles the touch interactions,
+ *
+ * @param controller The handwriting controller used to manage the eraser functionality.
+ */
 
+internal class StrokeEraserTouchEvent internal constructor(
+    private val controller: HandwritingController
 ): ToolTouchEvent {
 
+    // Stores the eraser path to mark areas to erase
     private var eraserPath by mutableStateOf(Path())
 
-    private var eraserOffset by mutableStateOf(Offset.Zero)
+    // Stores the current offset (position) of the eraser
+    private var currentOffset by mutableStateOf(Offset.Zero)
+
+    override fun onTouchInitialize() {
+        eraserPath = Path()
+        currentOffset = Offset.Zero
+    }
 
     override fun onTouchStart(
         canvas: Canvas?,
@@ -25,7 +37,7 @@ class StrokeEraserTouchEvent constructor(
         paint: Paint,
     ) {
         eraserPath = Path()
-        eraserOffset = offset
+        currentOffset = offset
     }
 
     override fun onTouchMove(
@@ -34,13 +46,15 @@ class StrokeEraserTouchEvent constructor(
         currentOffset: Offset,
         paint: Paint,
     ) {
-        eraserOffset = currentOffset
+        val radius = controller.eraserPointRadius
+
+        this.currentOffset = currentOffset
         eraserPath.addOval(
             Rect(
-                eraserOffset.x - controller.eraserPointRadius,
-                eraserOffset.y - controller.eraserPointRadius,
-                eraserOffset.x + controller.eraserPointRadius,
-                eraserOffset.y + controller.eraserPointRadius
+                currentOffset.x - radius,
+                currentOffset.y - radius,
+                currentOffset.x + radius,
+                currentOffset.y + radius
             )
         )
         controller.removeHandWritingPath(eraserPath)
@@ -50,20 +64,14 @@ class StrokeEraserTouchEvent constructor(
         canvas: Canvas?,
         paint: Paint,
     ) {
-        eraserPath.reset()
-        eraserOffset = Offset.Zero
-    }
-
-    override fun onTouchCancel() {
         eraserPath = Path()
-        eraserOffset = Offset.Zero
+        currentOffset = Offset.Zero
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
-
-        if (!isMultiTouch && eraserOffset != Offset.Zero && controller.isEraserPointShowed) {
+        if (!isMultiTouch && currentOffset != Offset.Zero && controller.isEraserPointShowed) {
             canvas.drawCircle(
-                eraserOffset,
+                currentOffset,
                 controller.eraserPointRadius,
                 paint
             )
