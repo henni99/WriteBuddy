@@ -44,6 +44,13 @@ import com.henni.handwriting.kmp.tool.StrokeEraserTouchEvent
 import com.henni.handwriting.kmp.tool.ToolTouchEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 
+/**
+ * Creates and remembers an instance of [HandwritingController].
+ * This ensures that the controller instance persists across recompositions.
+ *
+ * @param block A lambda function that allows customization of the controller upon initialization.
+ * @return A remembered instance of [HandwritingController].
+ */
 @Composable
 fun rememberHandwritingController(
     block: HandwritingController.() -> Unit
@@ -67,40 +74,94 @@ class HandwritingController {
      */
     val refreshTick = MutableStateFlow<Int>(0)
 
+    // ==============================
+    // Pen-related properties
+    // ==============================
+
     /**
-     * Pen-related properties and settings
+     * The paint settings for the pen tool.
      */
     var penPaint by mutableStateOf(defaultPenPaint())
 
+    // ==============================
+    // Eraser-related properties
+    // ==============================
+
     /**
-     * Eraser-related properties and settings
+     * The paint settings for the eraser tool.
      */
     var eraserPaint by mutableStateOf(defaultStrokeEraserPaint())
+
+    /**
+     * The radius of the eraser point.
+     */
     var eraserPointRadius by mutableStateOf(20f)
+
+    /**
+     * Determines whether the eraser point is visible.
+     */
     var isEraserPointShowed by mutableStateOf(true)
 
+    // ==============================
+    // Lasso selection properties
+    // ==============================
+
     /**
-     * Lasso selection properties and settings
+     * The paint settings for the lasso selection tool.
      */
     var lassoPaint by mutableStateOf(lassoDefaultPaint())
+
+    /**
+     * The bounding box representing the selected area during lasso selection.
+     */
     var lassoBoundBox by mutableStateOf(Rect.Zero)
+
+    /**
+     * The paint settings for the lasso bounding box.
+     */
     var lassoBoundBoxPaint by mutableStateOf(lassoDefaultPaint())
+
+    /**
+     * The padding applied to the lasso bounding box.
+     */
     var lassoBoundBoxPadding by mutableStateOf(Padding.Zero)
 
+    // ==============================
+    // Current tool-related properties
+    // ==============================
+
     /**
-     * Current tool-related properties
+     * The currently active paint settings (pen or eraser).
      */
     var currentPaint by mutableStateOf(penPaint)
-    var currentTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
-    val currentPointerType: MutableState<PointerType> = mutableStateOf(PointerType.Touch)
-    var contentBackground by mutableStateOf(Color.Red)
-    var isZoomable by mutableStateOf(true)
 
     /**
-     * Collections to store paths and selected paths
+     * The current touch event handler based on the selected tool.
      */
+    var currentTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
 
+    /**
+     * The background color of the handwriting canvas.
+     */
+    var contentBackground by mutableStateOf(Color.Red)
+
+    /**
+     * Determines whether zooming is enabled for the canvas.
+     */
+    var isZoomable by mutableStateOf(true)
+
+    // ==============================
+    // Path storage collections
+    // ==============================
+
+    /**
+     * A collection of all handwriting paths on the canvas.
+     */
     val handwritingPaths = ArrayDeque<HandwritingPath>()
+
+    /**
+     * A set of currently selected handwriting paths.
+     */
     val selectedHandwritingPaths = mutableSetOf<HandwritingPath>()
 
 

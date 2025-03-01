@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.dokka)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.maven.publish)
 }
@@ -132,3 +133,17 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
+
+dokka {
+    dokkaSourceSets.commonMain {
+        enableAndroidDocumentationLink = true
+    }
+    pluginsConfiguration.html {
+        moduleVersion = rootProject.properties["VERSION_NAME"]!!.toString()
+    }
+    dokkaPublications.html {
+        outputDirectory = file("$rootDir/docs")
+    }
+}
+
+
