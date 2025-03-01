@@ -62,3 +62,6 @@ replay_pid*
 .kotlin/
 
 .DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
