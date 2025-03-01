@@ -53,30 +53,26 @@ fun ColorPicker(
 
 fun defaultColorList(): List<Color> {
     return listOf(
-        Color(0xFFf8130d),
-        Color(0xFFb8070d),
-        Color(0xFF7a000b),
-        Color(0xFFff7900),
-        Color(0xFFfff8b3),
-        Color(0xFFfcf721),
-        Color(0xFFf8df09),
-        Color(0xFF8a3a00),
-        Color(0xFFc0dc18),
-        Color(0xFF88dd20),
-        Color(0xFF07ddc3),
-        Color(0xFF01a0a3),
-        Color(0xFF59cbf0),
-        Color(0xFF005FFF),
-        Color(0xFF022b6d),
-        Color(0xFFfa64e1),
-        Color(0xFFfc50a6),
-        Color(0xFFd7036a),
-        Color(0xFFdb94fe),
-        Color(0xFFb035f8),
-        Color(0xFF7b2bec),
-        Color(0xFFb0aaae),
-        Color(0xFF768484),
-        Color(0xFF333333),
-        Color(0xFF0a0c0b),
+        Color(0xFFff6b6b),  // Soft red
+        Color(0xFFff4f4f),  // Intense red
+        Color(0xFFc0392b),  // Dark red
+        Color(0xFFff914d),  // Warm orange
+        Color(0xFFf3e76e),  // Light yellow
+        Color(0xFFf1c40f),  // Bright yellow
+        Color(0xFFf39c12),  // Medium yellow
+        Color(0xFFd35400),  // Deep orange
+        Color(0xFF2ecc71),  // Fresh green
+        Color(0xFF27ae60),  // Dark green
+        Color(0xFF1abc9c),  // Teal
+        Color(0xFF16a085),  // Dark teal
+        Color(0xFF3498db),  // Light blue
+        Color(0xFF2980b9),  // Dark blue
+        Color(0xFF8e44ad),  // Purple
+        Color(0xFF9b59b6),  // Lavender
+        Color(0xFFdcdcdc),  // Light gray
+        Color(0xFF95a5a6),  // Medium gray
+        Color(0xFF7f8c8d),  // Dark gray
+        Color(0xFF34495e),  // Dark teal
+        Color(0xFF2c3e50)   // Deep blue
     )
 }

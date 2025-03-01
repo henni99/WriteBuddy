@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -72,7 +73,7 @@ fun HandWritingNote(
 
     val coroutineScope = rememberCoroutineScope()
 
-    SideEffect {
+    LaunchedEffect(Unit) {
         coroutineScope.launch(Dispatchers.Main) {
             controller.refreshTick.collect {
 
