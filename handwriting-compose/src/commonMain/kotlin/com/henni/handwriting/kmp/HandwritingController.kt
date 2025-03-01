@@ -19,12 +19,12 @@ import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.util.fastForEachReversed
-import com.henni.handwriting.kmp.ext.addPadding
-import com.henni.handwriting.kmp.ext.contains
-import com.henni.handwriting.kmp.ext.overlaps
-import com.henni.handwriting.kmp.ext.translate
-import com.henni.handwriting.kmp.ext.unions
-import com.henni.handwriting.kmp.ext.updateTick
+import com.henni.handwriting.kmp.extension.addPadding
+import com.henni.handwriting.kmp.extension.contains
+import com.henni.handwriting.kmp.extension.overlaps
+import com.henni.handwriting.kmp.extension.translate
+import com.henni.handwriting.kmp.extension.unions
+import com.henni.handwriting.kmp.extension.updateTick
 import com.henni.handwriting.kmp.model.HandwritingPath
 import com.henni.handwriting.kmp.model.HitResult
 import com.henni.handwriting.kmp.model.Padding
@@ -69,7 +69,7 @@ class HandwritingController internal constructor(
 
     var currentPaint by mutableStateOf(penPaint)
 
-    var selectedBoundBoxPaint by mutableStateOf(lassoDefaultPaint())
+    var lassoBoundBoxPaint by mutableStateOf(lassoDefaultPaint())
 
     var contentBackground by mutableStateOf(Color.Red)
 
@@ -124,9 +124,9 @@ class HandwritingController internal constructor(
     }
 
 
-    var selectedBoundBox by mutableStateOf(Rect.Zero)
+    var lassoBoundBox by mutableStateOf(Rect.Zero)
 
-    var selectedBoundBoxPadding by mutableStateOf(Padding.Zero)
+    var lassoBoundBoxPadding by mutableStateOf(Padding.Zero)
 
     var isSelectedDataHighlight by mutableStateOf(true)
 
@@ -171,17 +171,17 @@ class HandwritingController internal constructor(
 
     /** Sets a lasso stroke width to the [lassoPaint]. */
     fun setSelectedBoxStrokeWidth(width: Float) {
-        selectedBoundBoxPaint.strokeWidth = width
+        lassoBoundBoxPaint.strokeWidth = width
     }
 
     /** Sets a lasso color to the [lassoPaint]. */
     fun setSelectedBoxColor(color: Color) {
-        selectedBoundBoxPaint.color = color
+        lassoBoundBoxPaint.color = color
     }
 
     /** Sets a lasso color to the [lassoPaint]. */
     fun setSelectedBoxPadding(padding: Padding) {
-        selectedBoundBoxPadding = padding
+        lassoBoundBoxPadding = padding
     }
 
 
@@ -226,8 +226,8 @@ class HandwritingController internal constructor(
     }
 
 
-    fun transformSelectedBoundBox(matrix: Matrix) {
-        selectedBoundBox = selectedBoundBox.translate(matrix)
+    fun transformlassoBoundBox(matrix: Matrix) {
+        lassoBoundBox = lassoBoundBox.translate(matrix)
     }
 
     fun setToolMode(toolMode: ToolMode) {
@@ -267,7 +267,7 @@ class HandwritingController internal constructor(
         execute(
             InsertOperation(
                 controller = this@HandwritingController,
-                data = HandwritingPath(
+                path = HandwritingPath(
                     renderedPath = path,
                     hitAreaPath = deformationPath,
                     initialPoints = points,
@@ -285,7 +285,7 @@ class HandwritingController internal constructor(
                 execute(
                     RemoveOperation(
                         controller = this@HandwritingController,
-                        data = it
+                        path = it
                     )
                 )
             }
@@ -335,10 +335,10 @@ class HandwritingController internal constructor(
         if (tempSelectedDataSet.isNotEmpty()) {
             selectedDataSet.clear()
             selectedDataSet.addAll(tempSelectedDataSet)
-            selectedBoundBox = tempRect.addPadding(selectedBoundBoxPadding)
+            lassoBoundBox = tempRect.addPadding(lassoBoundBoxPadding)
             currentTouchEvent = LassoMoveTouchEvent(this)
         } else {
-            selectedBoundBox = Rect.Zero
+            lassoBoundBox = Rect.Zero
             currentTouchEvent = LassoSelectTouchEvent(this)
         }
 
@@ -382,13 +382,13 @@ class HandwritingController internal constructor(
         )
     }
 
-    fun addHandWritingData(data: HandwritingPath) {
-        handwritingPathCollection.add(data)
+    fun addHandWritingPath(path: HandwritingPath) {
+        handwritingPathCollection.add(path)
         updateRefreshTick()
     }
 
-    fun removeHandWritingData(data: HandwritingPath) {
-        if (handwritingPathCollection.remove(data)) {
+    fun removeHandWritingPath(path: HandwritingPath) {
+        if (handwritingPathCollection.remove(path)) {
             updateRefreshTick()
         }
     }
@@ -399,9 +399,7 @@ class HandwritingController internal constructor(
         execute(
             TranslateOperation(
                 controller = this@HandwritingController,
-                dataSet = mutableSetOf<HandwritingPath>().apply {
-                    addAll(selectedDataSet)
-                },
+                paths = selectedDataSet.toMutableSet(),
                 offset = translateOffset
             )
         )
@@ -415,7 +413,7 @@ class HandwritingController internal constructor(
     }
 
     private fun initializeSelection() {
-        selectedBoundBox = Rect.Zero
+        lassoBoundBox = Rect.Zero
         selectedDataSet.clear()
     }
 

@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
 import com.henni.handwriting.kmp.HandwritingController
 import com.henni.handwriting.kmp.model.ToolMode
-import com.henni.handwriting.kmp.ext.updateTick
+import com.henni.handwriting.kmp.extension.updateTick
 
 class LassoMoveTouchEvent constructor(
     private val controller: HandwritingController
@@ -28,12 +28,12 @@ class LassoMoveTouchEvent constructor(
         offset: Offset,
         paint: Paint,
     ) {
-        println("LassoMoveTouchEvent onTouchStart: ${controller.selectedBoundBox} ${controller.selectedBoundBox.contains(offset)}")
+        println("LassoMoveTouchEvent onTouchStart: ${controller.lassoBoundBox} ${controller.lassoBoundBox.contains(offset)}")
         canSelectBoxMoved = true
         firstOffset = offset
         this.offset = offset
 
-        if (controller.selectedBoundBox.contains(offset)) {
+        if (controller.lassoBoundBox.contains(offset)) {
             controller.refreshTick.updateTick()
         } else {
             controller.setToolMode(ToolMode.LassoSelectMode)
@@ -56,7 +56,7 @@ class LassoMoveTouchEvent constructor(
 
             offset = currentOffset
 
-            controller.transformSelectedBoundBox(transformMatrix)
+            controller.transformlassoBoundBox(transformMatrix)
             controller.selectedDataSet.forEach { data ->
                 data.renderedPath.transform(transformMatrix)
                 data.hitAreaPath.transform(transformMatrix)
@@ -89,10 +89,10 @@ class LassoMoveTouchEvent constructor(
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
-        if(controller.selectedBoundBox.center != Offset.Zero) {
+        if(controller.lassoBoundBox.center != Offset.Zero) {
             canvas.drawRect(
-                controller.selectedBoundBox,
-                controller.selectedBoundBoxPaint
+                controller.lassoBoundBox,
+                controller.lassoBoundBoxPaint
             )
         }
 

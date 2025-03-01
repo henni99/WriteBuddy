@@ -1,10 +1,12 @@
 package com.henni.handwriting.kmp.tool
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 
+@Stable
 interface ToolTouchEvent {
 
     fun onTouchStart(

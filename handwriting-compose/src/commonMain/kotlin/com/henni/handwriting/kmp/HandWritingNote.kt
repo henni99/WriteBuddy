@@ -26,9 +26,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
-import com.henni.handwriting.kmp.ext.detectTransformGestures
-import com.henni.handwriting.kmp.ext.getBitmap
-import com.henni.handwriting.kmp.ext.updateTick
+import com.henni.handwriting.kmp.extension.detectTransformGestures
+import com.henni.handwriting.kmp.extension.getBitmap
+import com.henni.handwriting.kmp.extension.updateTick
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -127,7 +127,7 @@ fun HandWritingNote(
 
                             invalidatorTick.updateTick()
                         },
-                        onGesture = { zoomChange: Float, panChange: Offset, change: PointerInputChange, _: Offset, isMultiTouch: Boolean ->
+                        onGesture = { zoomChange: Float, panChange: Offset, change: PointerInputChange, isMultiTouch: Boolean ->
                             println("detectDragGestures: onGesture ${change.position} ${change.previousPosition}")
                             println("isMultiTouch :${isMultiTouch}")
 

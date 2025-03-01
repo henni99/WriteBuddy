@@ -87,15 +87,15 @@ class LassoSelectTouchEvent constructor(
             canvas.drawPath(lassoPath, paint)
         }
 
-        if(controller.selectedBoundBox.center != Offset.Zero && !controller.selectedBoundBox.isEmpty) {
+        if(controller.lassoBoundBox.center != Offset.Zero && !controller.lassoBoundBox.isEmpty) {
             canvas.drawRect(
-                controller.selectedBoundBox,
-                controller.selectedBoundBoxPaint
+                controller.lassoBoundBox,
+                controller.lassoBoundBoxPaint
             )
         }
 
         println("onDrawIntoCanvas lassoSelect ${lassoPath.isEmpty}")
-        println("onDrawIntoCanvas lassoSelect ${controller.selectedBoundBox}")
+        println("onDrawIntoCanvas lassoSelect ${controller.lassoBoundBox}")
 
         controller.selectedDataSet.forEach { data ->
             canvas.drawPath(data.renderedPath, data.paint)
