@@ -2,6 +2,7 @@ package com.henni.handwriting.kmp
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +59,7 @@ fun rememberHandwritingController(
  * the state for various elements like strokes, selected paths, and the lasso area.
  */
 
+@Stable
 class HandwritingController {
 
     /**
