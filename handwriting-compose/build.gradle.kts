@@ -112,7 +112,7 @@ kotlin {
 
 android {
     namespace = "com.henni.handwriting"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 21

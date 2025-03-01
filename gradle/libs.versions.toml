@@ -1,12 +1,12 @@
 [versions]
-agp = "8.3.0"
-kotlin = "2.1.0"
-coreKtx = "1.13.1"
+agp = "8.3.2"
+kotlin = "2.1.10"
+coreKtx = "1.15.0"
 kotlinxCoroutinesSwing = "1.10.1"
-lifecycleRuntimeKtx = "2.8.2"
-activityCompose = "1.9.0"
-compose-plugin = "1.6.11"
-maven-publish="0.28.0"
+lifecycleRuntimeKtx = "2.8.7"
+activityCompose = "1.10.1"
+compose-plugin = "1.7.3"
+maven-publish="0.30.0"
 dokka = "2.0.0"
 
 [libraries]
