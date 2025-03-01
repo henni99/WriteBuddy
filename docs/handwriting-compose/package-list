@@ -57,7 +57,6 @@ $dokka.location:com.henni.handwriting.kmp/HandwritingController/canUndo/#/Pointi
 $dokka.location:com.henni.handwriting.kmp/HandwritingController/clearAllHandWritingPaths/#/PointingToDeclaration/handwriting-compose/com.henni.handwriting.kmp/-handwriting-controller/clear-all-hand-writing-paths.html
 $dokka.location:com.henni.handwriting.kmp/HandwritingController/contentBackground/#/PointingToDeclaration/handwriting-compose/com.henni.handwriting.kmp/-handwriting-controller/content-background.html
 $dokka.location:com.henni.handwriting.kmp/HandwritingController/currentPaint/#/PointingToDeclaration/handwriting-compose/com.henni.handwriting.kmp/-handwriting-controller/current-paint.html
-$dokka.location:com.henni.handwriting.kmp/HandwritingController/currentPointerType/#/PointingToDeclaration/handwriting-compose/com.henni.handwriting.kmp/-handwriting-controller/current-pointer-type.html
 $dokka.location:com.henni.handwriting.kmp/HandwritingController/currentTouchEvent/#/PointingToDeclaration/handwriting-compose/com.henni.handwriting.kmp/-handwriting-controller/current-touch-event.html
 $dokka.location:com.henni.handwriting.kmp/HandwritingController/eraserPaint/#/PointingToDeclaration/handwriting-compose/com.henni.handwriting.kmp/-handwriting-controller/eraser-paint.html
 $dokka.location:com.henni.handwriting.kmp/HandwritingController/eraserPointRadius/#/PointingToDeclaration/handwriting-compose/com.henni.handwriting.kmp/-handwriting-controller/eraser-point-radius.html
