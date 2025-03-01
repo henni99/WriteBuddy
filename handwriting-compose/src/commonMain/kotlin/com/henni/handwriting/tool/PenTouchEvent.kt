@@ -57,13 +57,13 @@ internal class PenTouchEvent internal constructor(
         currentOffset: Offset,
         paint: Paint,
     ) {
-        renderedPenPath.quadraticBezierTo(
+        renderedPenPath.quadraticTo(
             previousOffset.x,
             previousOffset.y,
             (currentOffset.x + previousOffset.x) / 2,
             (currentOffset.y + previousOffset.y) / 2
         )
-        hitAreaPath.quadraticBezierTo(
+        hitAreaPath.quadraticTo(
             previousOffset.x,
             previousOffset.y,
             (currentOffset.x + previousOffset.x) / 2,
