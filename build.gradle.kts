@@ -7,5 +7,9 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.vanniktech.maven.publish) apply false
-    alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.dokka)
+}
+
+tasks.withType<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>().configureEach {
+    outputDirectory.set(file("$rootDir/docs/kdoc"))
 }

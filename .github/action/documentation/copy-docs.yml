@@ -1,0 +1,44 @@
+name: 'Copy docs from my-library to my-library-docs'
+runs:
+  using: "composite"
+  steps:
+    - name: Generate documentation
+      shell: bash
+      run: |
+        ./gradlew :dokkaHtml
+
+    - name: Clone public repo
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+        repository: your-org/my-library-docs
+        path: docs
+        token: ${{ inputs.token }}
+        fetch-depth: 0
+
+    - name: Copy files from my-library to public repo
+      shell: bash
+      run: |
+        cp -r build/dokka/html docs
+
+    - name: Commit files
+      shell: bash
+      run: |
+        cd docs
+        git config --local user.email "ansehoon1999@gmail.com"
+        git config --local user.name "henni"
+        git add html
+        git commit -a -m "Update docs"
+
+    - name: Push the generated HTML to the public repo
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ inputs.token }}
+        repository: your-org/my-library-docs
+        directory: docs
+        force: true
+
+inputs:
+  token:
+    description: 'SSH private key for pushing to my-library-docs repo'
+    required: true
