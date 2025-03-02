@@ -10,43 +10,45 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.dokka)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.vanniktech.maven.publish)
 }
-mavenPublishing{
-    coordinates(
-//        groupId = "io.github.ehsannarmani",
-//        artifactId = "compose-charts",
-//        version = "0.1.0"
-    )
-    pom{
-//        name.set("Compose Charts")
-//        description.set("")
-//        inceptionYear.set("2024")
-//        url.set("")
-//
-//        licenses {
-//            license {
-//                name.set("MIT")
-//                url.set("https://opensource.org/licenses/MIT")
-//            }
-//        }
 
-        // Specify developers information
+mavenPublishing{
+
+
+    coordinates("io.github.henni99", "handwriting", "1.0.1")
+
+    pom {
+        name = "HandWriting"
+        description = "https://github.com/henni99/handwriting"
+        url = "https://github.com/henni99/handwriting"
+        inceptionYear = "2025"
+
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
         developers {
             developer {
-//                id.set("ehsannarmani")
-//                name.set("Ehsan Narmani")
-//                email.set("ehsan.enk.narmani@gmail.com")
+                id = "henni99"
+                name = "henni"
+                email = "ansehoon1999@gmail.com"
             }
         }
 
-        // Specify SCM information
         scm {
-//            url.set("https://github.com/ehsannarmani/ComposeCharts")
+            url.set("https://github.com/henni99/Handwriting")
+            connection.set("scm:git:git://github.com/henni99/Handwriting.git")
+            developerConnection.set("scm:git:ssh://git@github.com/henni99/Handwriting.git")
         }
     }
+
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
+
+
 }
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -112,10 +114,10 @@ kotlin {
 
 android {
     namespace = "com.henni.handwriting"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -139,7 +141,7 @@ dokka {
         enableAndroidDocumentationLink = true
     }
     pluginsConfiguration.html {
-        moduleVersion = rootProject.properties["VERSION_NAME"]!!.toString()
+        moduleVersion = "1.0.0"
     }
     dokkaPublications.html {
         outputDirectory = file("$rootDir/docs")
