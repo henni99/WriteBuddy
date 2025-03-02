@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.extension
+package com.henni.handwriting.extension
 
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown

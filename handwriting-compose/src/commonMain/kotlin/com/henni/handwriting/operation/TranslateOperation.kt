@@ -1,8 +1,8 @@
-package com.henni.handwriting.kmp.operation
+package com.henni.handwriting.operation
 
 import androidx.compose.ui.geometry.Offset
-import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.model.HandwritingPath
+import com.henni.handwriting.HandwritingController
+import com.henni.handwriting.model.HandwritingPath
 
 /**
  * [TranslateOperation] represents the operation of translating (moving) a set of handwriting paths by a specified offset.

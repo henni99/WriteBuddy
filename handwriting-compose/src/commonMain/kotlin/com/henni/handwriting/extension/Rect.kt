@@ -1,8 +1,8 @@
-package com.henni.handwriting.kmp.extension
+package com.henni.handwriting.extension
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Matrix
-import com.henni.handwriting.kmp.model.Padding
+import com.henni.handwriting.model.Padding
 
 /**
  * Checks if this rectangle contains another rectangle.

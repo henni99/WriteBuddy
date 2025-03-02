@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.tool
+package com.henni.handwriting.tool
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +8,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
-import com.henni.handwriting.kmp.HandwritingController
+import com.henni.handwriting.HandwritingController
 
 /**
  * A class representing the touch event handling for the eraser tool. This class handles the touch interactions,

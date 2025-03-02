@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.model
+package com.henni.handwriting.model
 
 /**
  * Enum class representing different writing modes.

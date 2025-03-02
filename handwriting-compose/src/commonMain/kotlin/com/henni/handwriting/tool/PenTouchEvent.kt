@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.tool
+package com.henni.handwriting.tool
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,8 +7,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
-import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.extension.addDeformationPoint
+import com.henni.handwriting.HandwritingController
+import com.henni.handwriting.extension.addDeformationPoint
 
 /**
  * A class representing the touch event handling for a pen tool. This class handles the touch interactions,

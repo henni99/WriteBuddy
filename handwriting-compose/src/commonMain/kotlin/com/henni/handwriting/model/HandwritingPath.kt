@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.model
+package com.henni.handwriting.model
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset

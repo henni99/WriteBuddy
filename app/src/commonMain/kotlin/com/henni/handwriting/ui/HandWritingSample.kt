@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.unit.dp
-import com.henni.handwriting.kmp.HandWritingNote
-import com.henni.handwriting.kmp.model.Padding
-import com.henni.handwriting.kmp.model.ToolMode
-import com.henni.handwriting.kmp.rememberHandwritingController
+import com.henni.handwriting.HandWritingNote
+import com.henni.handwriting.model.Padding
+import com.henni.handwriting.model.ToolMode
+import com.henni.handwriting.rememberHandwritingController
 
 @Composable
 fun HandWritingSample() {

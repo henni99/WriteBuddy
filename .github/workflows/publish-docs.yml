@@ -1,0 +1,25 @@
+name: Publish docs
+
+on:
+  push:
+    - main
+jobs:
+  deploy_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Generate docs
+        run: ./gradlew dokkaGeneratePublicationHtml
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          publish_dir: ./docs

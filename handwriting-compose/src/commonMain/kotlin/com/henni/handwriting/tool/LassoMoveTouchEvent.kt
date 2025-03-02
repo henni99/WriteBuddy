@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.tool
+package com.henni.handwriting.tool
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -7,10 +7,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
-import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.extension.translate
-import com.henni.handwriting.kmp.extension.updateTick
-import com.henni.handwriting.kmp.model.ToolMode
+import com.henni.handwriting.HandwritingController
+import com.henni.handwriting.extension.translate
+import com.henni.handwriting.extension.updateTick
+import com.henni.handwriting.model.ToolMode
 
 /**
  * A class representing the touch event handling for moving a lasso-bound selection.

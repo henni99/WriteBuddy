@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.model
+package com.henni.handwriting.model
 
 /**
  * ToolMode represents the different modes available for user interaction.

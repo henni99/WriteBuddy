@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp
+package com.henni.handwriting
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,16 +21,15 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.util.fastForEach
-import com.henni.handwriting.kmp.extension.detectTransformGestures
-import com.henni.handwriting.kmp.extension.findId
-import com.henni.handwriting.kmp.extension.getBitmap
-import com.henni.handwriting.kmp.extension.updateTick
+import com.henni.handwriting.extension.detectTransformGestures
+import com.henni.handwriting.extension.findId
+import com.henni.handwriting.extension.getBitmap
+import com.henni.handwriting.extension.updateTick
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

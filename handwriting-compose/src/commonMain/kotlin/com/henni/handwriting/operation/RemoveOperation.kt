@@ -1,7 +1,7 @@
-package com.henni.handwriting.kmp.operation
+package com.henni.handwriting.operation
 
-import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.model.HandwritingPath
+import com.henni.handwriting.HandwritingController
+import com.henni.handwriting.model.HandwritingPath
 
 /**
  * [RemoveOperation] represents the operation of removing a handwriting path.

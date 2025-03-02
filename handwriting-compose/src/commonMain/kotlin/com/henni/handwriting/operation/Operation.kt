@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.operation
+package com.henni.handwriting.operation
 
 import androidx.compose.runtime.Stable
 

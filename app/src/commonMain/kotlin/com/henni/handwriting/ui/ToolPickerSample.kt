@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.henni.handwriting.kmp.HandwritingController
-import com.henni.handwriting.kmp.model.ToolMode
+import com.henni.handwriting.HandwritingController
+import com.henni.handwriting.model.ToolMode
 
 @Composable
 fun ToolPicker(
@@ -50,10 +49,19 @@ fun ToolPicker(
                     .padding(8.dp)
             ) {
 
-                when(tool) {
-                    ToolMode.PenMode -> { Text("Pen") }
-                    ToolMode.EraserMode -> { Text("Eraser") }
-                    ToolMode.LassoSelectMode -> { Text("Lasso") }
+                when (tool) {
+                    ToolMode.PenMode -> {
+                        Text("Pen")
+                    }
+
+                    ToolMode.EraserMode -> {
+                        Text("Eraser")
+                    }
+
+                    ToolMode.LassoSelectMode -> {
+                        Text("Lasso")
+                    }
+
                     else -> {}
                 }
 

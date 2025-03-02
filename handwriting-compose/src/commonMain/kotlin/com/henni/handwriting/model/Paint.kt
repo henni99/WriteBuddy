@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.model
+package com.henni.handwriting.model
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint

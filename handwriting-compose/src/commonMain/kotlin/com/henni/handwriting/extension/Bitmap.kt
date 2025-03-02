@@ -1,4 +1,4 @@
-package com.henni.handwriting.kmp.extension
+package com.henni.handwriting.extension
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
