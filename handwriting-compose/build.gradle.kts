@@ -16,7 +16,7 @@ plugins {
 mavenPublishing{
 
 
-    coordinates("io.github.henni99", "handwriting", "1.0.1")
+    coordinates("io.github.henni99", "handwriting", "1.0.2")
 
     pom {
         name = "HandWriting"
@@ -141,7 +141,7 @@ dokka {
         enableAndroidDocumentationLink = true
     }
     pluginsConfiguration.html {
-        moduleVersion = "1.0.0"
+        moduleVersion = "1.0.2"
     }
     dokkaPublications.html {
         outputDirectory = file("$rootDir/docs")

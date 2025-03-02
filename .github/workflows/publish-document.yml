@@ -1,9 +1,9 @@
-name: Publish docs
+name: Publish document
 
 on:
   push:
     tags:
-      - v1.0.0
+      - v[1-9]+.[0-9]+.[0-9]+
 
 jobs:
   deploy_docs:
