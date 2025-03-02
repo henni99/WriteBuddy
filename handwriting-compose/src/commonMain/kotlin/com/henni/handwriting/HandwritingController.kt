@@ -141,7 +141,7 @@ class HandwritingController {
     /**
      * The background color of the handwriting canvas.
      */
-    var contentBackground by mutableStateOf(Color.Red)
+    var contentBackground by mutableStateOf(Color.White)
 
     /**
      * Determines whether zooming is enabled for the canvas.

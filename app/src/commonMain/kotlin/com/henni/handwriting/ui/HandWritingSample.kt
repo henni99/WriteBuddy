@@ -44,7 +44,7 @@ fun HandWritingSample() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(500.dp)
-                        .background(Color.Gray)
+                        .background(Color.LightGray)
                         .padding(innerPadding),
                     controller = controller,
                     contentWidth = 300.dp,

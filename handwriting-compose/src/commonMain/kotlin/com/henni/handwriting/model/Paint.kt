@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 /** Returns a default pen [Paint]. */
 internal fun defaultPenPaint(): Paint {
     return Paint().apply {
-        color = Color.White
+        color = Color.Black
         strokeWidth = 14f
         isAntiAlias = true
         style = PaintingStyle.Stroke
@@ -22,7 +22,7 @@ internal fun defaultPenPaint(): Paint {
 /** Returns a default stroke eraser [Paint]. */
 internal fun defaultStrokeEraserPaint(): Paint {
     return Paint().apply {
-        color = Color.White
+        color = Color.LightGray
         isAntiAlias = true
         style = PaintingStyle.Fill
         strokeJoin = StrokeJoin.Round
