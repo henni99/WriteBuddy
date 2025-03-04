@@ -37,7 +37,7 @@ Add the dependency below to your **module**'s `build.gradle` file:
 
 ```kotlin
 dependencies {
-    implementation("io.github.henni99:handwriting:1.0.2")
+    implementation("io.github.henni99:handwriting:1.0.3")
 }
 ```
 
