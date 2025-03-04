@@ -7,18 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import com.henni.handwriting.ui.App
 import com.henni.handwriting.ui.theme.ComposeChartsTheme
 
-
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-
-        enableEdgeToEdge()
-        setContent {
-            ComposeChartsTheme(false) {
-                App()
-            }
-        }
+    enableEdgeToEdge()
+    setContent {
+      ComposeChartsTheme(false) {
+        App()
+      }
     }
+  }
 }
-

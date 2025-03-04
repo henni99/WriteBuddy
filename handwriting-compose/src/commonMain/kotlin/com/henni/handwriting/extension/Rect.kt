@@ -12,10 +12,10 @@ import com.henni.handwriting.model.Padding
  * @return `true` if this rectangle contains the other, `false` otherwise.
  */
 internal inline fun Rect.contains(other: Rect): Boolean {
-    return (this.left <= other.left) &&
-            (this.right >= other.right) &&
-            (this.top <= other.top) &&
-            (this.bottom >= other.bottom)
+  return (this.left <= other.left) &&
+    (this.right >= other.right) &&
+    (this.top <= other.top) &&
+    (this.bottom >= other.bottom)
 }
 
 /**
@@ -26,36 +26,36 @@ internal inline fun Rect.contains(other: Rect): Boolean {
  * @return A new rectangle that covers both this and the other rectangle.
  */
 internal inline fun Rect.unions(
-    other: Rect,
+  other: Rect,
 ): Rect {
-    if(this == Rect.Zero && other != Rect.Zero) {
-        return Rect(
-            left = other.left,
-            top = other.top,
-            right = other.right,
-            bottom = other.bottom
-        )
-    }
-
-    if(this != Rect.Zero && other == Rect.Zero) {
-        return Rect(
-            left = other.left,
-            top = other.top,
-            right = other.right,
-            bottom = other.bottom
-        )
-    }
-
-    if(this == Rect.Zero && other == Rect.Zero) {
-        return Rect.Zero
-    }
-
+  if (this == Rect.Zero && other != Rect.Zero) {
     return Rect(
-        left = minOf(this.left, other.left),
-        top = minOf(this.top, other.top),
-        right = maxOf(this.right, other.right),
-        bottom = maxOf(this.bottom, other.bottom )
+      left = other.left,
+      top = other.top,
+      right = other.right,
+      bottom = other.bottom,
     )
+  }
+
+  if (this != Rect.Zero && other == Rect.Zero) {
+    return Rect(
+      left = other.left,
+      top = other.top,
+      right = other.right,
+      bottom = other.bottom,
+    )
+  }
+
+  if (this == Rect.Zero && other == Rect.Zero) {
+    return Rect.Zero
+  }
+
+  return Rect(
+    left = minOf(this.left, other.left),
+    top = minOf(this.top, other.top),
+    right = maxOf(this.right, other.right),
+    bottom = maxOf(this.bottom, other.bottom),
+  )
 }
 
 /**
@@ -65,12 +65,12 @@ internal inline fun Rect.unions(
  * @return A new rectangle that is expanded by the padding.
  */
 internal inline fun Rect.addPadding(padding: Padding): Rect {
-    return Rect(
-        this.left - padding.left,
-        this.top - padding.top,
-        this.right + padding.right,
-        this.bottom + padding.bottom
-    )
+  return Rect(
+    this.left - padding.left,
+    this.top - padding.top,
+    this.right + padding.right,
+    this.bottom + padding.bottom,
+  )
 }
 
 /**
@@ -81,8 +81,8 @@ internal inline fun Rect.addPadding(padding: Padding): Rect {
  * @return A new rectangle that is translated by the matrix.
  */
 internal inline fun Rect.translate(matrix: Matrix): Rect {
-    return this.translate(
-        matrix.values[12],
-        matrix.values[13]
-    )
+  return this.translate(
+    matrix.values[12],
+    matrix.values[13],
+  )
 }

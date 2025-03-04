@@ -13,57 +13,56 @@ import com.henni.handwriting.model.HandwritingPath
  */
 
 internal class TranslateOperation internal constructor(
-    private val controller: HandwritingController,
-    private val paths: MutableSet<HandwritingPath>,
-    private val offset: Offset
+  private val controller: HandwritingController,
+  private val paths: MutableSet<HandwritingPath>,
+  private val offset: Offset,
 ) : Operation {
 
-    /**
-     * Performs the translation operation by applying the offset to each handwriting path.
-     */
-    override fun doOperation(): Boolean {
-        paths.forEach { path ->
-            path.matrix.translate(
-                offset.x,
-                offset.y
-            )
-        }
-        return true
+  /**
+   * Performs the translation operation by applying the offset to each handwriting path.
+   */
+  override fun doOperation(): Boolean {
+    paths.forEach { path ->
+      path.matrix.translate(
+        offset.x,
+        offset.y,
+      )
+    }
+    return true
+  }
+
+  /**
+   * Undoes the translation operation by reversing the offset on each handwriting path.
+   * Also reverses the translation for the rendered and hit area paths, and adjusts the lasso boundary box.
+   */
+  override fun undo() = with(controller) {
+    paths.forEach { path ->
+
+      path.matrix.translate(
+        -offset.x,
+        -offset.y,
+      )
+
+      path.renderedPath.translate(offset.unaryMinus())
+      path.hitAreaPath.translate(offset.unaryMinus())
     }
 
-    /**
-     * Undoes the translation operation by reversing the offset on each handwriting path.
-     * Also reverses the translation for the rendered and hit area paths, and adjusts the lasso boundary box.
-     */
-    override fun undo() = with(controller) {
-        paths.forEach { path ->
+    lassoBoundBox = lassoBoundBox.translate(offset.unaryMinus())
+  }
 
-            path.matrix.translate(
-                -offset.x,
-                -offset.y
-            )
-
-            path.renderedPath.translate(offset.unaryMinus())
-            path.hitAreaPath.translate(offset.unaryMinus())
-        }
-
-        lassoBoundBox = lassoBoundBox.translate(offset.unaryMinus())
+  /**
+   * Redoes the translation operation by applying the offset to each handwriting path again.
+   * Also re-applies the translation for the rendered and hit area paths, and adjusts the lasso boundary box.
+   */
+  override fun redo() = with(controller) {
+    paths.forEach { path ->
+      path.matrix.translate(
+        offset.x,
+        offset.y,
+      )
+      path.renderedPath.translate(offset)
+      path.hitAreaPath.translate(offset)
     }
-
-    /**
-     * Redoes the translation operation by applying the offset to each handwriting path again.
-     * Also re-applies the translation for the rendered and hit area paths, and adjusts the lasso boundary box.
-     */
-    override fun redo() = with(controller) {
-        paths.forEach { path ->
-            path.matrix.translate(
-                offset.x,
-                offset.y
-            )
-            path.renderedPath.translate(offset)
-            path.hitAreaPath.translate(offset)
-        }
-        lassoBoundBox = lassoBoundBox.translate(offset)
-    }
-
+    lassoBoundBox = lassoBoundBox.translate(offset)
+  }
 }

@@ -25,123 +25,116 @@ import com.henni.handwriting.HandwritingController
 
 @Composable
 fun EnhancedPicker(
-    controller: HandwritingController,
-    modifier: Modifier = Modifier,
-    list: List<Float> = defaultStrokeWidthList()
+  controller: HandwritingController,
+  modifier: Modifier = Modifier,
+  list: List<Float> = defaultStrokeWidthList(),
 ) {
+  var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
-    var isDropDownMenuExpanded by remember { mutableStateOf(false) }
+  Text(
+    modifier = Modifier
+      .padding(start = 8.dp),
+    text = "Enhanced",
+    fontSize = 18.sp,
+  )
 
-    Text(
+  LazyRow(
+    modifier = modifier
+      .fillMaxWidth(),
+  ) {
+    item {
+      Box(
         modifier = Modifier
-            .padding(start = 8.dp),
-        text = "Enhanced",
-        fontSize = 18.sp
-    )
-
-    LazyRow(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-
-        item {
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(8.dp)
-                    .clickable { controller.undo() }
-            ) {
-
-                Text(
-                    text = "Undo",
-                    color = if (controller.canUndo) Color.Black else Color.Red
-                )
-            }
-        }
-
-        item {
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(8.dp)
-                    .clickable { controller.redo() }
-            ) {
-                Text(
-                    text = "Redo",
-                    color = if (controller.canRedo) Color.Black else Color.Red
-                )
-            }
-        }
-
-        item {
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(8.dp)
-                    .clickable { isDropDownMenuExpanded = true }
-            ) {
-                Text(
-                    text = "ChangeStroke",
-                    color = Color.Black
-                )
-
-                if (isDropDownMenuExpanded) {
-                    DropdownMenu(
-                        modifier = Modifier
-                            .wrapContentSize(),
-                        expanded = isDropDownMenuExpanded,
-                        onDismissRequest = { isDropDownMenuExpanded = false }
-                    ) {
-
-                        list.forEach {
-                            DropdownMenuItem(
-                                text = { Text("${it}") },
-                                onClick = {
-                                    controller.setPenStrokeWidth(it)
-                                    isDropDownMenuExpanded = false
-                                })
-                        }
-                    }
-                }
-            }
-        }
-
+          .padding(8.dp)
+          .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
+          .background(
+            color = Color.White,
+            shape = RoundedCornerShape(8.dp),
+          )
+          .padding(8.dp)
+          .clickable { controller.undo() },
+      ) {
+        Text(
+          text = "Undo",
+          color = if (controller.canUndo) Color.Black else Color.Red,
+        )
+      }
     }
 
+    item {
+      Box(
+        modifier = Modifier
+          .padding(8.dp)
+          .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
+          .background(
+            color = Color.White,
+            shape = RoundedCornerShape(8.dp),
+          )
+          .padding(8.dp)
+          .clickable { controller.redo() },
+      ) {
+        Text(
+          text = "Redo",
+          color = if (controller.canRedo) Color.Black else Color.Red,
+        )
+      }
+    }
 
+    item {
+      Box(
+        modifier = Modifier
+          .padding(8.dp)
+          .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
+          .background(
+            color = Color.White,
+            shape = RoundedCornerShape(8.dp),
+          )
+          .padding(8.dp)
+          .clickable { isDropDownMenuExpanded = true },
+      ) {
+        Text(
+          text = "ChangeStroke",
+          color = Color.Black,
+        )
 
+        if (isDropDownMenuExpanded) {
+          DropdownMenu(
+            modifier = Modifier
+              .wrapContentSize(),
+            expanded = isDropDownMenuExpanded,
+            onDismissRequest = { isDropDownMenuExpanded = false },
+          ) {
+            list.forEach {
+              DropdownMenuItem(
+                text = { Text("$it") },
+                onClick = {
+                  controller.setPenStrokeWidth(it)
+                  isDropDownMenuExpanded = false
+                },
+              )
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 fun defaultEnhancedFunctionList(): List<String> {
-    return listOf(
-        "Undo",
-        "Redo",
-        "Clear",
-        "StrokeChange"
-    )
+  return listOf(
+    "Undo",
+    "Redo",
+    "Clear",
+    "StrokeChange",
+  )
 }
 
 fun defaultStrokeWidthList(): List<Float> {
-    return listOf(
-        5f,
-        10f,
-        15f,
-        20f,
-        25f
-    )
+  return listOf(
+    5f,
+    10f,
+    15f,
+    20f,
+    25f,
+  )
 }

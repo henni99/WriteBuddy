@@ -6,16 +6,18 @@ package com.henni.handwriting.model
  */
 
 enum class WritingMode {
-    /**
-     * Mode for writing with a finger
-     */
-    Hand,
-    /**
-     * Mode for writing with a stylus pen
-     */
-    StylusPen,
-    /**
-     * Unknown input mode (e.g., when running on an unsupported device)
-     */
-    Unknown
+  /**
+   * Mode for writing with a finger
+   */
+  Hand,
+
+  /**
+   * Mode for writing with a stylus pen
+   */
+  StylusPen,
+
+  /**
+   * Unknown input mode (e.g., when running on an unsupported device)
+   */
+  Unknown,
 }

@@ -5,14 +5,14 @@ import androidx.compose.ui.window.rememberWindowState
 import com.henni.handwriting.ui.App
 
 fun main() = application {
-    Window(
-        state = rememberWindowState(
-            width = 1080.dp,
-            height = 720.dp
-        ),
-        onCloseRequest = ::exitApplication,
-        title = "Charts samples",
-    ) {
-        App()
-    }
+  Window(
+    state = rememberWindowState(
+      width = 1080.dp,
+      height = 720.dp,
+    ),
+    onCloseRequest = ::exitApplication,
+    title = "Charts samples",
+  ) {
+    App()
+  }
 }

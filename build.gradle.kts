@@ -8,4 +8,24 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.vanniktech.maven.publish) apply false
     alias(libs.plugins.dokka)
+    alias(libs.plugins.spotless)
+}
+
+subprojects {
+    apply(plugin = rootProject.libs.plugins.spotless.get().pluginId)
+
+    configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+        kotlin {
+            target("**/*.kt")
+            ktlint().editorConfigOverride(
+                mapOf(
+                    "indent_size" to "2",
+                    "continuation_indent_size" to "2",
+                    "ktlint_standard_filename" to "disabled"
+                )
+            )
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
 }

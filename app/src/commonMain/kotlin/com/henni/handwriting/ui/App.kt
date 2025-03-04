@@ -15,16 +15,17 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun App(){
-    val density = LocalDensity.current
-    var composableWidth by remember { mutableStateOf(0.dp) }
+fun App() {
+  val density = LocalDensity.current
+  var composableWidth by remember { mutableStateOf(0.dp) }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xff101010)).onGloballyPositioned { coordinates ->
-            composableWidth = with(density){ coordinates.size.width.toDp() }
-        }){
-
-            HandWritingSample()
-    }
+  Box(
+    modifier = Modifier
+      .fillMaxSize()
+      .background(Color(0xff101010)).onGloballyPositioned { coordinates ->
+        composableWidth = with(density) { coordinates.size.width.toDp() }
+      },
+  ) {
+    HandWritingSample()
+  }
 }

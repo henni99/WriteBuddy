@@ -11,30 +11,30 @@ import com.henni.handwriting.model.HandwritingPath
  */
 
 internal class InsertOperation internal constructor(
-    private val controller: HandwritingController,
-    private val path: HandwritingPath,
+  private val controller: HandwritingController,
+  private val path: HandwritingPath,
 ) : Operation {
 
-    /**
-     * Performs the operation of adding the handwriting path.
-     *
-     */
-    override fun doOperation(): Boolean {
-        controller.addHandWritingPath(path)
-        return true
-    }
+  /**
+   * Performs the operation of adding the handwriting path.
+   *
+   */
+  override fun doOperation(): Boolean {
+    controller.addHandWritingPath(path)
+    return true
+  }
 
-    /**
-     * Undo the operation by removing the last handwriting path.
-     */
-    override fun undo() = with(controller) {
-        removeHandWritingPath(path)
-    }
+  /**
+   * Undo the operation by removing the last handwriting path.
+   */
+  override fun undo() = with(controller) {
+    removeHandWritingPath(path)
+  }
 
-    /**
-     * Redo the operation by adding the handwriting path again.
-     */
-    override fun redo() = with(controller) {
-        addHandWritingPath(path)
-    }
+  /**
+   * Redo the operation by adding the handwriting path again.
+   */
+  override fun redo() = with(controller) {
+    addHandWritingPath(path)
+  }
 }

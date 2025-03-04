@@ -6,23 +6,23 @@ package com.henni.handwriting.model
  */
 
 enum class ToolMode {
-    /**
-     * Allow users to freely draw or write.
-     */
-    PenMode,
+  /**
+   * Allow users to freely draw or write.
+   */
+  PenMode,
 
-    /**
-     * Allow users to erase existing lines or content.
-     */
-    EraserMode,
+  /**
+   * Allow users to erase existing lines or content.
+   */
+  EraserMode,
 
-    /**
-     * Allow users to select a specific area.
-     */
-    LassoSelectMode,
+  /**
+   * Allow users to select a specific area.
+   */
+  LassoSelectMode,
 
-    /**
-     * Allow users to move the selected area.
-     */
-    LassoMoveMode
+  /**
+   * Allow users to move the selected area.
+   */
+  LassoMoveMode,
 }

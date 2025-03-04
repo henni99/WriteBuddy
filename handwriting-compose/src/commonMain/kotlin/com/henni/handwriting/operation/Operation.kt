@@ -10,21 +10,20 @@ import androidx.compose.runtime.Stable
 @Stable
 interface Operation {
 
-    /**
-     * Performs the operation.
-     *
-     * @return Returns true if the operation is successfully performed, false otherwise.
-     */
-    fun doOperation(): Boolean
+  /**
+   * Performs the operation.
+   *
+   * @return Returns true if the operation is successfully performed, false otherwise.
+   */
+  fun doOperation(): Boolean
 
-    /**
-     * Undo the operation, reverting any changes made by the `doOperation` method.
-     */
-    fun undo()
+  /**
+   * Undo the operation, reverting any changes made by the `doOperation` method.
+   */
+  fun undo()
 
-    /**
-     * Redo the operation, reapplying any changes that were undone by the `undo` method.
-     */
-    fun redo()
-
+  /**
+   * Redo the operation, reapplying any changes that were undone by the `undo` method.
+   */
+  fun redo()
 }

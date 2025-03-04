@@ -30,61 +30,59 @@ import androidx.compose.ui.util.fastForEach
  */
 
 internal suspend fun PointerInputScope.detectTransformGestures(
-    onGesture: (zoomChange: Float, panChange: Offset, change: PointerInputChange, isMultiTouch: Boolean) -> Unit,
-    onGestureStart: (Offset) -> Unit = {},
-    onGestureEnd: (isMultiTouch: Boolean) -> Unit = {},
-    onGestureCancel: () -> Unit = {}
+  onGesture: (zoomChange: Float, panChange: Offset, change: PointerInputChange, isMultiTouch: Boolean) -> Unit,
+  onGestureStart: (Offset) -> Unit = {},
+  onGestureEnd: (isMultiTouch: Boolean) -> Unit = {},
+  onGestureCancel: () -> Unit = {},
 ) = awaitEachGesture {
+  val firstDown = awaitFirstDown(requireUnconsumed = false)
+  firstDown.consume()
 
-    val firstDown = awaitFirstDown(requireUnconsumed = false)
-    firstDown.consume()
+  // Call the gesture start callback with the initial position
+  onGestureStart(firstDown.position)
 
-    // Call the gesture start callback with the initial position
-    onGestureStart(firstDown.position)
+  var isMultiTouch = false
 
-    var isMultiTouch = false
+  // Handle each pointer event until released
+  forEachPointerEventUntilReleased(
+    onCancel = { onGestureCancel() },
+  ) { event, isTouchSlopPast ->
 
-    // Handle each pointer event until released
-    forEachPointerEventUntilReleased(
-        onCancel = { onGestureCancel() },
-    ) { event, isTouchSlopPast ->
+    // Check if the gesture has passed the touch slop threshold and process zoom and pan
+    if (isTouchSlopPast) {
+      val zoomChange = event.calculateZoom()
+      val panChange = event.calculatePan()
 
-        // Check if the gesture has passed the touch slop threshold and process zoom and pan
-        if (isTouchSlopPast) {
-            val zoomChange = event.calculateZoom()
-            val panChange = event.calculatePan()
+      // Trigger the gesture callback if there is a zoom or pan change
+      if (zoomChange != 1f || panChange != Offset.Zero) {
+        onGesture(
+          zoomChange,
+          panChange,
+          event.changes[0],
+          isMultiTouch,
+        )
 
-            // Trigger the gesture callback if there is a zoom or pan change
-            if (zoomChange != 1f || panChange != Offset.Zero) {
-
-                onGesture(
-                    zoomChange,
-                    panChange,
-                    event.changes[0],
-                    isMultiTouch,
-                )
-
-                // Consume the input changes that have moved
-                event.changes.fastForEach {
-                    if (it.positionChanged()) {
-                        it.consume()
-                    }
-                }
-            }
+        // Consume the input changes that have moved
+        event.changes.fastForEach {
+          if (it.positionChanged()) {
+            it.consume()
+          }
         }
-
-        // Detect if the gesture is multi-touch (more than one pointer)
-        if (event.changes.size > 1) {
-            isMultiTouch = true
-        }
-
-        // Cancel the gesture if there was previously a multi-touch, but the event now has only one pointer
-        val cancelGesture = isMultiTouch && event.changes.size == 1
-        !cancelGesture
+      }
     }
 
-    // Call the gesture end callback with multi-touch status
-    onGestureEnd(isMultiTouch)
+    // Detect if the gesture is multi-touch (more than one pointer)
+    if (event.changes.size > 1) {
+      isMultiTouch = true
+    }
+
+    // Cancel the gesture if there was previously a multi-touch, but the event now has only one pointer
+    val cancelGesture = isMultiTouch && event.changes.size == 1
+    !cancelGesture
+  }
+
+  // Call the gesture end callback with multi-touch status
+  onGestureEnd(isMultiTouch)
 }
 
 /**
@@ -98,39 +96,37 @@ internal suspend fun PointerInputScope.detectTransformGestures(
  *               whether to continue processing the event.
  */
 private suspend fun AwaitPointerEventScope.forEachPointerEventUntilReleased(
-    onCancel: () -> Unit,
-    action: (event: PointerEvent, isTouchSlopPast: Boolean) -> Boolean,
+  onCancel: () -> Unit,
+  action: (event: PointerEvent, isTouchSlopPast: Boolean) -> Boolean,
 ) {
+  // Create a TouchSlopChecker to track whether the touch gesture exceeds the touch slop threshold
+  val touchSlop = TouchSlopChecker(viewConfiguration.touchSlop)
+  do {
+    // Await the next pointer event (Main pass)
+    val mainEvent = awaitPointerEvent(pass = PointerEventPass.Main)
 
-    // Create a TouchSlopChecker to track whether the touch gesture exceeds the touch slop threshold
-    val touchSlop = TouchSlopChecker(viewConfiguration.touchSlop)
-    do {
-        // Await the next pointer event (Main pass)
-        val mainEvent = awaitPointerEvent(pass = PointerEventPass.Main)
+    // Check if any pointer event has been consumed (indicating cancellation)
+    if (mainEvent.changes.fastAny { it.isConsumed }) {
+      // Call the cancel callback if the event is consumed
+      onCancel()
+      break
+    }
 
-        // Check if any pointer event has been consumed (indicating cancellation)
-        if (mainEvent.changes.fastAny { it.isConsumed }) {
-            // Call the cancel callback if the event is consumed
-            onCancel()
-            break
-        }
+    // Check if the touch gesture has exceeded the touch slop threshold
+    val isTouchSlopPast = touchSlop.isPastThreshold(mainEvent)
 
-        // Check if the touch gesture has exceeded the touch slop threshold
-        val isTouchSlopPast = touchSlop.isPastThreshold(mainEvent)
+    // Call the provided action with the current event and touch slop status
+    // If the action returns false, stop processing further events
+    val canContinue = action(mainEvent, isTouchSlopPast)
+    if (!canContinue) {
+      break
+    }
 
-        // Call the provided action with the current event and touch slop status
-        // If the action returns false, stop processing further events
-        val canContinue = action(mainEvent, isTouchSlopPast)
-        if (!canContinue) {
-            break
-        }
-
-        // If the touch slop threshold is not passed, continue waiting for more events
-        if (isTouchSlopPast) {
-            continue
-        }
-
-    } while (mainEvent.changes.fastAny { it.pressed }) // Continue processing while the pointer is pressed
+    // If the touch slop threshold is not passed, continue waiting for more events
+    if (isTouchSlopPast) {
+      continue
+    }
+  } while (mainEvent.changes.fastAny { it.pressed }) // Continue processing while the pointer is pressed
 }
 
 /**
@@ -142,32 +138,32 @@ private suspend fun AwaitPointerEventScope.forEachPointerEventUntilReleased(
  */
 
 private class TouchSlopChecker internal constructor(
-    private val threshold: Float
+  private val threshold: Float,
 ) {
-    private var pan = Offset.Zero
-    private var isPastThreshold = false
+  private var pan = Offset.Zero
+  private var isPastThreshold = false
 
-    /**
-     * Determines if the touch gesture has moved past the threshold distance.
-     *
-     * @param event The pointer event that contains the touch gesture information.
-     * @return `true` if the touch gesture has exceeded the threshold, `false` otherwise.
-     */
-    fun isPastThreshold(event: PointerEvent): Boolean {
-        // If the gesture has already passed the threshold, return true
-        if (isPastThreshold) {
-            return true
-        }
-
-        // If there are multiple pointers (e.g., multi-touch), consider the gesture past the threshold
-        if (event.changes.size > 1) {
-            isPastThreshold = true
-        } else {
-            // Calculate the pan movement and check if it exceeds the threshold
-            pan += event.calculatePan()
-            isPastThreshold = pan.getDistance() > threshold
-        }
-
-        return isPastThreshold
+  /**
+   * Determines if the touch gesture has moved past the threshold distance.
+   *
+   * @param event The pointer event that contains the touch gesture information.
+   * @return `true` if the touch gesture has exceeded the threshold, `false` otherwise.
+   */
+  fun isPastThreshold(event: PointerEvent): Boolean {
+    // If the gesture has already passed the threshold, return true
+    if (isPastThreshold) {
+      return true
     }
+
+    // If there are multiple pointers (e.g., multi-touch), consider the gesture past the threshold
+    if (event.changes.size > 1) {
+      isPastThreshold = true
+    } else {
+      // Calculate the pan movement and check if it exceeds the threshold
+      pan += event.calculatePan()
+      isPastThreshold = pan.getDistance() > threshold
+    }
+
+    return isPastThreshold
+  }
 }

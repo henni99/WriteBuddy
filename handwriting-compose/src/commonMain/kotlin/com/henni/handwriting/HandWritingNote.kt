@@ -49,156 +49,149 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun HandWritingNote(
-    modifier: Modifier = Modifier,
-    controller: HandwritingController,
-    contentWidth: Dp,
-    contentHeight: Dp,
-    onInvalidateListener: () -> Unit = {}
+  modifier: Modifier = Modifier,
+  controller: HandwritingController,
+  contentWidth: Dp,
+  contentHeight: Dp,
+  onInvalidateListener: () -> Unit = {},
 ) {
-    val invalidateTick: MutableState<Int> = remember { mutableStateOf(0) }
+  val invalidateTick: MutableState<Int> = remember { mutableStateOf(0) }
 
-    var canvas: Canvas? by remember { mutableStateOf(null) }
+  var canvas: Canvas? by remember { mutableStateOf(null) }
 
-    var canvasSize: IntSize by remember { mutableStateOf(IntSize.Zero) }
+  var canvasSize: IntSize by remember { mutableStateOf(IntSize.Zero) }
 
-    var canvasImageBitmap: ImageBitmap? by remember { mutableStateOf(null) }
+  var canvasImageBitmap: ImageBitmap? by remember { mutableStateOf(null) }
 
-    var scale by remember { mutableStateOf(1f) }
+  var scale by remember { mutableStateOf(1f) }
 
-    var offset by remember { mutableStateOf(Offset.Zero) }
+  var offset by remember { mutableStateOf(Offset.Zero) }
 
-    var isMultiTouched by remember { mutableStateOf(false) }
+  var isMultiTouched by remember { mutableStateOf(false) }
 
-    val coroutineScope = rememberCoroutineScope()
+  val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        coroutineScope.launch(Dispatchers.Main) {
-            controller.refreshTick.collect {
-
-                canvasImageBitmap = getBitmap(canvasSize).also {
-                    canvas = Canvas(it)
-                }
-
-                controller.handwritingPaths.fastForEach { path ->
-                    if (!controller.selectedHandwritingPaths.findId(path.id)) {
-                        canvas?.drawPath(
-                            path = path.renderedPath,
-                            paint = path.paint
-                        )
-                    }
-                }
-
-                invalidateTick.updateTick()
-            }
+  LaunchedEffect(Unit) {
+    coroutineScope.launch(Dispatchers.Main) {
+      controller.refreshTick.collect {
+        canvasImageBitmap = getBitmap(canvasSize).also {
+          canvas = Canvas(it)
         }
+
+        controller.handwritingPaths.fastForEach { path ->
+          if (!controller.selectedHandwritingPaths.findId(path.id)) {
+            canvas?.drawPath(
+              path = path.renderedPath,
+              paint = path.paint,
+            )
+          }
+        }
+
+        invalidateTick.updateTick()
+      }
     }
+  }
 
-    Box(
-        modifier = modifier
-            .clipToBounds()
-    ) {
-        androidx.compose.foundation.Canvas(
-            modifier = Modifier
-                .width(contentWidth)
-                .height(contentHeight)
-                .onSizeChanged { newSize ->
-                    val size =
-                        newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
+  Box(
+    modifier = modifier
+      .clipToBounds(),
+  ) {
+    androidx.compose.foundation.Canvas(
+      modifier = Modifier
+        .width(contentWidth)
+        .height(contentHeight)
+        .onSizeChanged { newSize ->
+          val size =
+            newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
 
-                    canvasImageBitmap = getBitmap(size).also {
-                        canvas = Canvas(it)
-                    }
-                }
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                    translationX = offset.x
-                    translationY = offset.y
+          canvasImageBitmap = getBitmap(size).also {
+            canvas = Canvas(it)
+          }
+        }
+        .graphicsLayer {
+          scaleX = scale
+          scaleY = scale
+          translationX = offset.x
+          translationY = offset.y
 
-                    canvasSize = IntSize(size.height.toInt(), size.width.toInt())
-                }
-                .clipToBounds()
-                .align(Alignment.Center)
-                .pointerInput(Unit) {
-                    detectTransformGestures(
-                        onGestureStart = { offset ->
+          canvasSize = IntSize(size.height.toInt(), size.width.toInt())
+        }
+        .clipToBounds()
+        .align(Alignment.Center)
+        .pointerInput(Unit) {
+          detectTransformGestures(
+            onGestureStart = { offset ->
 
-                            controller.currentTouchEvent.onTouchStart(
-                                canvas = canvas,
-                                offset = offset,
-                                paint = controller.currentPaint
-                            )
+              controller.currentTouchEvent.onTouchStart(
+                canvas = canvas,
+                offset = offset,
+                paint = controller.currentPaint,
+              )
 
-                            invalidateTick.updateTick()
-                        },
-                        onGesture = { zoomChange: Float, panChange: Offset, change: PointerInputChange, isMultiTouch: Boolean ->
-                            isMultiTouched = isMultiTouch
+              invalidateTick.updateTick()
+            },
+            onGesture = { zoomChange: Float, panChange: Offset, change: PointerInputChange, isMultiTouch: Boolean ->
+              isMultiTouched = isMultiTouch
 
-                            if (isMultiTouch) {
+              if (isMultiTouch) {
+                scale = (scale * zoomChange).coerceIn(1f, 5f)
 
-                                scale = (scale * zoomChange).coerceIn(1f, 5f)
+                val extraWidth = (scale - 1) * canvasSize.width
+                val extraHeight = (scale - 1) * canvasSize.height
 
-                                val extraWidth = (scale - 1) * canvasSize.width
-                                val extraHeight = (scale - 1) * canvasSize.height
+                val maxX = extraWidth / 2
+                val maxY = extraHeight / 2
 
-                                val maxX = extraWidth / 2
-                                val maxY = extraHeight / 2
-
-                                offset = Offset(
-                                    x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
-                                    y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
-                                )
-
-                            } else {
-
-                                controller.currentTouchEvent.onTouchMove(
-                                    canvas = canvas,
-                                    previousOffset = change.previousPosition,
-                                    currentOffset = change.position,
-                                    paint = controller.currentPaint
-                                )
-
-                            }
-
-                            invalidateTick.updateTick()
-
-
-                        },
-                        onGestureEnd = { isMultiTouch ->
-                            isMultiTouched = isMultiTouch
-
-                            if (!isMultiTouch) {
-                                controller.currentTouchEvent.onTouchEnd(
-                                    canvas = canvas,
-                                    paint = controller.currentPaint
-                                )
-                                invalidateTick.updateTick()
-                            }
-                        },
-                        onGestureCancel = {
-                            controller.currentTouchEvent.onTouchInitialize()
-                            invalidateTick.updateTick()
-                        }
-                    )
-                }
-        ) {
-            drawIntoCanvas { canvas ->
-                drawRect(controller.contentBackground)
-
-                canvasImageBitmap?.let { bitmap ->
-                    canvas.drawImage(bitmap, Offset.Zero, Paint())
-                }
-
-                controller.currentTouchEvent.onDrawIntoCanvas(
-                    canvas = canvas,
-                    paint = controller.currentPaint,
-                    isMultiTouch = isMultiTouched
+                offset = Offset(
+                  x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
+                  y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
                 )
-            }
+              } else {
+                controller.currentTouchEvent.onTouchMove(
+                  canvas = canvas,
+                  previousOffset = change.previousPosition,
+                  currentOffset = change.position,
+                  paint = controller.currentPaint,
+                )
+              }
 
-            if (invalidateTick.value != 0) {
-                onInvalidateListener()
-            }
+              invalidateTick.updateTick()
+            },
+            onGestureEnd = { isMultiTouch ->
+              isMultiTouched = isMultiTouch
+
+              if (!isMultiTouch) {
+                controller.currentTouchEvent.onTouchEnd(
+                  canvas = canvas,
+                  paint = controller.currentPaint,
+                )
+                invalidateTick.updateTick()
+              }
+            },
+            onGestureCancel = {
+              controller.currentTouchEvent.onTouchInitialize()
+              invalidateTick.updateTick()
+            },
+          )
+        },
+    ) {
+      drawIntoCanvas { canvas ->
+        drawRect(controller.contentBackground)
+
+        canvasImageBitmap?.let { bitmap ->
+          canvas.drawImage(bitmap, Offset.Zero, Paint())
         }
+
+        controller.currentTouchEvent.onDrawIntoCanvas(
+          canvas = canvas,
+          paint = controller.currentPaint,
+          isMultiTouch = isMultiTouched,
+        )
+      }
+
+      if (invalidateTick.value != 0) {
+        onInvalidateListener()
+      }
     }
+  }
 }

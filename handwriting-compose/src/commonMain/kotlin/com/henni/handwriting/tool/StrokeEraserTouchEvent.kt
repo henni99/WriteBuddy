@@ -17,64 +17,64 @@ import com.henni.handwriting.HandwritingController
  */
 
 internal class StrokeEraserTouchEvent internal constructor(
-    private val controller: HandwritingController
-): ToolTouchEvent {
+  private val controller: HandwritingController,
+) : ToolTouchEvent {
 
-    // Stores the eraser path to mark areas to erase
-    private var eraserPath by mutableStateOf(Path())
+  // Stores the eraser path to mark areas to erase
+  private var eraserPath by mutableStateOf(Path())
 
-    // Stores the current offset (position) of the eraser
-    private var currentOffset by mutableStateOf(Offset.Zero)
+  // Stores the current offset (position) of the eraser
+  private var currentOffset by mutableStateOf(Offset.Zero)
 
-    override fun onTouchInitialize() {
-        eraserPath = Path()
-        currentOffset = Offset.Zero
+  override fun onTouchInitialize() {
+    eraserPath = Path()
+    currentOffset = Offset.Zero
+  }
+
+  override fun onTouchStart(
+    canvas: Canvas?,
+    offset: Offset,
+    paint: Paint,
+  ) {
+    eraserPath = Path()
+    currentOffset = offset
+  }
+
+  override fun onTouchMove(
+    canvas: Canvas?,
+    previousOffset: Offset,
+    currentOffset: Offset,
+    paint: Paint,
+  ) {
+    val radius = controller.eraserPointRadius
+
+    this.currentOffset = currentOffset
+    eraserPath.addOval(
+      Rect(
+        currentOffset.x - radius,
+        currentOffset.y - radius,
+        currentOffset.x + radius,
+        currentOffset.y + radius,
+      ),
+    )
+    controller.removeHandWritingPath(eraserPath)
+  }
+
+  override fun onTouchEnd(
+    canvas: Canvas?,
+    paint: Paint,
+  ) {
+    eraserPath = Path()
+    currentOffset = Offset.Zero
+  }
+
+  override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
+    if (!isMultiTouch && currentOffset != Offset.Zero && controller.isEraserPointShowed) {
+      canvas.drawCircle(
+        currentOffset,
+        controller.eraserPointRadius,
+        paint,
+      )
     }
-
-    override fun onTouchStart(
-        canvas: Canvas?,
-        offset: Offset,
-        paint: Paint,
-    ) {
-        eraserPath = Path()
-        currentOffset = offset
-    }
-
-    override fun onTouchMove(
-        canvas: Canvas?,
-        previousOffset: Offset,
-        currentOffset: Offset,
-        paint: Paint,
-    ) {
-        val radius = controller.eraserPointRadius
-
-        this.currentOffset = currentOffset
-        eraserPath.addOval(
-            Rect(
-                currentOffset.x - radius,
-                currentOffset.y - radius,
-                currentOffset.x + radius,
-                currentOffset.y + radius
-            )
-        )
-        controller.removeHandWritingPath(eraserPath)
-    }
-
-    override fun onTouchEnd(
-        canvas: Canvas?,
-        paint: Paint,
-    ) {
-        eraserPath = Path()
-        currentOffset = Offset.Zero
-    }
-
-    override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
-        if (!isMultiTouch && currentOffset != Offset.Zero && controller.isEraserPointShowed) {
-            canvas.drawCircle(
-                currentOffset,
-                controller.eraserPointRadius,
-                paint
-            )
-        }
-    }
+  }
 }
