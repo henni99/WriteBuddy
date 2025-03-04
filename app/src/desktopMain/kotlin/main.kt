@@ -11,7 +11,7 @@ fun main() = application {
       height = 720.dp,
     ),
     onCloseRequest = ::exitApplication,
-    title = "Charts samples",
+    title = "HandWritingSample",
   ) {
     App()
   }
