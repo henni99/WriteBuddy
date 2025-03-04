@@ -19,7 +19,7 @@ jobs:
           distribution: zulu
           java-version: 17
       - uses: gradle/gradle-build-action@v3.5.0
-      - name: spotless
+      - name: check Spotless
         run: ./gradlew spotlessCheck
 
   build:
@@ -33,7 +33,7 @@ jobs:
           java-version: 17
 
       - uses: gradle/gradle-build-action@v3.5.0
-      - name: Make Gradle executable
+      - name: build Gradle
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
