@@ -61,7 +61,7 @@ internal class LassoSelectTouchEvent internal constructor(
             lassoPath.moveTo(currentOffset.x, currentOffset.y)
         }
 
-        lassoPath.quadraticBezierTo(
+        lassoPath.quadraticTo(
             previousOffset.x,
             previousOffset.y,
             (currentOffset.x + previousOffset.x) / 2,
