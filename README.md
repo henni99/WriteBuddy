@@ -10,7 +10,7 @@ Supports drawing, erasing, selection and manipulation, undo/redo, and zoom funct
 
 <div align="center">
 
-![Kotlin](https://img.shields.io/badge/Kotlin-2.0.0-orange)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.1.10-orange)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-blue)](https://kotlinlang.org/docs/reference/multiplatform.html)
 
@@ -37,7 +37,7 @@ Add the dependency below to your **module**'s `build.gradle` file:
 
 ```kotlin
 dependencies {
-    implementation("io.github.henni99:handwriting:1.0.0")
+    implementation("io.github.henni99:handwriting:1.0.2")
 }
 ```
 
