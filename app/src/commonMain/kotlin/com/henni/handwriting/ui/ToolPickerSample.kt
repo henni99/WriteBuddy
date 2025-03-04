@@ -67,10 +67,8 @@ fun ToolPicker(
   }
 }
 
-fun defaultToolList(): List<ToolMode> {
-  return listOf(
-    ToolMode.PenMode,
-    ToolMode.EraserMode,
-    ToolMode.LassoSelectMode,
-  )
-}
+fun defaultToolList(): List<ToolMode> = listOf(
+  ToolMode.PenMode,
+  ToolMode.EraserMode,
+  ToolMode.LassoSelectMode,
+)

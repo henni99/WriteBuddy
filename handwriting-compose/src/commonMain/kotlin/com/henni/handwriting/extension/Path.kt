@@ -13,11 +13,9 @@ import androidx.compose.ui.graphics.PathOperation
  * @return `true` if the paths overlap, `false` otherwise.
  */
 
-internal inline fun overlaps(path1: Path, path2: Path): Boolean {
-  return Path().apply {
-    this.op(path1, path2, PathOperation.Intersect)
-  }.isEmpty.not()
-}
+internal inline fun overlaps(path1: Path, path2: Path): Boolean = Path().apply {
+  this.op(path1, path2, PathOperation.Intersect)
+}.isEmpty.not()
 
 /**
  * Adds a deformation point to the path at the specified offset.

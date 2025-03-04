@@ -8,39 +8,33 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 
 /** Returns a default pen [Paint]. */
-internal fun defaultPenPaint(): Paint {
-  return Paint().apply {
-    color = Color.Black
-    strokeWidth = 14f
-    isAntiAlias = true
-    style = PaintingStyle.Stroke
-    strokeJoin = StrokeJoin.Round
-    strokeCap = StrokeCap.Round
-  }
+internal fun defaultPenPaint(): Paint = Paint().apply {
+  color = Color.Black
+  strokeWidth = 14f
+  isAntiAlias = true
+  style = PaintingStyle.Stroke
+  strokeJoin = StrokeJoin.Round
+  strokeCap = StrokeCap.Round
 }
 
 /** Returns a default stroke eraser [Paint]. */
-internal fun defaultStrokeEraserPaint(): Paint {
-  return Paint().apply {
-    color = Color.LightGray
-    isAntiAlias = true
-    style = PaintingStyle.Fill
-    strokeJoin = StrokeJoin.Round
-    strokeCap = StrokeCap.Round
-  }
+internal fun defaultStrokeEraserPaint(): Paint = Paint().apply {
+  color = Color.LightGray
+  isAntiAlias = true
+  style = PaintingStyle.Fill
+  strokeJoin = StrokeJoin.Round
+  strokeCap = StrokeCap.Round
 }
 
 /** Returns a default [Paint]. */
-internal fun lassoDefaultPaint(): Paint {
-  return Paint().apply {
-    color = Color.Black
-    strokeWidth = 12f
-    isAntiAlias = true
-    style = PaintingStyle.Stroke
-    strokeJoin = StrokeJoin.Round
-    strokeCap = StrokeCap.Round
-    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 40f), 10f)
-  }
+internal fun lassoDefaultPaint(): Paint = Paint().apply {
+  color = Color.Black
+  strokeWidth = 12f
+  isAntiAlias = true
+  style = PaintingStyle.Stroke
+  strokeJoin = StrokeJoin.Round
+  strokeCap = StrokeCap.Round
+  pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 40f), 10f)
 }
 
 internal fun Paint.copy(from: Paint): Paint = apply {

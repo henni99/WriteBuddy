@@ -52,10 +52,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun rememberHandwritingController(
   block: HandwritingController.() -> Unit,
-): HandwritingController {
-  return remember {
-    HandwritingController().apply(block)
-  }
+): HandwritingController = remember {
+  HandwritingController().apply(block)
 }
 
 /**
