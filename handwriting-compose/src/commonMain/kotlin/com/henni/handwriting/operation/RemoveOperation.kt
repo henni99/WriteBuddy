@@ -11,29 +11,29 @@ import com.henni.handwriting.model.HandwritingPath
  */
 
 internal class RemoveOperation internal constructor(
-    private val controller: HandwritingController,
-    private val path: HandwritingPath
+  private val controller: HandwritingController,
+  private val path: HandwritingPath,
 ) : Operation {
 
-    /**
-     * Performs the remove operation by deleting the specified handwriting path.
-     */
-    override fun doOperation(): Boolean {
-        controller.removeHandWritingPath(path)
-        return true
-    }
+  /**
+   * Performs the remove operation by deleting the specified handwriting path.
+   */
+  override fun doOperation(): Boolean {
+    controller.removeHandWritingPath(path)
+    return true
+  }
 
-    /**
-     * Undo the remove operation by re-adding the removed handwriting path.
-     */
-    override fun undo() = with(controller) {
-        addHandWritingPath(path)
-    }
+  /**
+   * Undo the remove operation by re-adding the removed handwriting path.
+   */
+  override fun undo() = with(controller) {
+    addHandWritingPath(path)
+  }
 
-    /**
-     * Redo the remove operation by removing the handwriting path again.
-     */
-    override fun redo() = with(controller) {
-        removeHandWritingPath(path)
-    }
+  /**
+   * Redo the remove operation by removing the handwriting path again.
+   */
+  override fun redo() = with(controller) {
+    removeHandWritingPath(path)
+  }
 }

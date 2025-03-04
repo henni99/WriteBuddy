@@ -20,61 +20,55 @@ import com.henni.handwriting.model.ToolMode
 
 @Composable
 fun ToolPicker(
-    controller: HandwritingController,
-    modifier: Modifier = Modifier,
-    list: List<ToolMode> = defaultToolList(),
+  controller: HandwritingController,
+  modifier: Modifier = Modifier,
+  list: List<ToolMode> = defaultToolList(),
 ) {
-    Text(
+  Text(
+    modifier = Modifier
+      .padding(start = 8.dp),
+    text = "Tool",
+    fontSize = 18.sp,
+  )
+
+  LazyRow(
+    modifier = modifier
+      .fillMaxWidth(),
+  ) {
+    items(list) { tool ->
+      Box(
         modifier = Modifier
-            .padding(start = 8.dp),
-        text = "Tool",
-        fontSize = 18.sp
-    )
+          .padding(8.dp)
+          .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
+          .background(
+            color = Color.White,
+            shape = RoundedCornerShape(8.dp),
+          )
+          .clickable { controller.setToolMode(tool) }
+          .padding(8.dp),
+      ) {
+        when (tool) {
+          ToolMode.PenMode -> {
+            Text("Pen")
+          }
 
-    LazyRow(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
+          ToolMode.EraserMode -> {
+            Text("Eraser")
+          }
 
-        items(list) { tool ->
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .border(2.dp, Color.Black, RoundedCornerShape(8.dp))
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .clickable { controller.setToolMode(tool) }
-                    .padding(8.dp)
-            ) {
+          ToolMode.LassoSelectMode -> {
+            Text("Lasso")
+          }
 
-                when (tool) {
-                    ToolMode.PenMode -> {
-                        Text("Pen")
-                    }
-
-                    ToolMode.EraserMode -> {
-                        Text("Eraser")
-                    }
-
-                    ToolMode.LassoSelectMode -> {
-                        Text("Lasso")
-                    }
-
-                    else -> {}
-                }
-
-            }
+          else -> {}
         }
+      }
     }
-
+  }
 }
 
-fun defaultToolList(): List<ToolMode> {
-    return listOf(
-        ToolMode.PenMode,
-        ToolMode.EraserMode,
-        ToolMode.LassoSelectMode
-    )
-}
+fun defaultToolList(): List<ToolMode> = listOf(
+  ToolMode.PenMode,
+  ToolMode.EraserMode,
+  ToolMode.LassoSelectMode,
+)

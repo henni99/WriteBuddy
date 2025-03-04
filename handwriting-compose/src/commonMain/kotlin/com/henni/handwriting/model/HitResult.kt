@@ -12,15 +12,15 @@ import androidx.compose.runtime.Immutable
 @Immutable
 internal data class HitResult(
 
-    /**
-     * Indicates whether the eraser has hit the [HandwritingPath].
-     * `true` if a hit is detected, `false` otherwise.
-     */
-    val isHit: Boolean,
+  /**
+   * Indicates whether the eraser has hit the [HandwritingPath].
+   * `true` if a hit is detected, `false` otherwise.
+   */
+  val isHit: Boolean,
 
-    /**
-     * The handwriting data that was hit by the eraser.
-     * Null if no hit occurred.
-     */
-    val path: HandwritingPath?
+  /**
+   * The handwriting data that was hit by the eraser.
+   * Null if no hit occurred.
+   */
+  val path: HandwritingPath?,
 )

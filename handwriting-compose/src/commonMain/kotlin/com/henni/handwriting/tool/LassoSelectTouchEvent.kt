@@ -19,95 +19,91 @@ import com.henni.handwriting.HandwritingController
  */
 
 internal class LassoSelectTouchEvent internal constructor(
-    private val controller: HandwritingController
+  private val controller: HandwritingController,
 ) : ToolTouchEvent {
 
-    // Stores the path of the lasso selection
-    private var lassoPath by mutableStateOf(Path())
+  // Stores the path of the lasso selection
+  private var lassoPath by mutableStateOf(Path())
 
-    // Flag to indicate whether the user performed a tap or a lasso selection
-    private var isTap = true
+  // Flag to indicate whether the user performed a tap or a lasso selection
+  private var isTap = true
 
-    // Stores the first offset (starting point of the selection)
-    private var firstOffset by mutableStateOf(Offset.Zero)
+  // Stores the first offset (starting point of the selection)
+  private var firstOffset by mutableStateOf(Offset.Zero)
 
-    override fun onTouchInitialize() {
-        lassoPath = Path()
-        isTap = true
-        firstOffset = Offset.Zero
+  override fun onTouchInitialize() {
+    lassoPath = Path()
+    isTap = true
+    firstOffset = Offset.Zero
+  }
+
+  override fun onTouchStart(
+    canvas: Canvas?,
+    offset: Offset,
+    paint: Paint,
+  ) {
+    isTap = true
+    lassoPath = Path()
+    lassoPath.moveTo(offset.x, offset.y)
+    firstOffset = offset
+  }
+
+  override fun onTouchMove(
+    canvas: Canvas?,
+    previousOffset: Offset,
+    currentOffset: Offset,
+    paint: Paint,
+  ) {
+    firstOffset = Offset.Zero
+    isTap = false
+
+    if (lassoPath.isEmpty) {
+      lassoPath.moveTo(currentOffset.x, currentOffset.y)
     }
 
-    override fun onTouchStart(
-        canvas: Canvas?,
-        offset: Offset,
-        paint: Paint,
-    ) {
-        isTap = true
-        lassoPath = Path()
-        lassoPath.moveTo(offset.x, offset.y)
-        firstOffset = offset
+    lassoPath.quadraticTo(
+      previousOffset.x,
+      previousOffset.y,
+      (currentOffset.x + previousOffset.x) / 2,
+      (currentOffset.y + previousOffset.y) / 2,
+    )
+  }
+
+  override fun onTouchEnd(
+    canvas: Canvas?,
+    paint: Paint,
+  ) {
+    if (isTap) {
+      lassoPath.addOval(
+        Rect(
+          center = firstOffset,
+          radius = 10f,
+        ),
+      )
     }
 
-    override fun onTouchMove(
-        canvas: Canvas?,
-        previousOffset: Offset,
-        currentOffset: Offset,
-        paint: Paint,
-    ) {
-        firstOffset = Offset.Zero
-        isTap = false
+    controller.selectHandWritingPath(
+      path = lassoPath,
+    )
+  }
 
-        if (lassoPath.isEmpty) {
-            lassoPath.moveTo(currentOffset.x, currentOffset.y)
-        }
-
-        lassoPath.quadraticBezierTo(
-            previousOffset.x,
-            previousOffset.y,
-            (currentOffset.x + previousOffset.x) / 2,
-            (currentOffset.y + previousOffset.y) / 2
-        )
+  override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
+    if (!lassoPath.isEmpty && !isMultiTouch) {
+      canvas.drawPath(lassoPath, paint)
     }
 
-    override fun onTouchEnd(
-        canvas: Canvas?,
-        paint: Paint,
-    ) {
-        if (isTap) {
-            lassoPath.addOval(
-                Rect(
-                    center = firstOffset,
-                    radius = 10f
-                )
-            )
-        }
+    val lassoBoundBox = controller.lassoBoundBox
+    val lassoBoundBoxPaint = controller.lassoBoundBoxPaint
 
-        controller.selectHandWritingPath(
-            path = lassoPath,
-        )
+    if (lassoBoundBox.center != Offset.Zero && !lassoBoundBox.isEmpty) {
+      canvas.drawRect(
+        lassoBoundBox,
+        lassoBoundBoxPaint,
+      )
     }
 
-
-    override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
-
-        if (!lassoPath.isEmpty && !isMultiTouch) {
-            canvas.drawPath(lassoPath, paint)
-        }
-
-        val lassoBoundBox = controller.lassoBoundBox
-        val lassoBoundBoxPaint = controller.lassoBoundBoxPaint
-
-        if (lassoBoundBox.center != Offset.Zero && !lassoBoundBox.isEmpty) {
-            canvas.drawRect(
-                lassoBoundBox,
-                lassoBoundBoxPaint
-            )
-        }
-
-        controller.selectedHandwritingPaths.forEach { path ->
-            canvas.drawPath(path.renderedPath, path.paint)
-        }
-
-
+    controller.selectedHandwritingPaths.forEach { path ->
+      canvas.drawPath(path.renderedPath, path.paint)
     }
+  }
 }

@@ -11,34 +11,34 @@ import androidx.compose.runtime.Stable
 
 @Immutable
 data class Padding(
-    /**
-     * Padding value for the left side.
-     */
-    val left: Int,
+  /**
+   * Padding value for the left side.
+   */
+  val left: Int,
 
-    /**
-     * Padding value for the top side.
-     */
-    val top: Int,
+  /**
+   * Padding value for the top side.
+   */
+  val top: Int,
 
-    /**
-     * Padding value for the right side.
-     */
-    val right: Int,
+  /**
+   * Padding value for the right side.
+   */
+  val right: Int,
 
-    /**
-     * Padding value for the bottom side.
-     */
-    val bottom: Int
+  /**
+   * Padding value for the bottom side.
+   */
+  val bottom: Int,
 ) {
-    companion object {
+  companion object {
 
-        /**
-         * A predefined instance of Padding with all values set to zero.
-         * Can be used as a default or empty padding.
-         */
+    /**
+     * A predefined instance of Padding with all values set to zero.
+     * Can be used as a default or empty padding.
+     */
 
-        @Stable
-        val Zero = Padding(0, 0, 0, 0)
-    }
+    @Stable
+    val Zero = Padding(0, 0, 0, 0)
+  }
 }
