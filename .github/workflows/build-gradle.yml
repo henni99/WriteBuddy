@@ -33,8 +33,22 @@ jobs:
           java-version: 17
 
       - uses: gradle/gradle-build-action@v3.5.0
-      - name: build Gradle
+      - name: set build
         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
+      - name: Android build
         run: ./gradlew build
+
+    build:
+      runs-on: macOS-latest
+      steps:
+        - name: Check out code
+          uses: actions/checkout@v4
+        - name: Set up JDK 21
+          uses: actions/setup-java@v4
+          with:
+            distribution: 'zulu'
+            java-version: 21
+
+        - name: iOS build
+          run: cd iosApp && xcodebuild -scheme iosApp -configuration Debug -destination 'platform=iOS Simulator,OS=latest,name=iPhone 16' CODE_SIGNING_ALLOWED='NO'
