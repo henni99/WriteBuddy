@@ -1,6 +1,7 @@
 package com.henni.handwriting.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,7 +36,7 @@ fun HandWritingSample() {
         HandWritingNote(
           modifier = Modifier
             .fillMaxWidth()
-            .height(500.dp)
+            .fillMaxHeight()
             .background(Color.LightGray)
             .padding(innerPadding),
           controller = controller,

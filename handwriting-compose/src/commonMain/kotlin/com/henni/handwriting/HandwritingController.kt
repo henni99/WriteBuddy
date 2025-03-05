@@ -3,6 +3,7 @@ package com.henni.handwriting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,6 +29,7 @@ import com.henni.handwriting.model.HitResult
 import com.henni.handwriting.model.Padding
 import com.henni.handwriting.model.ToolMode
 import com.henni.handwriting.model.copy
+import com.henni.handwriting.model.defaultLaserPaint
 import com.henni.handwriting.model.defaultPenPaint
 import com.henni.handwriting.model.defaultStrokeEraserPaint
 import com.henni.handwriting.model.lassoDefaultPaint
@@ -37,10 +39,14 @@ import com.henni.handwriting.operation.RemoveOperation
 import com.henni.handwriting.operation.TranslateOperation
 import com.henni.handwriting.tool.LassoMoveTouchEvent
 import com.henni.handwriting.tool.LassoSelectTouchEvent
+import com.henni.handwriting.tool.LineLaserPointerTouchEvent
 import com.henni.handwriting.tool.PenTouchEvent
 import com.henni.handwriting.tool.StrokeEraserTouchEvent
 import com.henni.handwriting.tool.ToolTouchEvent
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 /**
  * Creates and remembers an instance of [HandwritingController].
@@ -121,6 +127,24 @@ class HandwritingController {
    * The padding applied to the lasso bounding box.
    */
   var lassoBoundBoxPadding by mutableStateOf(Padding.Zero)
+
+  // ==============================
+  // Current laser properties
+  // ==============================
+
+  var laserPaint by mutableStateOf(defaultLaserPaint())
+
+  val laserPathList = ArrayDeque<Path>()
+
+  var isLaserEnd by mutableStateOf(false)
+
+  val laserTick = MutableStateFlow<Int>(0)
+
+  /** Sets a [Color] to the [laserPaint]. */
+  fun setLaserColor(color: Color) {
+    laserPaint.color = color
+    laserPathList.clear()
+  }
 
   // ==============================
   // Current tool-related properties
@@ -236,6 +260,11 @@ class HandwritingController {
       ToolMode.LassoMoveMode -> {
         currentPaint = lassoPaint
         currentTouchEvent = LassoMoveTouchEvent(this)
+      }
+
+      ToolMode.LineLaserMode -> {
+        currentPaint = laserPaint
+        currentTouchEvent = LineLaserPointerTouchEvent(this)
       }
     }
 

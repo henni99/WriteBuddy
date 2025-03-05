@@ -25,4 +25,7 @@ enum class ToolMode {
    * Allow users to move the selected area.
    */
   LassoMoveMode,
+
+
+  LineLaserMode
 }
