@@ -28,6 +28,7 @@ import com.henni.handwriting.model.HitResult
 import com.henni.handwriting.model.Padding
 import com.henni.handwriting.model.ToolMode
 import com.henni.handwriting.model.copy
+import com.henni.handwriting.model.defaultLaserPaint
 import com.henni.handwriting.model.defaultPenPaint
 import com.henni.handwriting.model.defaultStrokeEraserPaint
 import com.henni.handwriting.model.lassoDefaultPaint
@@ -37,6 +38,7 @@ import com.henni.handwriting.operation.RemoveOperation
 import com.henni.handwriting.operation.TranslateOperation
 import com.henni.handwriting.tool.LassoMoveTouchEvent
 import com.henni.handwriting.tool.LassoSelectTouchEvent
+import com.henni.handwriting.tool.LineLaserPointerTouchEvent
 import com.henni.handwriting.tool.PenTouchEvent
 import com.henni.handwriting.tool.StrokeEraserTouchEvent
 import com.henni.handwriting.tool.ToolTouchEvent
@@ -121,6 +123,31 @@ class HandwritingController {
    * The padding applied to the lasso bounding box.
    */
   var lassoBoundBoxPadding by mutableStateOf(Padding.Zero)
+
+  // ==============================
+  // Current laser properties
+  // ==============================
+
+  /**
+   * The paint settings for the laser tool.
+   */
+  var laserPaint by mutableStateOf(defaultLaserPaint())
+
+  /**
+   * A collection of all laser paths on the canvas.
+   */
+  val laserPathList = ArrayDeque<Path>()
+
+  /**
+   * Determines whether the laser is end.
+   */
+  var isLaserEnd by mutableStateOf(false)
+
+  /** Sets a [Color] to the [laserPaint]. */
+  fun setLaserColor(color: Color) {
+    laserPaint.color = color
+    laserPathList.clear()
+  }
 
   // ==============================
   // Current tool-related properties
@@ -236,6 +263,11 @@ class HandwritingController {
       ToolMode.LassoMoveMode -> {
         currentPaint = lassoPaint
         currentTouchEvent = LassoMoveTouchEvent(this)
+      }
+
+      ToolMode.LineLaserMode -> {
+        currentPaint = laserPaint
+        currentTouchEvent = LineLaserPointerTouchEvent(this)
       }
     }
 

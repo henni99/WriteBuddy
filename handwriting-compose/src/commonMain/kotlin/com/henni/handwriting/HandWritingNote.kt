@@ -1,5 +1,7 @@
 package com.henni.handwriting
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -30,7 +32,9 @@ import com.henni.handwriting.extension.detectTransformGestures
 import com.henni.handwriting.extension.findId
 import com.henni.handwriting.extension.getBitmap
 import com.henni.handwriting.extension.updateTick
+import com.henni.handwriting.tool.LineLaserPointerTouchEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -69,11 +73,33 @@ fun HandWritingNote(
 
   var isMultiTouched by remember { mutableStateOf(false) }
 
+  var isLaserEnd by remember { mutableStateOf(false) }
+
+  val laserPathAlpha = animateFloatAsState(
+    if (isLaserEnd) 0f else 1f,
+    animationSpec = if (isLaserEnd) tween(1000) else tween(0),
+    finishedListener = {
+      if (it == 0f) {
+        controller.laserPathList.clear()
+      }
+    },
+  )
+
+  LaunchedEffect(controller.isLaserEnd) {
+    if (controller.isLaserEnd) {
+      delay(1000)
+      isLaserEnd = true
+    } else {
+      isLaserEnd = false
+    }
+  }
+
   val coroutineScope = rememberCoroutineScope()
 
   LaunchedEffect(Unit) {
     coroutineScope.launch(Dispatchers.Main) {
       controller.refreshTick.collect {
+        println("refreshTick")
         canvasImageBitmap = getBitmap(canvasSize).also {
           canvas = Canvas(it)
         }
@@ -158,6 +184,7 @@ fun HandWritingNote(
               invalidateTick.updateTick()
             },
             onGestureEnd = { isMultiTouch ->
+
               isMultiTouched = isMultiTouch
 
               if (!isMultiTouch) {
@@ -184,7 +211,11 @@ fun HandWritingNote(
 
         controller.currentTouchEvent.onDrawIntoCanvas(
           canvas = canvas,
-          paint = controller.currentPaint,
+          paint = controller.currentPaint.apply {
+            if (controller.currentTouchEvent is LineLaserPointerTouchEvent) {
+              this.alpha = laserPathAlpha.value
+            }
+          },
           isMultiTouch = isMultiTouched,
         )
       }

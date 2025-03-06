@@ -60,6 +60,10 @@ fun ToolPicker(
             Text("Lasso")
           }
 
+          ToolMode.LineLaserMode -> {
+            Text("LineLaser")
+          }
+
           else -> {}
         }
       }
@@ -71,4 +75,5 @@ fun defaultToolList(): List<ToolMode> = listOf(
   ToolMode.PenMode,
   ToolMode.EraserMode,
   ToolMode.LassoSelectMode,
+  ToolMode.LineLaserMode,
 )

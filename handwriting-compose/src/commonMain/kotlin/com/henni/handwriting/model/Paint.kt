@@ -17,6 +17,16 @@ internal fun defaultPenPaint(): Paint = Paint().apply {
   strokeCap = StrokeCap.Round
 }
 
+/** Returns a default pen [Paint]. */
+internal fun defaultLaserPaint(): Paint = Paint().apply {
+  color = Color.Black
+  strokeWidth = 6f
+  isAntiAlias = true
+  style = PaintingStyle.Stroke
+  strokeJoin = StrokeJoin.Round
+  strokeCap = StrokeCap.Round
+}
+
 /** Returns a default stroke eraser [Paint]. */
 internal fun defaultStrokeEraserPaint(): Paint = Paint().apply {
   color = Color.LightGray
