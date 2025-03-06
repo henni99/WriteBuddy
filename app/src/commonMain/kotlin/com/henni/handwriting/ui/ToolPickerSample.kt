@@ -75,5 +75,5 @@ fun defaultToolList(): List<ToolMode> = listOf(
   ToolMode.PenMode,
   ToolMode.EraserMode,
   ToolMode.LassoSelectMode,
-  ToolMode.LineLaserMode
+  ToolMode.LineLaserMode,
 )

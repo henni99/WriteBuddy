@@ -3,7 +3,6 @@ package com.henni.handwriting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,10 +42,7 @@ import com.henni.handwriting.tool.LineLaserPointerTouchEvent
 import com.henni.handwriting.tool.PenTouchEvent
 import com.henni.handwriting.tool.StrokeEraserTouchEvent
 import com.henni.handwriting.tool.ToolTouchEvent
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 
 /**
  * Creates and remembers an instance of [HandwritingController].

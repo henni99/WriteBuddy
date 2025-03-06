@@ -27,7 +27,6 @@ internal fun defaultLaserPaint(): Paint = Paint().apply {
   strokeCap = StrokeCap.Round
 }
 
-
 /** Returns a default stroke eraser [Paint]. */
 internal fun defaultStrokeEraserPaint(): Paint = Paint().apply {
   color = Color.LightGray

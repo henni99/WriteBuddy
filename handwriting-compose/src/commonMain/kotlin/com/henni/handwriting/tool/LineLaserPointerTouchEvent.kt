@@ -21,61 +21,59 @@ import com.henni.handwriting.model.copy
  */
 
 internal class LineLaserPointerTouchEvent internal constructor(
-    private val controller: HandwritingController
+  private val controller: HandwritingController,
 ) : ToolTouchEvent {
 
-    private var renderedLaserPath by mutableStateOf(Path())
+  private var renderedLaserPath by mutableStateOf(Path())
 
-    override fun onTouchInitialize() {
-        renderedLaserPath = Path()
-    }
+  override fun onTouchInitialize() {
+    renderedLaserPath = Path()
+  }
 
-    override fun onTouchStart(canvas: Canvas?, offset: Offset, paint: Paint) {
-        renderedLaserPath = Path()
-        renderedLaserPath.moveTo(offset.x, offset.y)
-        controller.laserPathList.add(renderedLaserPath)
+  override fun onTouchStart(canvas: Canvas?, offset: Offset, paint: Paint) {
+    renderedLaserPath = Path()
+    renderedLaserPath.moveTo(offset.x, offset.y)
+    controller.laserPathList.add(renderedLaserPath)
 
-        controller.isLaserEnd = true
-    }
+    controller.isLaserEnd = true
+  }
 
-    override fun onTouchMove(
-        canvas: Canvas?,
-        previousOffset: Offset,
-        currentOffset: Offset,
-        paint: Paint
-    ) {
-        renderedLaserPath.quadraticTo(
-            previousOffset.x,
-            previousOffset.y,
-            (currentOffset.x + previousOffset.x) / 2,
-            (currentOffset.y + previousOffset.y) / 2,
+  override fun onTouchMove(
+    canvas: Canvas?,
+    previousOffset: Offset,
+    currentOffset: Offset,
+    paint: Paint,
+  ) {
+    renderedLaserPath.quadraticTo(
+      previousOffset.x,
+      previousOffset.y,
+      (currentOffset.x + previousOffset.x) / 2,
+      (currentOffset.y + previousOffset.y) / 2,
+    )
+
+    controller.isLaserEnd = false
+  }
+
+  override fun onTouchEnd(canvas: Canvas?, paint: Paint) {
+    controller.isLaserEnd = true
+  }
+
+  override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
+    if (!isMultiTouch) {
+      controller.laserPathList.forEach { path ->
+
+        canvas.drawOutline(
+          outline = Outline.Generic(path),
+          paint = Paint().copy(paint).apply {
+            asFrameworkPaint().setMaskFilter(5f)
+          },
         )
 
-        controller.isLaserEnd = false
+        canvas.drawPath(
+          path,
+          paint,
+        )
+      }
     }
-
-    override fun onTouchEnd(canvas: Canvas?, paint: Paint) {
-
-        controller.isLaserEnd = true
-    }
-
-    override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
-        if (!isMultiTouch) {
-
-            controller.laserPathList.forEach { path ->
-
-                canvas.drawOutline(
-                    outline = Outline.Generic(path),
-                    paint = Paint().copy(paint).apply {
-                        asFrameworkPaint().setMaskFilter(5f)
-                    }
-                )
-
-                canvas.drawPath(
-                    path,
-                    paint
-                )
-            }
-        }
-    }
+  }
 }

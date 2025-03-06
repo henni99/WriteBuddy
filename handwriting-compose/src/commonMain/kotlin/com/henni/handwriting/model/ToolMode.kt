@@ -26,6 +26,8 @@ enum class ToolMode {
    */
   LassoMoveMode,
 
-
-  LineLaserMode
+  /**
+   * Allow users to draw or interact with laser-like lines for precise pointing or highlighting.
+   */
+  LineLaserMode,
 }
