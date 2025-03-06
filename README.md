@@ -24,9 +24,9 @@ Supports drawing, erasing, selection and manipulation, undo/redo, and zoom funct
 
 <p align="center">
 
-🖊️ Pen Tool | 🧽 Stroke Eraser Tool | 🪢  Lasso Tool | 🔍  Zoom |
+🖊️ Pen Tool | 🧽 Stroke Eraser Tool | 🪢  Lasso Tool | 🔦  Laser Tool |
 | :---------------: | :---------------: | :---------------: | :---------------: |
-| <img src="https://github.com/user-attachments/assets/4b02d4c5-a0ec-4e64-abd6-6dda230b1a80" align="center" width="100%"/> | <img src="https://github.com/user-attachments/assets/e82efeaf-505b-4f97-82ae-f4116ef42037" align="center" width="100%"/> | <img src="https://github.com/user-attachments/assets/a4d61037-7cff-4a71-bb6f-dc44718e04c3" align="center" width="100%"/> | <img src="https://github.com/user-attachments/assets/2245a5c8-14cb-4cef-94cf-e4726f387ee3" align="center" width="100%"/> |
+| <img src="https://github.com/user-attachments/assets/4b02d4c5-a0ec-4e64-abd6-6dda230b1a80" align="center" width="100%"/> | <img src="https://github.com/user-attachments/assets/e82efeaf-505b-4f97-82ae-f4116ef42037" align="center" width="100%"/> | <img src="https://github.com/user-attachments/assets/a4d61037-7cff-4a71-bb6f-dc44718e04c3" align="center" width="100%"/> | <img src="https://github.com/user-attachments/assets/048e71cf-f0b7-405a-89c7-e4a6fda28362" align="center" width="100%"/> |
 
 </p>
 
@@ -66,13 +66,11 @@ HandWritingNote(
 
 ```
 
-If you don't want to use the zoom feature, you can set it up as follows.
+You can also use the 🔍 zoom feature!
 
-```kotlin
-val controller = rememberHandwritingController {
-    isZoomable = false
-}
-```
+<img src="https://github.com/user-attachments/assets/2245a5c8-14cb-4cef-94cf-e4726f387ee3" align="center" width="250"/> 
+
+<br>
 <br>
 
 ## Next Step !!
