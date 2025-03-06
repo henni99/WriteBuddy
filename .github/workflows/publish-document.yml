@@ -2,9 +2,8 @@ name: Publish document
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    tags:
+      - '*'
 
 jobs:
   publish_dokka:
@@ -27,4 +26,3 @@ jobs:
         with:
           github_token: ${{ secrets.GT_PAT }}
           publish_dir: ./docs
-          publish_branch: docs-page
