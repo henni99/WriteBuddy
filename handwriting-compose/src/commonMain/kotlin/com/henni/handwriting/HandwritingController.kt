@@ -132,13 +132,20 @@ class HandwritingController {
   // Current laser properties
   // ==============================
 
+  /**
+   * The paint settings for the laser tool.
+   */
   var laserPaint by mutableStateOf(defaultLaserPaint())
 
+  /**
+   * A collection of all laser paths on the canvas.
+   */
   val laserPathList = ArrayDeque<Path>()
 
+  /**
+   * Determines whether the laser is end.
+   */
   var isLaserEnd by mutableStateOf(false)
-
-  val laserTick = MutableStateFlow<Int>(0)
 
   /** Sets a [Color] to the [laserPaint]. */
   fun setLaserColor(color: Color) {

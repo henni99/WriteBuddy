@@ -37,6 +37,7 @@ import com.henni.handwriting.extension.findId
 import com.henni.handwriting.extension.getBitmap
 import com.henni.handwriting.extension.updateTick
 import com.henni.handwriting.extensions.setMaskFilter
+import com.henni.handwriting.tool.LineLaserPointerTouchEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -78,25 +79,24 @@ fun HandWritingNote(
 
     var isMultiTouched by remember { mutableStateOf(false) }
 
-    var realEnd by remember { mutableStateOf(false) }
+    var isLaserEnd by remember { mutableStateOf(false) }
 
-    val alpha = animateFloatAsState(
-        if(realEnd) 0f else 1f,
-        animationSpec = if(realEnd) tween(1000) else tween(0),
+    val laserPathAlpha = animateFloatAsState(
+        if(isLaserEnd) 0f else 1f,
+        animationSpec = if(isLaserEnd) tween(1000) else tween(0),
         finishedListener = {
             if(it == 0f) {
                 controller.laserPathList.clear()
             }
         }
-
     )
 
     LaunchedEffect(controller.isLaserEnd) {
         if(controller.isLaserEnd) {
             delay(1000)
-            realEnd = true
+            isLaserEnd = true
         } else {
-            realEnd = false
+            isLaserEnd = false
         }
     }
 
@@ -216,13 +216,13 @@ fun HandWritingNote(
                     canvas.drawImage(bitmap, Offset.Zero, Paint())
                 }
 
-                val curPaint = controller.currentPaint
-                curPaint.alpha = alpha.value
-
-
                 controller.currentTouchEvent.onDrawIntoCanvas(
                     canvas = canvas,
-                    paint = curPaint,
+                    paint = controller.currentPaint.apply {
+                        if(controller.currentTouchEvent is LineLaserPointerTouchEvent) {
+                            this.alpha = laserPathAlpha.value
+                        }
+                    },
                     isMultiTouch = isMultiTouched,
                 )
             }

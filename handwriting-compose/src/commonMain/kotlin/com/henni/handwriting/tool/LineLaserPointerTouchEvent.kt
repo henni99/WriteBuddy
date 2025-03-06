@@ -5,19 +5,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawOutline
 import com.henni.handwriting.HandwritingController
-import com.henni.handwriting.extension.updateTick
 import com.henni.handwriting.extensions.setMaskFilter
 import com.henni.handwriting.model.copy
 
+/**
+ * A class representing the touch event handling for a laser pointer tool.
+ * This class manages touch interactions, including initializing, updating, and rendering laser paths.
+ *
+ * @param controller The handwriting controller used to manage the laser paths.
+ */
+
 internal class LineLaserPointerTouchEvent internal constructor(
     private val controller: HandwritingController
-): ToolTouchEvent {
+) : ToolTouchEvent {
 
     private var renderedLaserPath by mutableStateOf(Path())
 
@@ -31,7 +36,6 @@ internal class LineLaserPointerTouchEvent internal constructor(
         controller.laserPathList.add(renderedLaserPath)
 
         controller.isLaserEnd = true
-        controller.laserTick.updateTick()
     }
 
     override fun onTouchMove(
@@ -48,14 +52,11 @@ internal class LineLaserPointerTouchEvent internal constructor(
         )
 
         controller.isLaserEnd = false
-        controller.laserTick.updateTick()
-
     }
 
     override fun onTouchEnd(canvas: Canvas?, paint: Paint) {
 
         controller.isLaserEnd = true
-        controller.laserTick.updateTick()
     }
 
     override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
@@ -63,11 +64,9 @@ internal class LineLaserPointerTouchEvent internal constructor(
 
             controller.laserPathList.forEach { path ->
 
-                canvas.drawOutline(Outline.Generic(path),
+                canvas.drawOutline(
+                    outline = Outline.Generic(path),
                     paint = Paint().copy(paint).apply {
-                        this.strokeWidth = paint.strokeWidth
-                        this.color = Color.Black
-                        this.alpha = paint.alpha
                         asFrameworkPaint().setMaskFilter(5f)
                     }
                 )
