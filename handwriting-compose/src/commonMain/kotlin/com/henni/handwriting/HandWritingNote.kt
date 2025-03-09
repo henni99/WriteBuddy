@@ -3,6 +3,8 @@ package com.henni.handwriting
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -16,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
@@ -27,6 +30,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.henni.handwriting.extension.detectTransformGestures
 import com.henni.handwriting.extension.findId
@@ -55,8 +59,8 @@ import kotlinx.coroutines.launch
 fun HandWritingNote(
   modifier: Modifier = Modifier,
   controller: HandwritingController,
-  contentWidth: Dp,
-  contentHeight: Dp,
+  contentWidthRatio: Float = 0.9f,
+  contentHeightRatio: Float = 0.9f,
   onInvalidateListener: () -> Unit = {},
 ) {
   val invalidateTick: MutableState<Int> = remember { mutableStateOf(0) }
@@ -99,7 +103,6 @@ fun HandWritingNote(
   LaunchedEffect(Unit) {
     coroutineScope.launch(Dispatchers.Main) {
       controller.refreshTick.collect {
-        println("refreshTick")
         canvasImageBitmap = getBitmap(canvasSize).also {
           canvas = Canvas(it)
         }
@@ -124,12 +127,14 @@ fun HandWritingNote(
   ) {
     androidx.compose.foundation.Canvas(
       modifier = Modifier
-        .width(contentWidth)
-        .height(contentHeight)
+        .fillMaxWidth(contentWidthRatio)
+        .fillMaxHeight(contentHeightRatio)
+
         .onSizeChanged { newSize ->
           val size =
             newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged
 
+          canvasSize = size
           canvasImageBitmap = getBitmap(size).also {
             canvas = Canvas(it)
           }
@@ -139,8 +144,6 @@ fun HandWritingNote(
           scaleY = scale
           translationX = offset.x
           translationY = offset.y
-
-          canvasSize = IntSize(size.height.toInt(), size.width.toInt())
         }
         .clipToBounds()
         .align(Alignment.Center)
