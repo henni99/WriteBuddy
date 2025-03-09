@@ -10,13 +10,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.henni.handwriting.HandWritingNote
 import com.henni.handwriting.model.Padding
 import com.henni.handwriting.model.ToolMode
@@ -120,7 +128,60 @@ fun HandWritingSample() {
                             onClickIcon = controller::setToolMode,
                             tooltipContent = {
 
+                                Column(
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 16.dp,
+                                            start = 16.dp,
+                                            end = 16.dp
+                                        )
+                                ) {
 
+
+                                    HandWritingSlider(
+                                        title = "Eraser Radius",
+                                        value = controller.eraserPointRadius,
+                                        sliderRange = SliderRange.ONE_TO_HUNDRED,
+                                        onValueChangeFinished = {
+                                            controller.eraserPointRadius = it
+                                        }
+                                    )
+
+                                    VerticalSpacer(12.dp)
+
+                                    HorizontalDivider(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        thickness = 1.dp,
+                                        color = Color.Black
+                                    )
+
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors().copy(
+                                            containerColor = Color.White,
+
+                                            ),
+                                        shape = RectangleShape,
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        onClick = {
+                                            controller.clearAllHandWritingPaths()
+                                        },
+                                    ) {
+                                        Text(
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            fontSize = 14.sp,
+                                            maxLines = 1,
+                                            textAlign = TextAlign.Center,
+                                            color = Color.Black,
+                                            fontWeight = FontWeight.Bold,
+                                            overflow = TextOverflow.Ellipsis,
+                                            text = "Clear All"
+                                        )
+                                    }
+
+                                }
                             }
                         )
                     }
@@ -150,6 +211,8 @@ fun HandWritingSample() {
                             toolMode = ToolMode.LineLaserMode,
                             onClickIcon = controller::setToolMode,
                             tooltipContent = {
+
+
                                 Text(
                                     modifier = Modifier.fillMaxWidth()
                                         .align(Alignment.Center)
@@ -158,9 +221,33 @@ fun HandWritingSample() {
                                 )
                             }
                         )
-
                     }
 
+                    item {
+                        PaletteIconButton(
+                            drawableResource = Res.drawable.ic_lasso,
+                            onClickIcon = {
+                                controller.undo()
+                            },
+                            iconColor = when(controller.canUndo) {
+                                true -> Color.Red
+                                false -> Color.Gray
+                            }
+                        )
+                    }
+
+                    item {
+                        PaletteIconButton(
+                            drawableResource = Res.drawable.ic_lasso,
+                            onClickIcon = {
+                                controller.redo()
+                            },
+                            iconColor = when(controller.canRedo) {
+                                true -> Color.Red
+                                false -> Color.Gray
+                            }
+                        )
+                    }
 
                 }
             }
