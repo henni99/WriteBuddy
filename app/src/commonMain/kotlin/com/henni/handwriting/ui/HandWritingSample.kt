@@ -213,12 +213,25 @@ fun HandWritingSample() {
                             tooltipContent = {
 
 
-                                Text(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .align(Alignment.Center)
-                                        .height(200.dp),
-                                    text = "laser pointer"
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                ) {
+
+                                    HandWritingSlider(
+                                        title = "StrokeWidth",
+                                        value = controller.laserPaint.strokeWidth,
+                                        sliderRange = SliderRange.ONE_TO_HUNDRED,
+                                        onValueChangeFinished = controller::setLassoStrokeWidth
+                                    )
+
+                                    VerticalSpacer(12.dp)
+
+                                    HandWritingColorPicker(
+                                        selectedColor = controller.laserPaint.color,
+                                        onItemClick = controller::setLaserColor
+                                    )
+                                }
                             }
                         )
                     }
