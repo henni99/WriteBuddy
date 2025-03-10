@@ -7,10 +7,10 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun App() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        HandWritingSample()
-    }
+  Box(
+    modifier = Modifier
+      .fillMaxSize(),
+  ) {
+    HandWritingSample()
+  }
 }

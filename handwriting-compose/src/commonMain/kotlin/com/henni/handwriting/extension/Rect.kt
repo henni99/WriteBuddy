@@ -11,7 +11,7 @@ import com.henni.handwriting.model.Padding
  * @param other The rectangle to check.
  * @return `true` if this rectangle contains the other, `false` otherwise.
  */
-internal inline fun Rect.contains(other: Rect): Boolean = (this.left <= other.left) &&
+internal fun Rect.contains(other: Rect): Boolean = (this.left <= other.left) &&
   (this.right >= other.right) &&
   (this.top <= other.top) &&
   (this.bottom >= other.bottom)
@@ -23,7 +23,7 @@ internal inline fun Rect.contains(other: Rect): Boolean = (this.left <= other.le
  * @param other The rectangle to union with this one.
  * @return A new rectangle that covers both this and the other rectangle.
  */
-internal inline fun Rect.unions(
+internal fun Rect.unions(
   other: Rect,
 ): Rect {
   if (this == Rect.Zero && other != Rect.Zero) {
@@ -62,7 +62,7 @@ internal inline fun Rect.unions(
  * @param padding The padding to apply to the rectangle.
  * @return A new rectangle that is expanded by the padding.
  */
-internal inline fun Rect.addPadding(padding: Padding): Rect = Rect(
+internal fun Rect.addPadding(padding: Padding): Rect = Rect(
   this.left - padding.left,
   this.top - padding.top,
   this.right + padding.right,
@@ -76,7 +76,7 @@ internal inline fun Rect.addPadding(padding: Padding): Rect = Rect(
  * @param matrix The matrix that contains translation values.
  * @return A new rectangle that is translated by the matrix.
  */
-internal inline fun Rect.translate(matrix: Matrix): Rect = this.translate(
+internal fun Rect.translate(matrix: Matrix): Rect = this.translate(
   matrix.values[12],
   matrix.values[13],
 )
