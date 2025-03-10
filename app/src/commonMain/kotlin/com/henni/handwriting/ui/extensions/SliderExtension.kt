@@ -56,7 +56,7 @@ fun HandWritingSlider(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.width(32.dp),
+                modifier = Modifier.width(40.dp),
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 text = when (sliderRange) {

@@ -55,7 +55,7 @@ fun PaletteIconButtonWithToolTip(
                 containerColor = Color.Transparent,
             ) {
                 Box(
-                    modifier.fillMaxWidth(0.9f)
+                    modifier.fillMaxWidth()
                         .background(
                             color = Color.White,
                             shape = RoundedCornerShape(5.dp)
