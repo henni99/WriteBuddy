@@ -1,6 +1,9 @@
 package com.henni.handwriting.ui
 
+import androidx.compose.foundation.BasicTooltipDefaults
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.MutatePriority
+import androidx.compose.foundation.MutatorMutex
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -18,6 +21,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -47,8 +51,15 @@ fun PaletteIconButtonWithToolTip(
     val state = rememberTooltipState(isPersistent = true)
     val scope = rememberCoroutineScope()
 
+    LaunchedEffect(state.isVisible) {
+        if(!state.isVisible) {
+            state.onDispose()
+            state.dismiss()
+        }
+    }
+
     TooltipBox(
-        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+        positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
         tooltip = {
             PlainTooltip(
                 modifier = Modifier.fillMaxWidth(),
@@ -78,10 +89,12 @@ fun PaletteIconButtonWithToolTip(
                 .padding(4.dp)
                 .combinedClickable(
                     onClick = { onClickIcon(toolMode) },
-                    onDoubleClick = {
+                    onLongClick = {
                         scope.launch {
+                            println("onDoubleClick: ${state.isVisible}")
                             onClickIcon(toolMode)
                             state.show()
+                            state.onDispose()
                         }
                     }
                 )

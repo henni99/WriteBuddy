@@ -1,6 +1,8 @@
 package com.henni.handwriting.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,12 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -130,11 +135,7 @@ fun HandWritingSample() {
 
                             Column(
                                 modifier = Modifier
-                                    .padding(
-                                        top = 16.dp,
-                                        start = 16.dp,
-                                        end = 16.dp
-                                    )
+                                    .padding(16.dp)
                             ) {
 
 
@@ -149,19 +150,9 @@ fun HandWritingSample() {
 
                                 VerticalSpacer(12.dp)
 
-                                HorizontalDivider(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    thickness = 1.dp,
-                                    color = Color.Black
-                                )
-
                                 Button(
-                                    colors = ButtonDefaults.buttonColors().copy(
-                                        containerColor = Color.White,
-
-                                        ),
-                                    shape = RectangleShape,
+                                    colors = ButtonDefaults.buttonColors(Color.LightGray),
+                                    shape = RoundedCornerShape(6.dp),
                                     modifier = Modifier
                                         .fillMaxWidth(),
                                     onClick = {
@@ -191,14 +182,7 @@ fun HandWritingSample() {
                         drawableResource = Res.drawable.ic_lasso,
                         toolMode = ToolMode.LassoSelectMode,
                         onClickIcon = controller::setToolMode,
-                        tooltipContent = {
-                            Text(
-                                modifier = Modifier.fillMaxWidth()
-                                    .weight(1f)
-                                    .height(200.dp),
-                                text = "lasso"
-                            )
-                        }
+                        tooltipContent = { }
                     )
 
                     PaletteIconButtonWithToolTip(
@@ -213,15 +197,6 @@ fun HandWritingSample() {
                                 modifier = Modifier
                                     .padding(16.dp)
                             ) {
-
-                                HandWritingSlider(
-                                    title = "StrokeWidth",
-                                    value = controller.laserPaint.strokeWidth,
-                                    sliderRange = SliderRange.ONE_TO_HUNDRED,
-                                    onValueChangeFinished = controller::setLassoStrokeWidth
-                                )
-
-                                VerticalSpacer(12.dp)
 
                                 HandWritingColorPicker(
                                     selectedColor = controller.laserPaint.color,
