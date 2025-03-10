@@ -32,7 +32,6 @@ fun HandWritingColorPicker(
   selectedColor: Color,
   onItemClick: (Color) -> Unit = { },
 ) {
-
   Text(
     modifier = Modifier.fillMaxWidth(),
     fontSize = 14.sp,

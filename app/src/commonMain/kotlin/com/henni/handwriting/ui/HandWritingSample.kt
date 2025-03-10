@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.henni.handwriting.HandWritingNote
-import com.henni.handwriting.model.Padding
 import com.henni.handwriting.model.ToolMode
 import com.henni.handwriting.rememberHandwritingController
 import com.henni.handwriting.ui.extensions.HandWritingSlider
@@ -40,214 +39,212 @@ import handwriting.app.generated.resources.ic_undo
 
 @Composable
 fun HandWritingSample() {
-    val controller = rememberHandwritingController()
+  val controller = rememberHandwritingController()
 
-
-    Scaffold(
+  Scaffold(
+    modifier = Modifier.fillMaxSize(),
+    content = { innerPadding ->
+      Column(
         modifier = Modifier.fillMaxSize(),
-        content = { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                HandWritingNote(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.LightGray)
-                        .padding(innerPadding),
-                    controller = controller,
-                    contentWidthRatio = 0.9f,
-                    contentHeightRatio = 0.9f,
+      ) {
+        HandWritingNote(
+          modifier = Modifier
+            .fillMaxSize()
+            .background(Color.LightGray)
+            .padding(innerPadding),
+          controller = controller,
+          contentWidthRatio = 0.9f,
+          contentHeightRatio = 0.9f,
+        )
+      }
+    },
+    bottomBar = {
+      Box {
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .background(Color.White)
+            .padding(
+              horizontal = 20.dp,
+            ),
+          horizontalArrangement = Arrangement.spacedBy(
+            8.dp,
+            Alignment.CenterHorizontally,
+          ),
+        ) {
+          PaletteIconButtonWithToolTip(
+            modifier = Modifier,
+            iconColor = controller.penColor,
+            toolMode = ToolMode.PenMode,
+            drawableResource = Res.drawable.ic_pen,
+            onClickIcon = controller::setToolMode,
+            tooltipContent = {
+              Column(
+                modifier = Modifier
+                  .padding(16.dp),
+              ) {
+                HandWritingSlider(
+                  title = "StrokeWidth",
+                  value = controller.penStrokeWidth,
+                  sliderRange = SliderRange.ONE_TO_HUNDRED,
+                  onValueChangeFinished = controller::updatePenStrokeWidth,
                 )
-            }
-        },
-        bottomBar = {
-            Box {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .background(Color.White)
-                        .padding(
-                            horizontal = 20.dp,
-                        ),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        8.dp,
-                        Alignment.CenterHorizontally
-                    ),
+
+                VerticalSpacer(12.dp)
+
+                HandWritingColorPicker(
+                  selectedColor = controller.penColor,
+                  onItemClick = {
+                    controller.updatePenColor(it)
+                  },
+                )
+              }
+            },
+          )
+
+          PaletteIconButtonWithToolTip(
+            modifier = Modifier,
+            drawableResource = Res.drawable.ic_eraser,
+            toolMode = ToolMode.EraserMode,
+            onClickIcon = controller::setToolMode,
+            tooltipContent = {
+              Column(
+                modifier = Modifier
+                  .padding(16.dp),
+              ) {
+                HandWritingSlider(
+                  title = "Eraser Radius",
+                  value = controller.eraserPointRadius,
+                  sliderRange = SliderRange.ONE_TO_HUNDRED,
+                  onValueChangeFinished = {
+                    controller.updateEraserPointRadius(it)
+                  },
+                )
+
+                VerticalSpacer(12.dp)
+
+                HandWritingSwitch(
+                  checked = controller.isEraserPointShowed,
+                  title = "Eraser Pointer Visibility",
+                  onCheckedChange = {
+                    controller.updateIsEraserPointShowed(it)
+                  },
+                )
+
+                VerticalSpacer(12.dp)
+
+                HandWritingColorPicker(
+                  title = "Eraser Point Color",
+                  selectedColor = controller.eraserPointColor,
+                  onItemClick = {
+                    controller.updateEraserPointColor(it)
+                  },
+                )
+
+                VerticalSpacer(12.dp)
+
+                Button(
+                  colors = ButtonDefaults.buttonColors(Color.LightGray),
+                  shape = RoundedCornerShape(6.dp),
+                  modifier = Modifier
+                    .fillMaxWidth(),
+                  onClick = {
+                    controller.clearAllHandWritingPaths()
+                  },
                 ) {
-                    PaletteIconButtonWithToolTip(
-                        modifier = Modifier,
-                        iconColor = controller.penColor,
-                        toolMode = ToolMode.PenMode,
-                        drawableResource = Res.drawable.ic_pen,
-                        onClickIcon = controller::setToolMode,
-                        tooltipContent = {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                            ) {
-
-                                HandWritingSlider(
-                                    title = "StrokeWidth",
-                                    value = controller.penStrokeWidth,
-                                    sliderRange = SliderRange.ONE_TO_HUNDRED,
-                                    onValueChangeFinished = controller::updatePenStrokeWidth,
-                                )
-
-                                VerticalSpacer(12.dp)
-
-                                HandWritingColorPicker(
-                                    selectedColor = controller.penColor,
-                                    onItemClick = {
-                                        controller.updatePenColor(it)
-                                    },
-                                )
-                            }
-                        },
-                    )
-
-                    PaletteIconButtonWithToolTip(
-                        modifier = Modifier,
-                        drawableResource = Res.drawable.ic_eraser,
-                        toolMode = ToolMode.EraserMode,
-                        onClickIcon = controller::setToolMode,
-                        tooltipContent = {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                            ) {
-                                HandWritingSlider(
-                                    title = "Eraser Radius",
-                                    value = controller.eraserPointRadius,
-                                    sliderRange = SliderRange.ONE_TO_HUNDRED,
-                                    onValueChangeFinished = {
-                                        controller.updateEraserPointRadius(it)
-                                    },
-                                )
-
-                                VerticalSpacer(12.dp)
-
-                                HandWritingSwitch(
-                                    checked = controller.isEraserPointShowed,
-                                    title = "Eraser Pointer Visibility",
-                                    onCheckedChange = {
-                                        controller.updateIsEraserPointShowed(it)
-                                    }
-                                )
-
-                                VerticalSpacer(12.dp)
-
-                                HandWritingColorPicker(
-                                    title = "Eraser Point Color",
-                                    selectedColor = controller.eraserPointColor,
-                                    onItemClick = {
-                                        controller.updateEraserPointColor(it)
-                                    },
-                                )
-
-                                VerticalSpacer(12.dp)
-
-                                Button(
-                                    colors = ButtonDefaults.buttonColors(Color.LightGray),
-                                    shape = RoundedCornerShape(6.dp),
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    onClick = {
-                                        controller.clearAllHandWritingPaths()
-                                    },
-                                ) {
-                                    Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        fontSize = 14.sp,
-                                        maxLines = 1,
-                                        textAlign = TextAlign.Center,
-                                        color = Color.Black,
-                                        fontWeight = FontWeight.Bold,
-                                        overflow = TextOverflow.Ellipsis,
-                                        text = "Clear All",
-                                    )
-                                }
-                            }
-                        },
-                    )
-
-                    PaletteIconButtonWithToolTip(
-                        modifier = Modifier,
-                        iconColor = controller.lassoColor,
-                        drawableResource = Res.drawable.ic_lasso,
-                        toolMode = ToolMode.LassoSelectMode,
-                        onClickIcon = controller::setToolMode,
-                        tooltipContent = {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                            ) {
-                                HandWritingColorPicker(
-                                    title = "Lasso Color",
-                                    selectedColor = controller.lassoColor,
-                                    onItemClick = {
-                                        controller.updateLassoColor(it)
-                                    },
-                                )
-
-                                VerticalSpacer(12.dp)
-
-                                HandWritingColorPicker(
-                                    title = "Lasso BoundBox Color",
-                                    selectedColor = controller.lassoBoundBoxColor,
-                                    onItemClick = {
-                                        controller.updateLassoBoundBoxColor(it)
-                                    },
-                                )
-                            }
-                        }
-                    )
-
-                    PaletteIconButtonWithToolTip(
-                        modifier = Modifier,
-                        iconColor = controller.laserColor,
-                        drawableResource = Res.drawable.ic_laser_pointer,
-                        toolMode = ToolMode.LineLaserMode,
-                        onClickIcon = controller::setToolMode,
-                        tooltipContent = {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                            ) {
-                                HandWritingColorPicker(
-                                    selectedColor = controller.laserColor,
-                                    onItemClick = controller::updateLaserColor,
-                                )
-                            }
-                        },
-                    )
-
-                    PaletteIconButton(
-                        drawableResource = Res.drawable.ic_undo,
-                        onClickIcon = {
-                            controller.undo()
-                        },
-                        iconColor = when (controller.canUndo) {
-                            true -> Color.Red
-                            false -> Color.Gray
-                        },
-                    )
-
-                    PaletteIconButton(
-                        drawableResource = Res.drawable.ic_redo,
-                        onClickIcon = {
-                            controller.redo()
-                        },
-                        iconColor = when (controller.canRedo) {
-                            true -> Color.Red
-                            false -> Color.Gray
-                        },
-                    )
+                  Text(
+                    modifier = Modifier
+                      .fillMaxWidth(),
+                    fontSize = 14.sp,
+                    maxLines = 1,
+                    textAlign = TextAlign.Center,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    overflow = TextOverflow.Ellipsis,
+                    text = "Clear All",
+                  )
                 }
-            }
-        },
-    )
+              }
+            },
+          )
+
+          PaletteIconButtonWithToolTip(
+            modifier = Modifier,
+            iconColor = controller.lassoColor,
+            drawableResource = Res.drawable.ic_lasso,
+            toolMode = ToolMode.LassoSelectMode,
+            onClickIcon = controller::setToolMode,
+            tooltipContent = {
+              Column(
+                modifier = Modifier
+                  .padding(16.dp),
+              ) {
+                HandWritingColorPicker(
+                  title = "Lasso Color",
+                  selectedColor = controller.lassoColor,
+                  onItemClick = {
+                    controller.updateLassoColor(it)
+                  },
+                )
+
+                VerticalSpacer(12.dp)
+
+                HandWritingColorPicker(
+                  title = "Lasso BoundBox Color",
+                  selectedColor = controller.lassoBoundBoxColor,
+                  onItemClick = {
+                    controller.updateLassoBoundBoxColor(it)
+                  },
+                )
+              }
+            },
+          )
+
+          PaletteIconButtonWithToolTip(
+            modifier = Modifier,
+            iconColor = controller.laserColor,
+            drawableResource = Res.drawable.ic_laser_pointer,
+            toolMode = ToolMode.LineLaserMode,
+            onClickIcon = controller::setToolMode,
+            tooltipContent = {
+              Column(
+                modifier = Modifier
+                  .padding(16.dp),
+              ) {
+                HandWritingColorPicker(
+                  selectedColor = controller.laserColor,
+                  onItemClick = controller::updateLaserColor,
+                )
+              }
+            },
+          )
+
+          PaletteIconButton(
+            drawableResource = Res.drawable.ic_undo,
+            onClickIcon = {
+              controller.undo()
+            },
+            iconColor = when (controller.canUndo) {
+              true -> Color.Red
+              false -> Color.Gray
+            },
+          )
+
+          PaletteIconButton(
+            drawableResource = Res.drawable.ic_redo,
+            onClickIcon = {
+              controller.redo()
+            },
+            iconColor = when (controller.canRedo) {
+              true -> Color.Red
+              false -> Color.Gray
+            },
+          )
+        }
+      }
+    },
+  )
 }
 
 // ToolPicker(controller)
