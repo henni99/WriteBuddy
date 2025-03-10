@@ -40,12 +40,8 @@ import handwriting.app.generated.resources.ic_undo
 
 @Composable
 fun HandWritingSample() {
-    val controller = rememberHandwritingController {
-        isZoomable = true
-        isEraserPointShowed = true
-        eraserPointRadius = 20f
-//        lassoBoundBoxPadding = Padding(20, 20, 20, 20)
-    }
+    val controller = rememberHandwritingController()
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -125,7 +121,7 @@ fun HandWritingSample() {
                                     value = controller.eraserPointRadius,
                                     sliderRange = SliderRange.ONE_TO_HUNDRED,
                                     onValueChangeFinished = {
-                                        controller.eraserPointRadius = it
+                                        controller.updateEraserPointRadius(it)
                                     },
                                 )
 

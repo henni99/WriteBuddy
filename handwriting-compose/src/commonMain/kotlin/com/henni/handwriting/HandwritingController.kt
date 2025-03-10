@@ -11,11 +11,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.Shader
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.util.fastForEachReversed
 import com.henni.handwriting.extension.addPadding
 import com.henni.handwriting.extension.contains
@@ -29,9 +25,9 @@ import com.henni.handwriting.model.Padding
 import com.henni.handwriting.model.ToolMode
 import com.henni.handwriting.model.copy
 import com.henni.handwriting.model.defaultLaserPaint
+import com.henni.handwriting.model.defaultLassoPaint
 import com.henni.handwriting.model.defaultPenPaint
 import com.henni.handwriting.model.defaultStrokeEraserPaint
-import com.henni.handwriting.model.defaultLassoPaint
 import com.henni.handwriting.operation.InsertOperation
 import com.henni.handwriting.operation.Operation
 import com.henni.handwriting.operation.RemoveOperation
@@ -51,12 +47,49 @@ import kotlinx.coroutines.flow.MutableStateFlow
  * @param block A lambda function that allows customization of the controller upon initialization.
  * @return A remembered instance of [HandwritingController].
  */
+
 @Composable
 fun rememberHandwritingController(
-    block: HandwritingController.() -> Unit,
-): HandwritingController = remember {
-    HandwritingController().apply(block)
-}
+    isZoomable: Boolean = true,
+    isEraserPointShowed: Boolean = true,
+    penColor: Color = Color.Black,
+    penStrokeWidth: Float = 14f,
+    eraserPointColor: Color = Color.LightGray,
+    eraserPointRadius: Float = 20f,
+    lassoColor: Color = Color.Black,
+    lassoBoundBoxColor: Color = Color.Black,
+    lassoBoundBoxPadding: Padding = Padding(20, 20, 20, 20),
+    laserColor: Color = Color.Black,
+    contentBackground: Color = Color.White,
+): HandwritingController =
+    remember(
+        isZoomable,
+        isEraserPointShowed,
+        penColor,
+        penStrokeWidth,
+        eraserPointColor,
+        eraserPointRadius,
+        lassoColor,
+        lassoBoundBoxColor,
+        lassoBoundBoxPadding,
+        laserColor,
+        contentBackground
+    ) {
+        HandwritingController(
+            defaultIsZoomable = isZoomable,
+            defaultIsEraserPointShowed = isEraserPointShowed,
+            defaultPenColor = penColor,
+            defaultPenStrokeWidth = penStrokeWidth,
+            defaultEraserPointColor = eraserPointColor,
+            defaultEraserPointRadius = eraserPointRadius,
+            defaultLassoColor = lassoColor,
+            defaultLassoBoundBoxColor = lassoBoundBoxColor,
+            defaultLassoBoundBoxPadding = lassoBoundBoxPadding,
+            defaultLaserColor = laserColor,
+            defaultContentBackground = contentBackground,
+        )
+    }
+
 
 /**
  * Controller for managing handwriting data, such as pen strokes, eraser actions,
@@ -65,7 +98,20 @@ fun rememberHandwritingController(
  */
 
 @Stable
-class HandwritingController {
+class HandwritingController internal constructor(
+    defaultIsZoomable: Boolean,
+    defaultIsEraserPointShowed: Boolean,
+    defaultPenColor: Color,
+    defaultPenStrokeWidth: Float,
+    defaultEraserPointColor: Color,
+    defaultEraserPointRadius: Float,
+    defaultLassoColor: Color,
+    defaultLassoBoundBoxColor: Color,
+    defaultLassoBoundBoxPadding: Padding,
+    defaultLaserColor: Color,
+    defaultContentBackground: Color,
+) {
+
 
     /**
      * Mutable state to track refresh ticks for UI updates
@@ -84,41 +130,35 @@ class HandwritingController {
     /**
      * A mutable state for the pen color, initially set to black.
      */
-    internal var _penColor = mutableStateOf(Color.Black)
+    private var _penColor = mutableStateOf(defaultPenColor)
 
     /**
-     * Public property for getting and setting the pen color.
+     * Public property for getting the pen color.
      */
-    var penColor: Color
+    val penColor: Color
         get() = _penColor.value
-        internal set(color) {
-            penPaint.color = color
-            _penColor.value = color
-        }
+
+    /** Update pen color to the [penColor]. */
+    fun updatePenColor(color: Color) {
+        penPaint.color = color
+        _penColor.value = color
+    }
 
     /**
      * A mutable state for the pen's stroke width, initially set to 14f.
      */
-    internal var _penStrokeWidth = mutableStateOf(14f)
+    private var _penStrokeWidth = mutableStateOf(defaultPenStrokeWidth)
 
     /**
-     * Public property for getting and setting the pen's stroke width.
+     * Public property for getting the pen's stroke width.
      */
-    var penStrokeWidth: Float
+    val penStrokeWidth: Float
         get() = _penStrokeWidth.value
-        internal set(strokeWidth) {
-            penPaint.strokeWidth = strokeWidth
-            _penStrokeWidth.value = strokeWidth
-        }
-
-    /** Update pen color to the [penColor]. */
-    fun updatePenColor(color: Color) {
-        penColor = color
-    }
 
     /** Update pen stroke width to the [penStrokeWidth]. */
     fun updatePenStrokeWidth(width: Float) {
-        penStrokeWidth = width
+        penPaint.strokeWidth = width
+        _penStrokeWidth.value = width
     }
 
     // ==============================
@@ -133,32 +173,35 @@ class HandwritingController {
     /**
      * A mutable state for the eraser point color, initially set to light gray.
      */
-    private var _eraserPointColor = mutableStateOf(Color.LightGray)
+    private var _eraserPointColor = mutableStateOf(defaultEraserPointColor)
 
     /**
-     * Public property for getting and setting the eraser point color.
+     * Public property for getting the eraser point color.
      */
-    var eraserPointColor: Color
+    val eraserPointColor: Color
         get() = _eraserPointColor.value
-        internal set(color) {
-            eraserPointPaint.color = color
-            _eraserPointColor.value = color
-        }
+
+    /** Update eraser point color to the [eraserPointColor]. */
+    fun updateEraserPointColor(color: Color) {
+        eraserPointPaint.color = color
+        _eraserPointColor.value = color
+    }
 
     /**
      * A mutable state for the eraser point color, initially set to light gray.
      */
-    var eraserPointRadius by mutableStateOf(20f)
+    var eraserPointRadius by mutableStateOf(defaultEraserPointRadius)
+
+    /** Update eraser point radius to the [eraserPointRadius]. */
+    fun updateEraserPointRadius(radius: Float) {
+        eraserPointRadius = radius
+    }
 
     /**
      * Determines whether the eraser point is visible.
      */
-    var isEraserPointShowed by mutableStateOf(true)
+    var isEraserPointShowed by mutableStateOf(defaultIsEraserPointShowed)
 
-    /** Update eraser point color to the [eraserPointColor]. */
-    fun updateEraserPointColor(color: Color) {
-        eraserPointColor = color
-    }
 
     /** Update eraser point visibility to the [isEraserPointShowed]. */
     fun updateIsEraserPointShowed(isShowed: Boolean) {
@@ -177,21 +220,18 @@ class HandwritingController {
     /**
      * A mutable state for the lasso color, initially set to black.
      */
-    internal var _lassoColor = mutableStateOf(Color.Black)
+    private var _lassoColor = mutableStateOf(defaultLassoColor)
 
     /**
-     * Public property for getting and setting the lasso color.
+     * Public property for getting the lasso color.
      */
-    var lassoColor: Color
+    val lassoColor: Color
         get() = _lassoColor.value
-        internal set(color) {
-            lassoPaint.color = color
-            _lassoColor.value = color
-        }
 
     /** Update lassoColor color to the [lassoColor]. */
     fun updateLassoColor(color: Color) {
-        lassoColor = color
+        lassoPaint.color = color
+        _lassoColor.value = color
     }
 
     /**
@@ -202,21 +242,18 @@ class HandwritingController {
     /**
      * A mutable state for the lasso bound box color, initially set to black.
      */
-    internal var _lassoBoundBoxColor = mutableStateOf(Color.Black)
+    private var _lassoBoundBoxColor = mutableStateOf(defaultLassoBoundBoxColor)
 
     /**
      * Public property for getting and setting the lasso bound box color.
      */
-    var lassoBoundBoxColor: Color
+    val lassoBoundBoxColor: Color
         get() = _lassoBoundBoxColor.value
-        internal set(color) {
-            lassoBoundBoxPaint.color = color
-            _lassoBoundBoxColor.value = color
-        }
 
     /** Update lasso color to the [lassoColor]. */
     fun updateLassoBoundBoxColor(color: Color) {
-        lassoBoundBoxColor = color
+        lassoBoundBoxPaint.color = color
+        _lassoBoundBoxColor.value = color
     }
 
     /**
@@ -234,7 +271,11 @@ class HandwritingController {
     /**
      * The padding applied to the lasso bounding box.
      */
-    internal var lassoBoundBoxPadding by mutableStateOf(Padding.Zero)
+    private var _lassoBoundBoxPadding by mutableStateOf(defaultLassoBoundBoxPadding)
+
+
+    val lassoBoundBoxPadding: Padding
+        get() = _lassoBoundBoxPadding
 
     // ==============================
     // Current laser properties
@@ -248,21 +289,19 @@ class HandwritingController {
     /**
      * A mutable state for the laser color, initially set to black.
      */
-    internal var _laserColor = mutableStateOf(Color.Black)
+    internal var _laserColor = mutableStateOf(defaultLaserColor)
 
     /**
      * Public property for getting and setting the laser color.
      */
-    var laserColor: Color
+    val laserColor: Color
         get() = _laserColor.value
-        internal set(color) {
-            laserPaint.color = color
-            _laserColor.value = color
-        }
+
 
     /** Update laser color to the [laserColor]. */
     fun updateLaserColor(color: Color) {
-        laserColor = color
+        laserPaint.color = color
+        _laserColor.value = color
     }
 
     /**
@@ -292,12 +331,12 @@ class HandwritingController {
     /**
      * The background color of the handwriting canvas.
      */
-    var contentBackground by mutableStateOf(Color.White)
+    val contentBackground by mutableStateOf(defaultContentBackground)
 
     /**
      * Determines whether zooming is enabled for the canvas.
      */
-    var isZoomable by mutableStateOf(true)
+    private var isZoomable by mutableStateOf(defaultIsZoomable)
 
     // ==============================
     // Path storage collections
@@ -327,7 +366,6 @@ class HandwritingController {
     internal fun clearSelectedHandwritingPaths() {
         selectedHandwritingPaths.clear()
     }
-
 
 
     /** Sets [Paint], [PenTouchEvent] to the [toolMode]. */
@@ -552,7 +590,7 @@ class HandwritingController {
         if (tempSelectedPaths.isNotEmpty()) {
             selectedHandwritingPaths.clear()
             selectedHandwritingPaths.addAll(tempSelectedPaths)
-            lassoBoundBox = tempBounds.addPadding(lassoBoundBoxPadding)
+            lassoBoundBox = tempBounds.addPadding(_lassoBoundBoxPadding)
             currentTouchEvent = LassoMoveTouchEvent(this)
         } else {
             lassoBoundBox = Rect.Zero
