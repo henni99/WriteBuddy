@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.PathOperation
  * @return `true` if the paths overlap, `false` otherwise.
  */
 
-internal inline fun overlaps(path1: Path, path2: Path): Boolean = Path().apply {
+internal fun overlaps(path1: Path, path2: Path): Boolean = Path().apply {
   this.op(path1, path2, PathOperation.Intersect)
 }.isEmpty.not()
 
@@ -24,7 +24,7 @@ internal inline fun overlaps(path1: Path, path2: Path): Boolean = Path().apply {
  * @param offset The position to add the deformation point.
  */
 
-internal inline fun Path.addDeformationPoint(offset: Offset) {
+internal fun Path.addDeformationPoint(offset: Offset) {
   this.lineTo(offset.x + 3, offset.y + 3)
   this.lineTo(offset.x - 6, offset.y + 3)
   this.lineTo(offset.x + 3, offset.y - 6)

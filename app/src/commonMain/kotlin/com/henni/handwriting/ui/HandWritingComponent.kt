@@ -1,15 +1,11 @@
 package com.henni.handwriting.ui
 
-import androidx.compose.foundation.BasicTooltipDefaults
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.MutatePriority
-import androidx.compose.foundation.MutatorMutex
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -33,99 +29,96 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 enum class SliderRange {
-    ONE_TO_HUNDRED,
-    ZERO_TO_ONE
+  ONE_TO_HUNDRED,
+  ZERO_TO_ONE,
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PaletteIconButtonWithToolTip(
-    modifier: Modifier = Modifier,
-    iconColor: Color = Color.Gray,
-    toolMode: ToolMode,
-    drawableResource: DrawableResource,
-    onClickIcon: (ToolMode) -> Unit = {},
-    tooltipContent: @Composable () -> Unit,
+  modifier: Modifier = Modifier,
+  iconColor: Color = Color.Gray,
+  toolMode: ToolMode,
+  drawableResource: DrawableResource,
+  onClickIcon: (ToolMode) -> Unit = {},
+  tooltipContent: @Composable () -> Unit,
 ) {
-    val state = rememberTooltipState(isPersistent = true)
-    val scope = rememberCoroutineScope()
+  val state = rememberTooltipState(isPersistent = true)
+  val scope = rememberCoroutineScope()
 
-    LaunchedEffect(state.isVisible) {
-        if(!state.isVisible) {
-            state.onDispose()
-            state.dismiss()
+  LaunchedEffect(state.isVisible) {
+    if (!state.isVisible) {
+      state.onDispose()
+      state.dismiss()
+    }
+  }
+
+  TooltipBox(
+    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+    tooltip = {
+      PlainTooltip(
+        modifier = Modifier.fillMaxWidth(),
+        containerColor = Color.Transparent,
+      ) {
+        Box(
+          modifier.fillMaxWidth()
+            .background(
+              color = Color.White,
+              shape = RoundedCornerShape(5.dp),
+            )
+            .shadow(
+              elevation = 3.dp,
+              shape = RoundedCornerShape(5.dp),
+            )
+            .wrapContentHeight()
+            .background(Color.White),
+        ) {
+          tooltipContent()
         }
-    }
-
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
-        tooltip = {
-            PlainTooltip(
-                modifier = Modifier.fillMaxWidth(),
-                containerColor = Color.Transparent,
-            ) {
-                Box(
-                    modifier.fillMaxWidth()
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                        .shadow(
-                            elevation = 3.dp,
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                        .wrapContentHeight()
-                        .background(Color.White)
-                ) {
-                    tooltipContent()
-                }
+      }
+    },
+    state = state,
+  ) {
+    Icon(
+      modifier = Modifier
+        .padding(4.dp)
+        .combinedClickable(
+          onClick = { onClickIcon(toolMode) },
+          onLongClick = {
+            scope.launch {
+              println("onDoubleClick: ${state.isVisible}")
+              onClickIcon(toolMode)
+              state.show()
+              state.onDispose()
             }
-        },
-        state = state
-    ) {
-        Icon(
-            modifier = Modifier
-                .padding(4.dp)
-                .combinedClickable(
-                    onClick = { onClickIcon(toolMode) },
-                    onLongClick = {
-                        scope.launch {
-                            println("onDoubleClick: ${state.isVisible}")
-                            onClickIcon(toolMode)
-                            state.show()
-                            state.onDispose()
-                        }
-                    }
-                )
-                .padding(4.dp)
-                .size(28.dp),
-            painter = painterResource(drawableResource),
-            contentDescription = null,
-            tint = iconColor
+          },
         )
-    }
+        .padding(4.dp)
+        .size(28.dp),
+      painter = painterResource(drawableResource),
+      contentDescription = null,
+      tint = iconColor,
+    )
+  }
 }
 
 @Composable
 fun PaletteIconButton(
-    modifier: Modifier = Modifier,
-    iconColor: Color = Color.Gray,
-    drawableResource: DrawableResource,
-    onClickIcon: () -> Unit = {},
+  modifier: Modifier = Modifier,
+  iconColor: Color = Color.Gray,
+  drawableResource: DrawableResource,
+  onClickIcon: () -> Unit = {},
 ) {
-
-    Icon(
-        modifier = modifier
-            .padding(4.dp)
-            .clickable {
-                onClickIcon()
-            }
-            .padding(4.dp)
-            .size(28.dp),
-        painter = painterResource(drawableResource),
-        contentDescription = null,
-        tint = iconColor
-    )
+  Icon(
+    modifier = modifier
+      .padding(4.dp)
+      .clickable {
+        onClickIcon()
+      }
+      .padding(4.dp)
+      .size(28.dp),
+    painter = painterResource(drawableResource),
+    contentDescription = null,
+    tint = iconColor,
+  )
 }
-

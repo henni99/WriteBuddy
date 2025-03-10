@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.update
  * Increments the current value by 1 and wraps around at `Int.MAX_VALUE`.
  */
 
-internal inline fun MutableStateFlow<Int>.updateTick() {
+internal fun MutableStateFlow<Int>.updateTick() {
   update {
     (it + 1) % Int.MAX_VALUE
   }
@@ -20,6 +20,6 @@ internal inline fun MutableStateFlow<Int>.updateTick() {
  * Increments the current value by 1 and wraps around at `Int.MAX_VALUE`.
  */
 
-internal inline fun MutableState<Int>.updateTick() {
+internal fun MutableState<Int>.updateTick() {
   this.value = (this.value + 1) % Int.MAX_VALUE
 }

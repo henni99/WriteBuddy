@@ -18,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
@@ -28,9 +27,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.henni.handwriting.extension.detectTransformGestures
 import com.henni.handwriting.extension.findId
@@ -129,7 +126,6 @@ fun HandWritingNote(
       modifier = Modifier
         .fillMaxWidth(contentWidthRatio)
         .fillMaxHeight(contentHeightRatio)
-
         .onSizeChanged { newSize ->
           val size =
             newSize.takeIf { it.width != 0 && it.height != 0 } ?: return@onSizeChanged

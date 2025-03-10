@@ -9,16 +9,16 @@ import androidx.compose.ui.unit.Dp
 
 @Composable
 fun VerticalSpacer(height: Dp) {
-    Spacer(
-        modifier = Modifier
-            .height(height)
-    )
+  Spacer(
+    modifier = Modifier
+      .height(height),
+  )
 }
 
 @Composable
 fun HorizontalSpacer(width: Dp) {
-    Spacer(
-        modifier = Modifier
-            .width(width)
-    )
+  Spacer(
+    modifier = Modifier
+      .width(width),
+  )
 }

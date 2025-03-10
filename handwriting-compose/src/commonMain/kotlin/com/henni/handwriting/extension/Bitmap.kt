@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.IntSize
  * @param size The size (width and height) of the bitmap to create.
  * @return A new `ImageBitmap` with the specified size and ARGB8888 configuration.
  */
-internal inline fun getBitmap(size: IntSize): ImageBitmap = ImageBitmap(
+internal fun getBitmap(size: IntSize): ImageBitmap = ImageBitmap(
   size.width,
   size.height,
   ImageBitmapConfig.Argb8888,
