@@ -1,11 +1,14 @@
 package com.henni.handwriting.ui.extensions
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +24,37 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.henni.handwriting.ui.SliderRange
+
+@Composable
+fun HandWritingSwitch(
+  checked: Boolean,
+  title: String,
+  onCheckedChange: (Boolean) -> Unit,
+) {
+  Row(
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.Center,
+  ) {
+    Text(
+      modifier = Modifier.wrapContentWidth(),
+      fontSize = 14.sp,
+      maxLines = 1,
+      color = Color.Black,
+      fontWeight = FontWeight.Bold,
+      overflow = TextOverflow.Ellipsis,
+      text = title,
+    )
+
+    Spacer(Modifier.weight(1f))
+
+    Switch(
+      checked = checked,
+      onCheckedChange = { checked ->
+        onCheckedChange(checked)
+      },
+    )
+  }
+}
 
 @Composable
 fun HandWritingSlider(

@@ -37,9 +37,9 @@ internal fun defaultStrokeEraserPaint(): Paint = Paint().apply {
 }
 
 /** Returns a default [Paint]. */
-internal fun lassoDefaultPaint(): Paint = Paint().apply {
+internal fun defaultLassoPaint(): Paint = Paint().apply {
   color = Color.Black
-  strokeWidth = 12f
+  strokeWidth = 6f
   isAntiAlias = true
   style = PaintingStyle.Stroke
   strokeJoin = StrokeJoin.Round

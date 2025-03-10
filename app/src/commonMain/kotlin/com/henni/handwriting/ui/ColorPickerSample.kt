@@ -27,17 +27,11 @@ import com.henni.handwriting.ui.extensions.VerticalSpacer
 @Composable
 fun HandWritingColorPicker(
   modifier: Modifier = Modifier,
+  title: String = "Color",
   list: List<Color> = defaultColorList(),
   selectedColor: Color,
   onItemClick: (Color) -> Unit = { },
 ) {
-//    var currentColor by remember { mutableStateOf(Color.Black) }
-//
-//    LaunchedEffect(Unit) {
-//        currentColor = selectedColor
-//
-//    }
-
   Text(
     modifier = Modifier.fillMaxWidth(),
     fontSize = 14.sp,
@@ -45,7 +39,7 @@ fun HandWritingColorPicker(
     color = Color.Black,
     fontWeight = FontWeight.Bold,
     overflow = TextOverflow.Ellipsis,
-    text = "Color",
+    text = title,
   )
 
   VerticalSpacer(8.dp)
@@ -64,7 +58,6 @@ fun HandWritingColorPicker(
             shape = RoundedCornerShape(8.dp),
           )
           .clickable {
-//                        currentColor = color
             onItemClick(color)
           },
       ) {

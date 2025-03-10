@@ -15,7 +15,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,10 +24,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.henni.handwriting.HandWritingNote
-import com.henni.handwriting.model.Padding
 import com.henni.handwriting.model.ToolMode
 import com.henni.handwriting.rememberHandwritingController
 import com.henni.handwriting.ui.extensions.HandWritingSlider
+import com.henni.handwriting.ui.extensions.HandWritingSwitch
 import com.henni.handwriting.ui.extensions.VerticalSpacer
 import handwriting.app.generated.resources.Res
 import handwriting.app.generated.resources.ic_eraser
@@ -40,12 +39,7 @@ import handwriting.app.generated.resources.ic_undo
 
 @Composable
 fun HandWritingSample() {
-  val controller = rememberHandwritingController {
-    isZoomable = true
-    isEraserPointShowed = true
-    eraserPointRadius = 20f
-    lassoBoundBoxPadding = Padding(20, 20, 20, 20)
-  }
+  val controller = rememberHandwritingController()
 
   Scaffold(
     modifier = Modifier.fillMaxSize(),
@@ -74,11 +68,14 @@ fun HandWritingSample() {
             .padding(
               horizontal = 20.dp,
             ),
-          horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+          horizontalArrangement = Arrangement.spacedBy(
+            8.dp,
+            Alignment.CenterHorizontally,
+          ),
         ) {
           PaletteIconButtonWithToolTip(
             modifier = Modifier,
-            iconColor = controller.penPaint.color,
+            iconColor = controller.penColor,
             toolMode = ToolMode.PenMode,
             drawableResource = Res.drawable.ic_pen,
             onClickIcon = controller::setToolMode,
@@ -88,26 +85,19 @@ fun HandWritingSample() {
                   .padding(16.dp),
               ) {
                 HandWritingSlider(
-                  title = "Alpha",
-                  value = controller.currentPaint.alpha,
-                  sliderRange = SliderRange.ZERO_TO_ONE,
-                  onValueChangeFinished = controller::setPenAlpha,
-                )
-
-                VerticalSpacer(12.dp)
-
-                HandWritingSlider(
                   title = "StrokeWidth",
-                  value = controller.currentPaint.strokeWidth,
+                  value = controller.penStrokeWidth,
                   sliderRange = SliderRange.ONE_TO_HUNDRED,
-                  onValueChangeFinished = controller::setPenStrokeWidth,
+                  onValueChangeFinished = controller::updatePenStrokeWidth,
                 )
 
                 VerticalSpacer(12.dp)
 
                 HandWritingColorPicker(
-                  selectedColor = controller.penPaint.color,
-                  onItemClick = controller::setPenColor,
+                  selectedColor = controller.penColor,
+                  onItemClick = {
+                    controller.updatePenColor(it)
+                  },
                 )
               }
             },
@@ -128,7 +118,27 @@ fun HandWritingSample() {
                   value = controller.eraserPointRadius,
                   sliderRange = SliderRange.ONE_TO_HUNDRED,
                   onValueChangeFinished = {
-                    controller.eraserPointRadius = it
+                    controller.updateEraserPointRadius(it)
+                  },
+                )
+
+                VerticalSpacer(12.dp)
+
+                HandWritingSwitch(
+                  checked = controller.isEraserPointShowed,
+                  title = "Eraser Pointer Visibility",
+                  onCheckedChange = {
+                    controller.updateIsEraserPointShowed(it)
+                  },
+                )
+
+                VerticalSpacer(12.dp)
+
+                HandWritingColorPicker(
+                  title = "Eraser Point Color",
+                  selectedColor = controller.eraserPointColor,
+                  onItemClick = {
+                    controller.updateEraserPointColor(it)
                   },
                 )
 
@@ -161,14 +171,39 @@ fun HandWritingSample() {
 
           PaletteIconButtonWithToolTip(
             modifier = Modifier,
+            iconColor = controller.lassoColor,
             drawableResource = Res.drawable.ic_lasso,
             toolMode = ToolMode.LassoSelectMode,
             onClickIcon = controller::setToolMode,
-            tooltipContent = { },
+            tooltipContent = {
+              Column(
+                modifier = Modifier
+                  .padding(16.dp),
+              ) {
+                HandWritingColorPicker(
+                  title = "Lasso Color",
+                  selectedColor = controller.lassoColor,
+                  onItemClick = {
+                    controller.updateLassoColor(it)
+                  },
+                )
+
+                VerticalSpacer(12.dp)
+
+                HandWritingColorPicker(
+                  title = "Lasso BoundBox Color",
+                  selectedColor = controller.lassoBoundBoxColor,
+                  onItemClick = {
+                    controller.updateLassoBoundBoxColor(it)
+                  },
+                )
+              }
+            },
           )
 
           PaletteIconButtonWithToolTip(
             modifier = Modifier,
+            iconColor = controller.laserColor,
             drawableResource = Res.drawable.ic_laser_pointer,
             toolMode = ToolMode.LineLaserMode,
             onClickIcon = controller::setToolMode,
@@ -178,8 +213,8 @@ fun HandWritingSample() {
                   .padding(16.dp),
               ) {
                 HandWritingColorPicker(
-                  selectedColor = controller.laserPaint.color,
-                  onItemClick = controller::setLaserColor,
+                  selectedColor = controller.laserColor,
+                  onItemClick = controller::updateLaserColor,
                 )
               }
             },
