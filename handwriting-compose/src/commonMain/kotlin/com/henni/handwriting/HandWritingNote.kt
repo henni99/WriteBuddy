@@ -2,8 +2,11 @@ package com.henni.handwriting
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -99,6 +103,7 @@ fun HandWritingNote(
   modifier: Modifier = Modifier,
   controller: HandwritingController,
   laserState: State<Float> = mutableStateOf(1f),
+  containerBackgroundColor: Color = Color.Transparent,
   contentWidthRatio: Float = 0.9f,
   contentHeightRatio: Float = 0.9f,
   onInvalidateListener: () -> Unit = {},
@@ -142,9 +147,10 @@ fun HandWritingNote(
 
   Box(
     modifier = modifier
+      .background(containerBackgroundColor)
       .clipToBounds(),
   ) {
-    androidx.compose.foundation.Canvas(
+    Box(
       modifier = Modifier
         .fillMaxWidth(contentWidthRatio)
         .fillMaxHeight(contentHeightRatio)
@@ -164,85 +170,100 @@ fun HandWritingNote(
           translationY = offset.y
         }
         .clipToBounds()
-        .align(Alignment.Center)
-        .pointerInput(Unit) {
-          detectTransformGestures(
-            onGestureStart = { offset ->
+        .align(Alignment.Center),
 
-              controller.currentTouchEvent.onTouchStart(
-                canvas = canvas,
-                offset = offset,
-                paint = controller.currentPaint,
-              )
-
-              invalidateTick.updateTick()
-            },
-            onGesture = { zoomChange: Float, panChange: Offset, change: PointerInputChange, isMultiTouch: Boolean ->
-              isMultiTouched = isMultiTouch
-
-              if (isMultiTouch) {
-                scale = (scale * zoomChange).coerceIn(1f, 5f)
-
-                val extraWidth = (scale - 1) * canvasSize.width
-                val extraHeight = (scale - 1) * canvasSize.height
-
-                val maxX = extraWidth / 2
-                val maxY = extraHeight / 2
-
-                offset = Offset(
-                  x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
-                  y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
-                )
-              } else {
-                controller.currentTouchEvent.onTouchMove(
-                  canvas = canvas,
-                  previousOffset = change.previousPosition,
-                  currentOffset = change.position,
-                  paint = controller.currentPaint,
-                )
-              }
-
-              invalidateTick.updateTick()
-            },
-            onGestureEnd = { isMultiTouch ->
-
-              isMultiTouched = isMultiTouch
-
-              if (!isMultiTouch) {
-                controller.currentTouchEvent.onTouchEnd(
-                  canvas = canvas,
-                  paint = controller.currentPaint,
-                )
-                invalidateTick.updateTick()
-              }
-            },
-            onGestureCancel = {
-              controller.currentTouchEvent.onTouchInitialize()
-              invalidateTick.updateTick()
-            },
-          )
-        },
     ) {
-      drawIntoCanvas { canvas ->
-        drawRect(controller.contentBackground)
-
-        canvasImageBitmap?.let { bitmap ->
-          canvas.drawImage(bitmap, Offset.Zero, Paint())
-        }
-
-        controller.currentTouchEvent.onDrawIntoCanvas(
-          canvas = canvas,
-          paint = controller.currentPaint.apply {
-            if (controller.currentTouchEvent is LineLaserPointerTouchEvent) {
-              this.alpha = laserState.value
-            }
-          },
-          isMultiTouch = isMultiTouched,
+      controller.contentBackgroundImageBitmap?.let { bitmap ->
+        Image(
+          modifier = Modifier.fillMaxSize()
+            .background(controller.contentBackgroundImageColor),
+          bitmap = bitmap,
+          contentDescription = null,
+          contentScale = controller.contentBackgroundImageContentScale,
         )
       }
+      androidx.compose.foundation.Canvas(
+        modifier = Modifier
+          .fillMaxSize()
+          .pointerInput(Unit) {
+            detectTransformGestures(
+              onGestureStart = { offset ->
 
-      if (invalidateTick.value != 0) {
-        onInvalidateListener()
+                controller.currentTouchEvent.onTouchStart(
+                  canvas = canvas,
+                  offset = offset,
+                  paint = controller.currentPaint,
+                )
+
+                invalidateTick.updateTick()
+              },
+              onGesture = { zoomChange: Float, panChange: Offset, change: PointerInputChange, isMultiTouch: Boolean ->
+                isMultiTouched = isMultiTouch
+
+                if (isMultiTouch && controller.isZoomable) {
+                  scale = (scale * zoomChange).coerceIn(1f, 5f)
+
+                  val extraWidth = (scale - 1) * canvasSize.width
+                  val extraHeight = (scale - 1) * canvasSize.height
+
+                  val maxX = extraWidth / 2
+                  val maxY = extraHeight / 2
+
+                  offset = Offset(
+                    x = (offset.x + scale * panChange.x).coerceIn(-maxX, maxX),
+                    y = (offset.y + scale * panChange.y).coerceIn(-maxY, maxY),
+                  )
+                } else {
+                  controller.currentTouchEvent.onTouchMove(
+                    canvas = canvas,
+                    previousOffset = change.previousPosition,
+                    currentOffset = change.position,
+                    paint = controller.currentPaint,
+                  )
+                }
+
+                invalidateTick.updateTick()
+              },
+              onGestureEnd = { isMultiTouch ->
+
+                isMultiTouched = isMultiTouch
+
+                if (!isMultiTouch) {
+                  controller.currentTouchEvent.onTouchEnd(
+                    canvas = canvas,
+                    paint = controller.currentPaint,
+                  )
+                  invalidateTick.updateTick()
+                }
+              },
+              onGestureCancel = {
+                controller.currentTouchEvent.onTouchInitialize()
+                invalidateTick.updateTick()
+              },
+            )
+          },
+      ) {
+        drawIntoCanvas { canvas ->
+          drawRect(controller.contentBackground)
+
+          canvasImageBitmap?.let { bitmap ->
+            canvas.drawImage(bitmap, Offset.Zero, Paint())
+          }
+
+          controller.currentTouchEvent.onDrawIntoCanvas(
+            canvas = canvas,
+            paint = controller.currentPaint.apply {
+              if (controller.currentTouchEvent is LineLaserPointerTouchEvent) {
+                this.alpha = laserState.value
+              }
+            },
+            isMultiTouch = isMultiTouched,
+          )
+        }
+
+        if (invalidateTick.value != 0) {
+          onInvalidateListener()
+        }
       }
     }
   }

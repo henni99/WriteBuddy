@@ -15,9 +15,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,11 +43,20 @@ import handwriting.app.generated.resources.ic_lasso
 import handwriting.app.generated.resources.ic_pen
 import handwriting.app.generated.resources.ic_redo
 import handwriting.app.generated.resources.ic_undo
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.decodeToImageBitmap
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HandWritingSample() {
   val controller = rememberHandwritingController()
+
   val laserState = animateLaserAlphaFloatAsState(controller)
+
+  LaunchedEffect(Unit) {
+    val imageBitmap = Res.readBytes("drawable/img_lined_paper.png").decodeToImageBitmap()
+    controller.updateContentBackgroundImageBitmap(imageBitmap, ContentScale.None)
+  }
 
   Scaffold(
     modifier = Modifier.fillMaxSize(),
@@ -56,10 +67,10 @@ fun HandWritingSample() {
         HandWritingNote(
           modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray)
             .padding(innerPadding),
           controller = controller,
           laserState = laserState,
+          containerBackgroundColor = Color.LightGray,
           contentWidthRatio = 0.9f,
           contentHeightRatio = 0.9f,
         )

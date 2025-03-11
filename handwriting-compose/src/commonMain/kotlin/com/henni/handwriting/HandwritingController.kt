@@ -9,9 +9,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.util.fastForEachReversed
 import com.henni.handwriting.extension.addPadding
 import com.henni.handwriting.extension.contains
@@ -71,7 +73,10 @@ fun rememberHandwritingController(
   lassoBoundBoxColor: Color = Color.Black,
   lassoBoundBoxPadding: Padding = Padding(20, 20, 20, 20),
   laserColor: Color = Color.Black,
-  contentBackground: Color = Color.White,
+  contentBackground: Color = Color.Transparent,
+  contentBackgroundImage: ImageBitmap? = null,
+  contentBackgroundImageColor: Color = Color.Transparent,
+  contentBackgroundImageContentScale: ContentScale = ContentScale.None,
 ): HandwritingController = remember(
   isZoomable,
   isEraserPointShowed,
@@ -84,6 +89,7 @@ fun rememberHandwritingController(
   lassoBoundBoxPadding,
   laserColor,
   contentBackground,
+  contentBackgroundImage,
 ) {
   HandwritingController(
     defaultIsZoomable = isZoomable,
@@ -97,6 +103,9 @@ fun rememberHandwritingController(
     defaultLassoBoundBoxPadding = lassoBoundBoxPadding,
     defaultLaserColor = laserColor,
     defaultContentBackground = contentBackground,
+    defaultContentBackgroundImage = contentBackgroundImage,
+    defaultContentBackgroundImageColor = contentBackgroundImageColor,
+    defaultContentBackgroundContentScale = contentBackgroundImageContentScale,
   )
 }
 
@@ -119,6 +128,9 @@ class HandwritingController internal constructor(
   defaultLassoBoundBoxPadding: Padding,
   defaultLaserColor: Color,
   defaultContentBackground: Color,
+  defaultContentBackgroundImage: ImageBitmap?,
+  defaultContentBackgroundImageColor: Color,
+  defaultContentBackgroundContentScale: ContentScale,
 ) {
 
   /**
@@ -160,7 +172,6 @@ class HandwritingController internal constructor(
   /**
    * A mutable state for the pen's stroke width, initially set to 14f.
    */
-  @Suppress("backing-property-naming")
   private var _penStrokeWidth = mutableStateOf(defaultPenStrokeWidth)
 
   /**
@@ -378,15 +389,69 @@ class HandwritingController internal constructor(
    */
   internal var currentTouchEvent: ToolTouchEvent by mutableStateOf(PenTouchEvent(this))
 
+  // ==============================
+  // Handwriting canvas properties
+  // ==============================
+
   /**
    * The background color of the handwriting canvas.
    */
   val contentBackground by mutableStateOf(defaultContentBackground)
 
   /**
-   * Determines whether zooming is enabled for the canvas.
+   * A mutable state holding the background image of the handwriting canvas.
    */
-  private var isZoomable by mutableStateOf(defaultIsZoomable)
+  private var _contentBackgroundImageBitmap = mutableStateOf(defaultContentBackgroundImage)
+
+  /**
+   * The public property to retrieve the current background image.
+   */
+  val contentBackgroundImageBitmap: ImageBitmap?
+    get() = _contentBackgroundImageBitmap.value
+
+  /**
+   * A mutable state holding the overlay color applied to the background image.
+   */
+  private var _contentBackgroundImageColor = mutableStateOf(defaultContentBackgroundImageColor)
+
+  /**
+   * The public property to retrieve the current overlay color of the background image.
+   */
+  val contentBackgroundImageColor: Color
+    get() = _contentBackgroundImageColor.value
+
+  /**
+   * A mutable state holding the content scaling mode for the background image.
+   */
+  private var _contentBackgroundImageContentScale = mutableStateOf(defaultContentBackgroundContentScale)
+
+  /**
+   * The public property to retrieve the current content scale mode of the background image.
+   */
+  val contentBackgroundImageContentScale: ContentScale
+    get() = _contentBackgroundImageContentScale.value
+
+  /**
+   * Updates the background image and its scaling mode.
+   *
+   * @param imageBitmap The new image to set as the background.
+   * @param contentScale The content scaling mode for the background image.
+   */
+  fun updateContentBackgroundImageBitmap(imageBitmap: ImageBitmap, contentScale: ContentScale) {
+    _contentBackgroundImageBitmap.value = imageBitmap
+    _contentBackgroundImageContentScale.value = contentScale
+  }
+
+  /**
+   * A mutable state indicating whether zooming is enabled.
+   */
+  private var _isZoomable = mutableStateOf(defaultIsZoomable)
+
+  /**
+   * A public property to check if zooming is enabled.
+   */
+  val isZoomable: Boolean
+    get() = _isZoomable.value
 
   // ==============================
   // Path storage collections
