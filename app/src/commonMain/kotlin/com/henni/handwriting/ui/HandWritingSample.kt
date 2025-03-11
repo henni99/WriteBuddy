@@ -24,10 +24,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.henni.handwriting.HandWritingNote
+import com.henni.handwriting.animateLaserAlphaFloatAsState
 import com.henni.handwriting.model.ToolMode
 import com.henni.handwriting.rememberHandwritingController
+import com.henni.handwriting.ui.extensions.HandWritingColorPicker
 import com.henni.handwriting.ui.extensions.HandWritingSlider
 import com.henni.handwriting.ui.extensions.HandWritingSwitch
+import com.henni.handwriting.ui.extensions.PaletteIconButton
+import com.henni.handwriting.ui.extensions.PaletteIconButtonWithToolTip
+import com.henni.handwriting.ui.extensions.SliderRange
 import com.henni.handwriting.ui.extensions.VerticalSpacer
 import handwriting.app.generated.resources.Res
 import handwriting.app.generated.resources.ic_eraser
@@ -40,6 +45,7 @@ import handwriting.app.generated.resources.ic_undo
 @Composable
 fun HandWritingSample() {
   val controller = rememberHandwritingController()
+  val laserState = animateLaserAlphaFloatAsState(controller)
 
   Scaffold(
     modifier = Modifier.fillMaxSize(),
@@ -53,6 +59,7 @@ fun HandWritingSample() {
             .background(Color.LightGray)
             .padding(innerPadding),
           controller = controller,
+          laserState = laserState,
           contentWidthRatio = 0.9f,
           contentHeightRatio = 0.9f,
         )

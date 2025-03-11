@@ -35,7 +35,7 @@ internal class LineLaserPointerTouchEvent internal constructor(
     renderedLaserPath.moveTo(offset.x, offset.y)
     controller.laserPathList.add(renderedLaserPath)
 
-    controller.isLaserEnd = true
+    controller.isLaserEnd.value = true
   }
 
   override fun onTouchMove(
@@ -51,11 +51,11 @@ internal class LineLaserPointerTouchEvent internal constructor(
       (currentOffset.y + previousOffset.y) / 2,
     )
 
-    controller.isLaserEnd = false
+    controller.isLaserEnd.value = false
   }
 
   override fun onTouchEnd(canvas: Canvas?, paint: Paint) {
-    controller.isLaserEnd = true
+    controller.isLaserEnd.value = true
   }
 
   override fun onDrawIntoCanvas(canvas: Canvas, paint: Paint, isMultiTouch: Boolean) {
