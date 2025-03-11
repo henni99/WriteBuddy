@@ -353,9 +353,16 @@ class HandwritingController internal constructor(
   internal val laserPathList = ArrayDeque<Path>()
 
   /**
+   * Clears all laser handwriting paths from the canvas.
+   */
+  internal fun clearLaserPaths() {
+    laserPathList.clear()
+  }
+
+  /**
    * Determines whether the laser drawing is finished.
    */
-  internal var isLaserEnd by mutableStateOf(false)
+  internal var isLaserEnd = MutableStateFlow<Boolean>(false)
 
   // ==============================
   // Current tool-related properties

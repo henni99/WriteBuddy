@@ -1,8 +1,7 @@
-package com.henni.handwriting.ui
+package com.henni.handwriting.ui.extensions
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -100,25 +99,4 @@ fun PaletteIconButtonWithToolTip(
       tint = iconColor,
     )
   }
-}
-
-@Composable
-fun PaletteIconButton(
-  modifier: Modifier = Modifier,
-  iconColor: Color = Color.Gray,
-  drawableResource: DrawableResource,
-  onClickIcon: () -> Unit = {},
-) {
-  Icon(
-    modifier = modifier
-      .padding(4.dp)
-      .clickable {
-        onClickIcon()
-      }
-      .padding(4.dp)
-      .size(28.dp),
-    painter = painterResource(drawableResource),
-    contentDescription = null,
-    tint = iconColor,
-  )
 }

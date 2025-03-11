@@ -5,11 +5,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +38,49 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
+ * Animates the laser effect's alpha value based on the controller's state.
+ *
+ * When the laser effect ends (`controller.isLaserEnd` is true), the alpha value
+ * gradually fades to 0 over 1 second. Once fully faded, it clears the laser paths.
+ * If the laser effect is reactivated, the alpha immediately returns to 1.
+ *
+ * @param controller The HandwritingController managing the laser effect.
+ * @return A [State] representing the animated alpha value.
+ */
+@Composable
+fun animateLaserAlphaFloatAsState(
+  controller: HandwritingController,
+): State<Float> {
+  var isLaserEnd by remember { mutableStateOf(false) }
+  val coroutineScope = rememberCoroutineScope()
+
+  val laserPathAlpha = animateFloatAsState(
+    if (isLaserEnd) 0f else 1f,
+    animationSpec = if (isLaserEnd) tween(1000) else tween(0),
+    finishedListener = {
+      if (it == 0f) {
+        controller.clearLaserPaths()
+      }
+    },
+  )
+
+  LaunchedEffect(Unit) {
+    coroutineScope.launch {
+      controller.isLaserEnd.collect {
+        if (it) {
+          delay(1000)
+          isLaserEnd = true
+        } else {
+          isLaserEnd = false
+        }
+      }
+    }
+  }
+
+  return laserPathAlpha
+}
+
+/**
  * A Composable function that represents a handwriting note.
  *
  * This Composable listens for touch events and allows the user to draw on the canvas.
@@ -56,6 +98,7 @@ import kotlinx.coroutines.launch
 fun HandWritingNote(
   modifier: Modifier = Modifier,
   controller: HandwritingController,
+  laserState: State<Float> = mutableStateOf(1f),
   contentWidthRatio: Float = 0.9f,
   contentHeightRatio: Float = 0.9f,
   onInvalidateListener: () -> Unit = {},
@@ -73,27 +116,6 @@ fun HandWritingNote(
   var offset by remember { mutableStateOf(Offset.Zero) }
 
   var isMultiTouched by remember { mutableStateOf(false) }
-
-  var isLaserEnd by remember { mutableStateOf(false) }
-
-  val laserPathAlpha = animateFloatAsState(
-    if (isLaserEnd) 0f else 1f,
-    animationSpec = if (isLaserEnd) tween(1000) else tween(0),
-    finishedListener = {
-      if (it == 0f) {
-        controller.laserPathList.clear()
-      }
-    },
-  )
-
-  LaunchedEffect(controller.isLaserEnd) {
-    if (controller.isLaserEnd) {
-      delay(1000)
-      isLaserEnd = true
-    } else {
-      isLaserEnd = false
-    }
-  }
 
   val coroutineScope = rememberCoroutineScope()
 
@@ -212,7 +234,7 @@ fun HandWritingNote(
           canvas = canvas,
           paint = controller.currentPaint.apply {
             if (controller.currentTouchEvent is LineLaserPointerTouchEvent) {
-              this.alpha = laserPathAlpha.value
+              this.alpha = laserState.value
             }
           },
           isMultiTouch = isMultiTouched,
