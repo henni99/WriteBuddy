@@ -1,0 +1,28 @@
+name: Publish document
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  publish_dokka:
+    name: Generate dokka docs
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: main
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4.7.0
+        with:
+          distribution: adopt
+          java-version: 17
+      - name: Generate Dokka HTML docs
+        run: ./gradlew dokkaGeneratePublicationHtml
+      - name: Deploy to GitHub pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GT_PAT }}
+          publish_dir: ./docs
