@@ -429,6 +429,9 @@ class StickyItemController internal constructor(
         )
     }
 
+    /**
+     * Private mutable state for VectorImage properties.
+     */
     private var _vectorImageProperty = mutableStateOf(defaultVectorImageProperty)
 
     /**
@@ -525,6 +528,9 @@ class StickyItemController internal constructor(
         )
     }
 
+    /**
+     * Private mutable state for BitmapImage properties.
+     */
     private var _bitmapImageProperty = mutableStateOf(defaultBitmapImageProperty)
 
     /**
