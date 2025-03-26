@@ -299,7 +299,9 @@ fun StickySample(
                     }
 
                     1 -> controller.vectorImageProperty.size.height.value
+
                     2 -> controller.bitmapImageProperty.size.height.value
+
                     else -> 0f
                   },
                   sliderRange = SliderRange.ONE_TO_THOUSANDS,

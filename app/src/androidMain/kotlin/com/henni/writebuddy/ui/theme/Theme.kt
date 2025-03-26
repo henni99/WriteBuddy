@@ -37,6 +37,7 @@ fun HandWritingTheme(
     }
 
     darkTheme -> DarkColorScheme
+
     else -> LightColorScheme
   }
 
