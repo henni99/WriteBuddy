@@ -14,38 +14,35 @@ import com.henni.writebuddy.extension.detectTransformGestures
  */
 
 fun Modifier.useStickyMode(
-    controller: StickyItemController,
-    isEnabled: Boolean = true
+  controller: StickyItemController,
+  isEnabled: Boolean = true,
 ) = this then (
-        if (!isEnabled) {
-            Modifier
-        } else {
-            Modifier
-                .pointerInput(Unit) {
-                    detectTransformGestures(
-                        onGestureStart = { offset ->
-                            controller.touchEvent.onTouchStart(
-                                offset = offset,
-                            )
+  if (!isEnabled) {
+    Modifier
+  } else {
+    Modifier
+      .pointerInput(Unit) {
+        detectTransformGestures(
+          onGestureStart = { offset ->
+            controller.touchEvent.onTouchStart(
+              offset = offset,
+            )
+          },
+          onGesture = { change, isMultiTouch ->
 
-                        },
-                        onGesture = { change, isMultiTouch ->
+            controller.touchEvent.onTouchMove(
+              previousOffset = change.previousPosition,
+              currentOffset = change.position,
+            )
+          },
+          onGestureEnd = { isMultiTouch ->
 
-                            controller.touchEvent.onTouchMove(
-                                previousOffset = change.previousPosition,
-                                currentOffset = change.position,
-                            )
-                        },
-                        onGestureEnd = { isMultiTouch ->
-
-                            controller.touchEvent.onTouchEnd()
-
-                        },
-                        onGestureCancel = {
-                            controller.touchEvent.onTouchInitialize()
-                        }
-                    )
-                }
-        }
-)
-
+            controller.touchEvent.onTouchEnd()
+          },
+          onGestureCancel = {
+            controller.touchEvent.onTouchInitialize()
+          },
+        )
+      }
+  }
+  )

@@ -8,10 +8,10 @@ import com.henni.writebuddy.ui.root.WriteBuddySample
 
 @Composable
 fun App() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-    ) {
-        WriteBuddySample()
-    }
+  Box(
+    modifier = Modifier
+      .fillMaxSize(),
+  ) {
+    WriteBuddySample()
+  }
 }

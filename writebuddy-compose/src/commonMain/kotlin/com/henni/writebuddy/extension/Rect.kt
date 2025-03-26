@@ -2,7 +2,6 @@ package com.henni.writebuddy.extension
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Matrix
-import com.henni.writebuddy.model.Padding
 
 /**
  * Checks if this rectangle contains another rectangle.

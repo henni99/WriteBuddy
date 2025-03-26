@@ -1,6 +1,5 @@
-package com.henni.writebuddy.sticky.text.post_it
+package com.henni.writebuddy.sticky.text.postIt
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -41,58 +40,58 @@ import com.henni.writebuddy.sticky.text.common.StickyTextItem
 
 @Composable
 fun StickyPostIt(
-    modifier: Modifier = Modifier,
-    property: PostItProperty,
-    textItem: StickyTextItem,
-    onStickyMoved: (Offset) -> Unit,
-    onTextChange: (String) -> Unit,
-    onDeleteSticky: (StickyTextItem) -> Unit,
-    onFocusChange: (String, Boolean) -> Unit,
-    onZoomChanged: (String, Float, Offset) -> Unit
+  modifier: Modifier = Modifier,
+  property: PostItProperty,
+  textItem: StickyTextItem,
+  onStickyMoved: (Offset) -> Unit,
+  onTextChange: (String) -> Unit,
+  onDeleteSticky: (StickyTextItem) -> Unit,
+  onFocusChange: (String, Boolean) -> Unit,
+  onZoomChanged: (String, Float, Offset) -> Unit,
 ) {
-    var text by remember { mutableStateOf(textItem.text) }
+  var text by remember { mutableStateOf(textItem.text) }
 
-    val interactionSource = remember { MutableInteractionSource() }
-    val focusedState = interactionSource.collectIsFocusedAsState()
+  val interactionSource = remember { MutableInteractionSource() }
+  val focusedState = interactionSource.collectIsFocusedAsState()
 
-    LaunchedEffect(focusedState.value) {
-        onFocusChange(textItem.id, focusedState.value)
-    }
+  LaunchedEffect(focusedState.value) {
+    onFocusChange(textItem.id, focusedState.value)
+  }
 
-    Sticky(
-        modifier = modifier,
-        attachable = textItem,
-        stickySize = property.size,
-        onStickyMoved = { offset ->
-            onStickyMoved(offset)
-        },
-        onZoomChanged = { scale, offset ->
-            onZoomChanged(textItem.id, scale, offset)
-        }
+  Sticky(
+    modifier = modifier,
+    attachable = textItem,
+    stickySize = property.size,
+    onStickyMoved = { offset ->
+      onStickyMoved(offset)
+    },
+    onZoomChanged = { scale, offset ->
+      onZoomChanged(textItem.id, scale, offset)
+    },
+  ) {
+    CompositionLocalProvider(
+      LocalTextSelectionColors provides TextSelectionColors(
+        handleColor = Color.Transparent,
+        backgroundColor = property.selectionBackgroundColor,
+      ),
     ) {
-        CompositionLocalProvider(
-            LocalTextSelectionColors provides TextSelectionColors(
-                handleColor = Color.Transparent,
-                backgroundColor = property.selectionBackgroundColor
-            )
-        ) {
-            BasicTextField(
-                modifier = Modifier
-                    .shadow(property.elevation)
-                    .size(property.size)
-                    .background(
-                        color = property.backgroundColor,
-                        shape = RoundedCornerShape(property.corner)
-                    )
-                    .padding(property.padding),
-                interactionSource = interactionSource,
-                value = text,
-                textStyle = property.textStyle,
-                onValueChange = {
-                    text = it
-                    onTextChange(it)
-                }
-            )
-        }
+      BasicTextField(
+        modifier = Modifier
+          .shadow(property.elevation)
+          .size(property.size)
+          .background(
+            color = property.backgroundColor,
+            shape = RoundedCornerShape(property.corner),
+          )
+          .padding(property.padding),
+        interactionSource = interactionSource,
+        value = text,
+        textStyle = property.textStyle,
+        onValueChange = {
+          text = it
+          onTextChange(it)
+        },
+      )
     }
+  }
 }

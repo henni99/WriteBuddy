@@ -27,31 +27,28 @@ import com.henni.writebuddy.sticky.Property
 
 @Immutable
 data class PainterImageProperty(
-    val size: DpSize,
-    val painter: Painter?,
-    val color: Color,
-    val alignment: Alignment,
-    val contentScale: ContentScale,
-    val alpha: Float,
-    val colorFilter: ColorFilter?
+  val size: DpSize,
+  val painter: Painter?,
+  val color: Color,
+  val alignment: Alignment,
+  val contentScale: ContentScale,
+  val alpha: Float,
+  val colorFilter: ColorFilter?,
 ) : Property {
-    companion object {
+  companion object {
 
-        /**
-         * Default property values for a painter image.
-         */
-        @Stable
-        val DEFAULT = PainterImageProperty(
-            size = DpSize(200.dp, 200.dp),
-            painter = null,
-            color = Color.Transparent,
-            alignment = Alignment.Center,
-            contentScale = ContentScale.Fit,
-            alpha = DefaultAlpha,
-            colorFilter = null
-        )
-    }
+    /**
+     * Default property values for a painter image.
+     */
+    @Stable
+    val DEFAULT = PainterImageProperty(
+      size = DpSize(200.dp, 200.dp),
+      painter = null,
+      color = Color.Transparent,
+      alignment = Alignment.Center,
+      contentScale = ContentScale.Fit,
+      alpha = DefaultAlpha,
+      colorFilter = null,
+    )
+  }
 }
-
-
-

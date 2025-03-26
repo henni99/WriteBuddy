@@ -19,77 +19,72 @@ import com.henni.writebuddy.extension.detectTransformGestures
  */
 
 fun Modifier.useLaserPointerMode(
-    controller: LaserPointerController,
-    progress: State<Float>,
-    isEnabled: Boolean,
-    onCanvasInvalidate: () -> Unit = { }
+  controller: LaserPointerController,
+  progress: State<Float>,
+  isEnabled: Boolean,
+  onCanvasInvalidate: () -> Unit = { },
 ) = this then (
-        if(isEnabled) {
-            Modifier
-                .pointerInput(Unit) {
-                    detectTransformGestures(
-                        onGestureStart = { offset ->
-                            controller.touchEvent.onTouchStart(
-                                offset = offset,
-                                paint = controller.paint
-                            )
+  if (isEnabled) {
+    Modifier
+      .pointerInput(Unit) {
+        detectTransformGestures(
+          onGestureStart = { offset ->
+            controller.touchEvent.onTouchStart(
+              offset = offset,
+              paint = controller.paint,
+            )
 
-                            controller.updateInvalidateTick()
+            controller.updateInvalidateTick()
+          },
+          onGesture = { change, isMultiTouch ->
 
-                        },
-                        onGesture = { change, isMultiTouch ->
+            controller.updateIsMultiTouched(isMultiTouch)
 
-                            controller.updateIsMultiTouched(isMultiTouch)
-
-                            if (!isMultiTouch) {
-                                controller.touchEvent.onTouchMove(
-                                    previousOffset = change.previousPosition,
-                                    currentOffset = change.position,
-                                    paint = controller.paint,
-                                )
-                            }
-
-                            controller.updateInvalidateTick()
-                        },
-                        onGestureEnd = { isMultiTouch ->
-
-                            controller.updateIsMultiTouched(isMultiTouch)
-
-                            if (!isMultiTouch) {
-                                controller.touchEvent.onTouchEnd(
-                                    paint = controller.paint,
-                                )
-
-                                controller.updateInvalidateTick()
-                            }
-                        },
-                        onGestureCancel = {
-                            controller.touchEvent.onTouchInitialize()
-                            controller.updateInvalidateTick()
-                        }
-                    )
-                }
-        } else {
-            Modifier
-        }.drawBehind {
-
-            drawIntoCanvas { canvas ->
-
-                controller.touchEvent.onDrawIntoCanvas(
-                    drawScope = this@drawBehind,
-                    canvas = canvas,
-                    paint = controller.paint.apply {
-                        this.alpha = progress.value
-                    },
-                    isMultiTouch = controller.isMultiTouched,
-                )
-
-                if (controller.invalidateTick != 0) {
-                    onCanvasInvalidate()
-                }
+            if (!isMultiTouch) {
+              controller.touchEvent.onTouchMove(
+                previousOffset = change.previousPosition,
+                currentOffset = change.position,
+                paint = controller.paint,
+              )
             }
-        }
-)
 
+            controller.updateInvalidateTick()
+          },
+          onGestureEnd = { isMultiTouch ->
 
+            controller.updateIsMultiTouched(isMultiTouch)
 
+            if (!isMultiTouch) {
+              controller.touchEvent.onTouchEnd(
+                paint = controller.paint,
+              )
+
+              controller.updateInvalidateTick()
+            }
+          },
+          onGestureCancel = {
+            controller.touchEvent.onTouchInitialize()
+            controller.updateInvalidateTick()
+          },
+        )
+      }
+  } else {
+    Modifier
+  }.drawBehind {
+    drawIntoCanvas { canvas ->
+
+      controller.touchEvent.onDrawIntoCanvas(
+        drawScope = this@drawBehind,
+        canvas = canvas,
+        paint = controller.paint.apply {
+          this.alpha = progress.value
+        },
+        isMultiTouch = controller.isMultiTouched,
+      )
+
+      if (controller.invalidateTick != 0) {
+        onCanvasInvalidate()
+      }
+    }
+  }
+  )

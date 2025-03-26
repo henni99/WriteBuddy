@@ -1,20 +1,13 @@
 package com.henni.writebuddy.sticky.image
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.center
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.input.pointer.pointerInput
 import com.henni.writebuddy.sticky.Sticky
 import com.henni.writebuddy.sticky.image.imageBitmap.ImageBitmapItem
 import com.henni.writebuddy.sticky.image.imageBitmap.ImageBitmapProperty
@@ -37,37 +30,36 @@ import com.henni.writebuddy.sticky.image.painter.PainterImageProperty
 
 @Composable
 fun StickyImage(
-    modifier: Modifier = Modifier,
-    property: PainterImageProperty,
-    image: PainterImageItem,
-    onStickyMoved: (Offset) -> Unit,
-    onZoomChanged: (String, Float, Offset) -> Unit,
-    onDeleteSticky: (PainterImageItem) -> Unit
+  modifier: Modifier = Modifier,
+  property: PainterImageProperty,
+  image: PainterImageItem,
+  onStickyMoved: (Offset) -> Unit,
+  onZoomChanged: (String, Float, Offset) -> Unit,
+  onDeleteSticky: (PainterImageItem) -> Unit,
 ) {
-    Sticky(
-        attachable = image,
-        stickySize = property.size,
-        onStickyMoved = { offset ->
-            onStickyMoved(offset)
-        },
-        onZoomChanged = { scale, offset ->
-            onZoomChanged(image.id, scale, offset)
-        }
-    ) {
-        property.painter?.let {
-            Image(
-                painter = it,
-                contentDescription = null,
-                modifier = modifier
-                    .size(property.size),
-                alignment = property.alignment,
-                contentScale = property.contentScale,
-                alpha = property.alpha,
-                colorFilter = property.colorFilter
-            )
-        }
+  Sticky(
+    attachable = image,
+    stickySize = property.size,
+    onStickyMoved = { offset ->
+      onStickyMoved(offset)
+    },
+    onZoomChanged = { scale, offset ->
+      onZoomChanged(image.id, scale, offset)
+    },
+  ) {
+    property.painter?.let {
+      Image(
+        painter = it,
+        contentDescription = null,
+        modifier = modifier
+          .size(property.size),
+        alignment = property.alignment,
+        contentScale = property.contentScale,
+        alpha = property.alpha,
+        colorFilter = property.colorFilter,
+      )
     }
-
+  }
 }
 
 /**
@@ -84,36 +76,36 @@ fun StickyImage(
 
 @Composable
 fun StickyImage(
-    modifier: Modifier = Modifier,
-    property: VectorImageProperty,
-    image: VectorImageItem,
-    onStickyMoved: (Offset) -> Unit,
-    onZoomChanged: (String, Float, Offset) -> Unit,
-    onDeleteSticky: (VectorImageItem) -> Unit
+  modifier: Modifier = Modifier,
+  property: VectorImageProperty,
+  image: VectorImageItem,
+  onStickyMoved: (Offset) -> Unit,
+  onZoomChanged: (String, Float, Offset) -> Unit,
+  onDeleteSticky: (VectorImageItem) -> Unit,
 ) {
-    Sticky(
-        attachable = image,
-        stickySize = property.size,
-        onStickyMoved = { offset ->
-            onStickyMoved(offset)
-        },
-        onZoomChanged = { scale, offset ->
-            onZoomChanged(image.id, scale, offset)
-        }
-    ) {
-        property.imageVector?.let {
-            Image(
-                imageVector = it,
-                contentDescription = null,
-                modifier = modifier
-                    .size(property.size),
-                alignment = property.alignment,
-                contentScale = property.contentScale,
-                alpha = property.alpha,
-                colorFilter = property.colorFilter
-            )
-        }
+  Sticky(
+    attachable = image,
+    stickySize = property.size,
+    onStickyMoved = { offset ->
+      onStickyMoved(offset)
+    },
+    onZoomChanged = { scale, offset ->
+      onZoomChanged(image.id, scale, offset)
+    },
+  ) {
+    property.imageVector?.let {
+      Image(
+        imageVector = it,
+        contentDescription = null,
+        modifier = modifier
+          .size(property.size),
+        alignment = property.alignment,
+        contentScale = property.contentScale,
+        alpha = property.alpha,
+        colorFilter = property.colorFilter,
+      )
     }
+  }
 }
 
 /**
@@ -130,34 +122,34 @@ fun StickyImage(
 
 @Composable
 fun StickyImage(
-    modifier: Modifier = Modifier,
-    property: ImageBitmapProperty,
-    image: ImageBitmapItem,
-    onStickyMoved: (Offset) -> Unit,
-    onZoomChanged: (String, Float, Offset) -> Unit,
-    onDeleteSticky: (ImageBitmapItem) -> Unit
+  modifier: Modifier = Modifier,
+  property: ImageBitmapProperty,
+  image: ImageBitmapItem,
+  onStickyMoved: (Offset) -> Unit,
+  onZoomChanged: (String, Float, Offset) -> Unit,
+  onDeleteSticky: (ImageBitmapItem) -> Unit,
 ) {
-    Sticky(
-        attachable = image,
-        stickySize = property.size,
-        onStickyMoved = {
-            onStickyMoved(it)
-        },
-        onZoomChanged = { scale, offset ->
-            onZoomChanged(image.id, scale, offset)
-        }
-    ) {
-        property.imageBitmap?.let {
-            Image(
-                bitmap = it,
-                modifier = modifier
-                    .size(property.size),
-                contentDescription = null,
-                alignment = property.alignment,
-                contentScale = property.contentScale,
-                alpha = property.alpha,
-                colorFilter = property.colorFilter
-            )
-        }
+  Sticky(
+    attachable = image,
+    stickySize = property.size,
+    onStickyMoved = {
+      onStickyMoved(it)
+    },
+    onZoomChanged = { scale, offset ->
+      onZoomChanged(image.id, scale, offset)
+    },
+  ) {
+    property.imageBitmap?.let {
+      Image(
+        bitmap = it,
+        modifier = modifier
+          .size(property.size),
+        contentDescription = null,
+        alignment = property.alignment,
+        contentScale = property.contentScale,
+        alpha = property.alpha,
+        colorFilter = property.colorFilter,
+      )
     }
+  }
 }

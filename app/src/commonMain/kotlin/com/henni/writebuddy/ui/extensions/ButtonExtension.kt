@@ -13,21 +13,21 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun PaletteIconButton(
-    modifier: Modifier = Modifier,
-    iconColor: Color = Color.Gray,
-    drawableResource: DrawableResource,
-    onClickIcon: () -> Unit = {},
+  modifier: Modifier = Modifier,
+  iconColor: Color = Color.Gray,
+  drawableResource: DrawableResource,
+  onClickIcon: () -> Unit = {},
 ) {
-    Icon(
-        modifier = modifier
-            .padding(4.dp)
-            .clickable {
-                onClickIcon()
-            }
-            .padding(4.dp)
-            .size(28.dp),
-        painter = painterResource(drawableResource),
-        contentDescription = null,
-        tint = iconColor,
-    )
+  Icon(
+    modifier = modifier
+      .padding(4.dp)
+      .clickable {
+        onClickIcon()
+      }
+      .padding(4.dp)
+      .size(28.dp),
+    painter = painterResource(drawableResource),
+    contentDescription = null,
+    tint = iconColor,
+  )
 }

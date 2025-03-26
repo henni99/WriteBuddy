@@ -24,12 +24,14 @@ import kotlin.uuid.Uuid
  */
 
 @Immutable
-data class TapeItem @OptIn(ExperimentalUuidApi::class) constructor(
-    val id: String = Uuid.random().toString(),
-    val bound: Rect,
-    val startPoint: Offset,
-    val paint: Paint,
-    val imagePaint: Paint,
-    val path: Path,
-    val imagePath: Path = Path()
+data class TapeItem
+@OptIn(ExperimentalUuidApi::class)
+constructor(
+  val id: String = Uuid.random().toString(),
+  val bound: Rect,
+  val startPoint: Offset,
+  val paint: Paint,
+  val imagePaint: Paint,
+  val path: Path,
+  val imagePath: Path = Path(),
 )

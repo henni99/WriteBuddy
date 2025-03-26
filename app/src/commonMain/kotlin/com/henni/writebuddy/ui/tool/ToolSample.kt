@@ -41,156 +41,153 @@ import writebuddy.app.generated.resources.ic_tape
 
 @Composable
 fun ToolSample(
-    modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
+  val laserPointerController = rememberLaserPointerController()
 
-    val laserPointerController = rememberLaserPointerController()
+  val progress = animateLaserAlphaFloatAsState(laserPointerController) {
+    laserPointerController.clearLaserPaths()
+  }
 
-    val progress = animateLaserAlphaFloatAsState(laserPointerController) {
-        laserPointerController.clearLaserPaths()
-    }
+  val tapeController = rememberTapeController()
 
-    val tapeController = rememberTapeController()
+  var selectedMode by remember { mutableStateOf(ToolMode.LineLaserMode) }
 
-    var selectedMode by remember { mutableStateOf(ToolMode.LineLaserMode) }
+  Scaffold(
+    modifier = modifier.fillMaxSize(),
+    content = { innerPadding ->
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        content = { innerPadding ->
+      Box(
+        modifier = modifier
+          .padding(innerPadding)
+          .fillMaxSize()
+          .useLaserPointerMode(
+            laserPointerController,
+            progress,
+            selectedMode == ToolMode.LineLaserMode,
+          )
+          .useTapeMode(tapeController, selectedMode == ToolMode.TapeMode),
+      )
+    },
+    bottomBar = {
+      Box {
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .background(Color.White)
+            .padding(
+              horizontal = 20.dp,
+            ),
+          horizontalArrangement = Arrangement.spacedBy(
+            8.dp,
+            Alignment.CenterHorizontally,
+          ),
+        ) {
+          PaletteIconButtonWithToolTip(
+            modifier = Modifier,
+            drawableResource = Res.drawable.ic_laser_pointer,
+            toolMode = ToolMode.LineLaserMode,
+            onClickIcon = {
+              selectedMode = ToolMode.LineLaserMode
+            },
+            tooltipContent = {
+              Column(
+                modifier = Modifier
+                  .padding(16.dp),
+              ) {
+                Text(
+                  modifier = Modifier.fillMaxWidth(),
+                  fontSize = 18.sp,
+                  maxLines = 1,
+                  color = Color.Black,
+                  textAlign = TextAlign.Center,
+                  fontWeight = FontWeight.Bold,
+                  overflow = TextOverflow.Ellipsis,
+                  text = "Laser",
+                )
 
-            Box(
-                modifier = modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .useLaserPointerMode(
-                        laserPointerController,
-                        progress,
-                        selectedMode == ToolMode.LineLaserMode
-                    )
-                    .useTapeMode(tapeController, selectedMode == ToolMode.TapeMode)
-            )
-        },
-        bottomBar = {
-            Box {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .background(Color.White)
-                        .padding(
-                            horizontal = 20.dp,
-                        ),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        8.dp,
-                        Alignment.CenterHorizontally,
-                    ),
-                ) {
+                VerticalSpacer(16.dp)
 
-                    PaletteIconButtonWithToolTip(
-                        modifier = Modifier,
-                        drawableResource = Res.drawable.ic_laser_pointer,
-                        toolMode = ToolMode.LineLaserMode,
-                        onClickIcon = {
-                            selectedMode = ToolMode.LineLaserMode
-                        },
-                        tooltipContent = {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                            ) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    fontSize = 18.sp,
-                                    maxLines = 1,
-                                    color = Color.Black,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    overflow = TextOverflow.Ellipsis,
-                                    text = "Laser"
-                                )
+                ColorPicker(
+                  selectedColor = laserPointerController.paint.color,
+                  onItemClick = {
+                    laserPointerController.updateLaserColor(it)
+                  },
+                )
 
-                                VerticalSpacer(16.dp)
+                VerticalSpacer(16.dp)
 
-                                ColorPicker(
-                                    selectedColor = laserPointerController.paint.color,
-                                    onItemClick = {
-                                        laserPointerController.updateLaserColor(it)
-                                    },
-                                )
+                Slider(
+                  title = "StrokeWidth",
+                  value = laserPointerController.paint.strokeWidth,
+                  sliderRange = SliderRange.ONE_TO_HUNDRED,
+                  onValueChangeFinished = {
+                    laserPointerController.updateLaserStrokeWidth(it)
+                  },
+                )
+              }
+            },
+          )
 
-                                VerticalSpacer(16.dp)
+          PaletteIconButtonWithToolTip(
+            modifier = Modifier,
+            drawableResource = Res.drawable.ic_tape,
+            toolMode = ToolMode.TapeMode,
+            onClickIcon = {
+              selectedMode = ToolMode.TapeMode
+            },
+            tooltipContent = {
+              Column(
+                modifier = Modifier
+                  .padding(16.dp),
+              ) {
+                Text(
+                  modifier = Modifier.fillMaxWidth(),
+                  fontSize = 18.sp,
+                  maxLines = 1,
+                  color = Color.Black,
+                  textAlign = TextAlign.Center,
+                  fontWeight = FontWeight.Bold,
+                  overflow = TextOverflow.Ellipsis,
+                  text = "Tape",
+                )
 
-                                Slider(
-                                    title = "StrokeWidth",
-                                    value = laserPointerController.paint.strokeWidth,
-                                    sliderRange = SliderRange.ONE_TO_HUNDRED,
-                                    onValueChangeFinished = {
-                                        laserPointerController.updateLaserStrokeWidth(it)
-                                    }
-                                )
-                            }
-                        },
-                    )
+                VerticalSpacer(16.dp)
 
-                    PaletteIconButtonWithToolTip(
-                        modifier = Modifier,
-                        drawableResource = Res.drawable.ic_tape,
-                        toolMode = ToolMode.TapeMode,
-                        onClickIcon = {
-                            selectedMode = ToolMode.TapeMode
-                        },
-                        tooltipContent = {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                            ) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    fontSize = 18.sp,
-                                    maxLines = 1,
-                                    color = Color.Black,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    overflow = TextOverflow.Ellipsis,
-                                    text = "Tape"
-                                )
+                ColorPicker(
+                  selectedColor = tapeController.paint.color,
+                  onItemClick = {
+                    tapeController.updateTapeColor(it)
+                  },
+                )
 
-                                VerticalSpacer(16.dp)
+                VerticalSpacer(16.dp)
 
-                                ColorPicker(
-                                    selectedColor = tapeController.paint.color,
-                                    onItemClick = {
-                                        tapeController.updateTapeColor(it)
-                                    },
-                                )
+                Slider(
+                  title = "Width",
+                  value = tapeController.paint.strokeWidth,
+                  sliderRange = SliderRange.ONE_TO_HUNDRED,
+                  onValueChangeFinished = {
+                    tapeController.updateTapeWidth(it)
+                  },
+                )
 
-                                VerticalSpacer(16.dp)
+                VerticalSpacer(16.dp)
 
-                                Slider(
-                                    title = "Width",
-                                    value = tapeController.paint.strokeWidth,
-                                    sliderRange = SliderRange.ONE_TO_HUNDRED,
-                                    onValueChangeFinished = {
-                                        tapeController.updateTapeWidth(it)
-                                    }
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                Slider(
-                                    title = "Image Width",
-                                    value = tapeController.imagePaint.strokeWidth,
-                                    sliderRange = SliderRange.ONE_TO_HUNDRED,
-                                    onValueChangeFinished = {
-                                        tapeController.updateTapeImageWidth(it)
-                                    }
-                                )
-                            }
-                        },
-                    )
-                }
-            }
+                Slider(
+                  title = "Image Width",
+                  value = tapeController.imagePaint.strokeWidth,
+                  sliderRange = SliderRange.ONE_TO_HUNDRED,
+                  onValueChangeFinished = {
+                    tapeController.updateTapeImageWidth(it)
+                  },
+                )
+              }
+            },
+          )
         }
-    )
-
+      }
+    },
+  )
 }

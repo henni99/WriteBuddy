@@ -1,6 +1,5 @@
 package com.henni.writebuddy.sticky.text.textbox
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -41,68 +40,67 @@ import com.henni.writebuddy.sticky.text.common.StickyTextItem
 
 @Composable
 fun StickyTextBox(
-    modifier: Modifier = Modifier,
-    property: TextBoxProperty,
-    textItem: StickyTextItem,
-    onStickyMoved: (Offset) -> Unit,
-    onTextChange: (String) -> Unit,
-    onZoomChanged: (String, Float, Offset) -> Unit,
-    onDeleteSticky: (StickyTextItem) -> Unit,
-    onFocusChange: (String, Boolean) -> Unit
+  modifier: Modifier = Modifier,
+  property: TextBoxProperty,
+  textItem: StickyTextItem,
+  onStickyMoved: (Offset) -> Unit,
+  onTextChange: (String) -> Unit,
+  onZoomChanged: (String, Float, Offset) -> Unit,
+  onDeleteSticky: (StickyTextItem) -> Unit,
+  onFocusChange: (String, Boolean) -> Unit,
 ) {
-    var text by remember { mutableStateOf(textItem.text) }
+  var text by remember { mutableStateOf(textItem.text) }
 
-    val interactionSource = remember { MutableInteractionSource() }
-    val focusedState = interactionSource.collectIsFocusedAsState()
+  val interactionSource = remember { MutableInteractionSource() }
+  val focusedState = interactionSource.collectIsFocusedAsState()
 
-    LaunchedEffect(focusedState.value) {
-        onFocusChange(textItem.id, focusedState.value)
-    }
+  LaunchedEffect(focusedState.value) {
+    onFocusChange(textItem.id, focusedState.value)
+  }
 
-    Sticky(
-        modifier = modifier,
-        attachable = textItem,
-        stickySize = property.size,
-        onStickyMoved = { offset ->
-            onStickyMoved(offset)
-        },
-        onZoomChanged = { scale, offset ->
-            onZoomChanged(textItem.id, scale, offset)
-        }
+  Sticky(
+    modifier = modifier,
+    attachable = textItem,
+    stickySize = property.size,
+    onStickyMoved = { offset ->
+      onStickyMoved(offset)
+    },
+    onZoomChanged = { scale, offset ->
+      onZoomChanged(textItem.id, scale, offset)
+    },
+  ) {
+    CompositionLocalProvider(
+      LocalTextSelectionColors provides TextSelectionColors(
+        handleColor = Color.Transparent,
+        backgroundColor = property.selectionBackgroundColor,
+      ),
     ) {
-        CompositionLocalProvider(
-            LocalTextSelectionColors provides TextSelectionColors(
-                handleColor = Color.Transparent,
-                backgroundColor = property.selectionBackgroundColor
-            )
-        ) {
-            BasicTextField(
-                modifier = Modifier
+      BasicTextField(
+        modifier = Modifier
+          .background(property.backgroundColor)
+          .padding(property.padding)
+          .drawBehind {
+            drawIntoCanvas { canvas ->
 
-                    .background(property.backgroundColor)
-                    .padding(property.padding)
-                    .drawBehind {
-                        drawIntoCanvas { canvas ->
-
-                            if (focusedState.value) {
-                                canvas.drawRect(
-                                    left = size.center.x - size.width / 2 - property.borderBoxPadding.toPx(),
-                                    top = size.center.y - size.height / 2 - property.borderBoxPadding.toPx(),
-                                    right = size.center.x + size.width / 2 + property.borderBoxPadding.toPx(),
-                                    bottom = size.center.y + size.height / 2 + property.borderBoxPadding.toPx(),
-                                    paint = property.borderBoxPaint
-                                )
-                            }
-                        }
-                    },
-                interactionSource = interactionSource,
-                value = text,
-                textStyle = property.textStyle,
-                onValueChange = {
-                    text = it
-                    onTextChange(it)
-                }
-            )
-        }
+              if (focusedState.value) {
+                canvas.drawRect(
+                  left = size.center.x - size.width / 2 - property.borderBoxPadding.toPx(),
+                  top = size.center.y - size.height / 2 - property.borderBoxPadding.toPx(),
+                  right = size.center.x + size.width / 2 + property.borderBoxPadding.toPx(),
+                  bottom = size.center.y + size.height / 2 + property.borderBoxPadding.toPx(),
+                  paint = property.borderBoxPaint,
+                )
+              }
+            }
+          },
+        interactionSource = interactionSource,
+        value = text,
+        textStyle = property.textStyle,
+        onValueChange = {
+          text = it
+          onTextChange(it)
+        },
+      )
     }
+  }
 }

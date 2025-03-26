@@ -1,4 +1,4 @@
-package com.henni.writebuddy.sticky.image.imageVector
+package com.henni.writebuddy.sticky.text.postIt
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,15 +6,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import com.henni.writebuddy.sticky.StickyItemController
 import com.henni.writebuddy.sticky.StickyTouchEvent
+import com.henni.writebuddy.sticky.text.common.StickyTextItem
 
 /**
- * Handles touch events for a vector image item.
- * This class manages user interactions such as tapping, moving, and selecting a vector image.
+ * Handles touch events for the Post-It sticky note, including touch initialization, start, move, and end.
+ * This class manages the interaction with the sticky note and allows for adding a new sticky note
+ * item when a tap is detected.
  *
- * @property controller The controller responsible for managing sticky items.
+ * @param controller The StickyItemController responsible for managing sticky note items.
  */
 
-internal class VectorImageTouchEvent internal constructor(
+internal class PostItTouchEvent internal constructor(
   private val controller: StickyItemController,
 ) : StickyTouchEvent {
 
@@ -27,7 +29,9 @@ internal class VectorImageTouchEvent internal constructor(
   /** Indicates whether the touch event is a tap action. */
   private var isTap = false
 
-  /** Initializes touch-related states. */
+  /**
+   * Initializes the touch event flags and resets the touch points to zero.
+   */
   override fun onTouchInitialize() {
     isTap = false
     firstPoint = Offset.Zero
@@ -35,9 +39,9 @@ internal class VectorImageTouchEvent internal constructor(
   }
 
   /**
-   * Handles the start of a touch event.
+   * Handles the start of a touch event. It sets the initial touch point and marks it as a tap.
    *
-   * @param offset The position where the touch event started.
+   * @param offset The position of the touch when it starts.
    */
   override fun onTouchStart(offset: Offset) {
     isTap = true
@@ -45,10 +49,11 @@ internal class VectorImageTouchEvent internal constructor(
   }
 
   /**
-   * Handles touch movement events.
+   * Handles the movement of a touch event. It updates the last touch position and marks the touch
+   * as no longer a tap (if the touch moves).
    *
-   * @param previousOffset The previous touch position.
-   * @param currentOffset The current touch position.
+   * @param previousOffset The previous position of the touch.
+   * @param currentOffset The current position of the touch.
    */
   override fun onTouchMove(previousOffset: Offset, currentOffset: Offset) {
     isTap = false
@@ -56,8 +61,8 @@ internal class VectorImageTouchEvent internal constructor(
   }
 
   /**
-   * Handles the end of a touch event.
-   * If the event is a tap, it either clears focus or adds a new vector image item.
+   * Handles the end of a touch event. If it was a tap, it adds a new sticky note item.
+   * If the sticky note is currently focused, it clears the focus instead.
    */
   override fun onTouchEnd() = with(controller) {
     if (isTap) {
@@ -68,10 +73,10 @@ internal class VectorImageTouchEvent internal constructor(
       }
 
       addStickyItem(
-        VectorImageItem(
+        StickyTextItem(
           firstPoint = firstPoint,
           type = type,
-          property = vectorImageProperty,
+          property = postItProperty,
         ),
       )
     }

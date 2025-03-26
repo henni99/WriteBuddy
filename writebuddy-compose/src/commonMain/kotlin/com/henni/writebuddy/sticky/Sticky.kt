@@ -30,99 +30,98 @@ import com.henni.writebuddy.extension.detectTransformGestures
 
 @Composable
 fun Sticky(
-    modifier: Modifier = Modifier,
-    attachable: Attachable,
-    stickySize: DpSize,
-    onStickyMoved: (Offset) -> Unit,
-    onZoomChanged: (Float, Offset) -> Unit,
-    content: @Composable () -> Unit = {}
+  modifier: Modifier = Modifier,
+  attachable: Attachable,
+  stickySize: DpSize,
+  onStickyMoved: (Offset) -> Unit,
+  onZoomChanged: (Float, Offset) -> Unit,
+  content: @Composable () -> Unit = {},
 ) {
-    var isMultiTouched by remember { mutableStateOf(false) }
+  var isMultiTouched by remember { mutableStateOf(false) }
 
-    var moveOffsetX by remember {
-        mutableStateOf(
-            attachable.firstPoint.x + attachable.translate.x
+  var moveOffsetX by remember {
+    mutableStateOf(
+      attachable.firstPoint.x + attachable.translate.x,
+    )
+  }
+
+  var moveOffsetY by remember {
+    mutableStateOf(
+      attachable.firstPoint.y + attachable.translate.y,
+    )
+  }
+
+  var scaleFactor by remember { mutableStateOf(attachable.scaleFactor) }
+
+  var scaleOffset by remember { mutableStateOf(attachable.scaleOffset) }
+
+  Column(
+    modifier = modifier
+      .offset {
+        IntOffset(
+          x = (-stickySize.width / 2).toPx().toInt(),
+          y = (-stickySize.height / 2).toPx().toInt(),
         )
-    }
-
-    var moveOffsetY by remember {
-        mutableStateOf(
-            attachable.firstPoint.y + attachable.translate.y
+      }
+      .offset {
+        IntOffset(
+          x = moveOffsetX.toInt(),
+          y = moveOffsetY.toInt(),
         )
-    }
+      }
+      .graphicsLayer {
+        scaleX = scaleFactor
+        scaleY = scaleFactor
+        translationX = scaleOffset.x
+        translationY = scaleOffset.y
+      }
+      .pointerInput(Unit) {
+        detectTransformGestures(
+          onGestureStart = { _ -> },
+          onGesture = { zoomChange, panChange, change, isMultiTouch ->
+            isMultiTouched = isMultiTouch
 
-    var scaleFactor by remember { mutableStateOf(attachable.scaleFactor) }
+            if (isMultiTouch) {
+              scaleFactor = (scaleFactor * zoomChange).coerceIn(1f, 5f)
 
-    var scaleOffset by remember { mutableStateOf(attachable.scaleOffset) }
+              val extraWidth = (scaleFactor - 1) * size.width
+              val extraHeight = (scaleFactor - 1) * size.height
 
-    Column(
-        modifier = modifier
-            .offset {
-                IntOffset(
-                    x = (-stickySize.width / 2).toPx().toInt(),
-                    y = (-stickySize.height / 2).toPx().toInt()
-                )
+              val maxX = extraWidth / 2
+              val maxY = extraHeight / 2
+
+              scaleOffset = Offset(
+                x = (scaleOffset.x + scaleFactor * panChange.x).coerceIn(
+                  -maxX,
+                  maxX,
+                ),
+                y = (scaleOffset.y + scaleFactor * panChange.y).coerceIn(
+                  -maxY,
+                  maxY,
+                ),
+              )
+            } else {
+              moveOffsetX += (change.position.x - change.previousPosition.x)
+              moveOffsetY += (change.position.y - change.previousPosition.y)
             }
-            .offset {
-                IntOffset(
-                    x = moveOffsetX.toInt(),
-                    y = moveOffsetY.toInt()
-                )
+          },
+          onGestureEnd = { isMultiTouch ->
+
+            if (isMultiTouch) {
+              onZoomChanged(scaleFactor, scaleOffset)
+            } else {
+              onStickyMoved(
+                Offset(
+                  x = moveOffsetX,
+                  y = moveOffsetY,
+                ),
+              )
             }
-            .graphicsLayer {
-                scaleX = scaleFactor
-                scaleY = scaleFactor
-                translationX = scaleOffset.x
-                translationY = scaleOffset.y
-            }
-            .pointerInput(Unit) {
-                detectTransformGestures(
-                    onGestureStart = { _ -> },
-                    onGesture = { zoomChange, panChange, change, isMultiTouch ->
-                        isMultiTouched = isMultiTouch
-
-                        if (isMultiTouch) {
-                            scaleFactor = (scaleFactor * zoomChange).coerceIn(1f, 5f)
-
-                            val extraWidth = (scaleFactor - 1) * size.width
-                            val extraHeight = (scaleFactor - 1) * size.height
-
-                            val maxX = extraWidth / 2
-                            val maxY = extraHeight / 2
-
-                            scaleOffset = Offset(
-                                x = (scaleOffset.x + scaleFactor * panChange.x).coerceIn(
-                                    -maxX,
-                                    maxX
-                                ),
-                                y = (scaleOffset.y + scaleFactor * panChange.y).coerceIn(
-                                    -maxY,
-                                    maxY
-                                ),
-                            )
-                        } else {
-                            moveOffsetX += (change.position.x - change.previousPosition.x)
-                            moveOffsetY += (change.position.y - change.previousPosition.y)
-                        }
-                    },
-                    onGestureEnd = { isMultiTouch ->
-
-                        if (isMultiTouch) {
-                            onZoomChanged(scaleFactor, scaleOffset)
-                        } else {
-                            onStickyMoved(
-                                Offset(
-                                    x = moveOffsetX,
-                                    y = moveOffsetY
-                                )
-                            )
-                        }
-                    },
-                    onGestureCancel = { }
-                )
-            }
-    ) {
-        content()
-    }
+          },
+          onGestureCancel = { },
+        )
+      },
+  ) {
+    content()
+  }
 }
-

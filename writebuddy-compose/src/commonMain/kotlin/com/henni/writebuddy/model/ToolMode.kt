@@ -6,16 +6,15 @@ package com.henni.writebuddy.model
 
 enum class ToolMode {
 
-    /**
-     * Mode for using a tape measurement tool.
-     */
+  /**
+   * Mode for using a tape measurement tool.
+   */
 
-    TapeMode,
+  TapeMode,
 
-    /**
-     * Mode for using a line laser tool.
-     */
+  /**
+   * Mode for using a line laser tool.
+   */
 
-    LineLaserMode,
-
+  LineLaserMode,
 }

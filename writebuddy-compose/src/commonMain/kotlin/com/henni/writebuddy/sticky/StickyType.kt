@@ -7,33 +7,33 @@ package com.henni.writebuddy.sticky
 
 enum class StickyType {
 
-    /**
-     * Represents a sticky note, typically a post-it note style.
-     * This is a simple sticky item, often used for text notes.
-     */
-    POST_IT,
+  /**
+   * Represents a sticky note, typically a post-it note style.
+   * This is a simple sticky item, often used for text notes.
+   */
+  POST_IT,
 
-    /**
-     * Represents a sticky item that displays a painter image.
-     * This could be an image that is drawn or rendered in some way.
-     */
-    PAINTER_IMAGE,
+  /**
+   * Represents a sticky item that displays a painter image.
+   * This could be an image that is drawn or rendered in some way.
+   */
+  PAINTER_IMAGE,
 
-    /**
-     * Represents a sticky item that displays a vector image.
-     * Vector images are scalable graphics created using mathematical formulas.
-     */
-    VECTOR_IMAGE,
+  /**
+   * Represents a sticky item that displays a vector image.
+   * Vector images are scalable graphics created using mathematical formulas.
+   */
+  VECTOR_IMAGE,
 
-    /**
-     * Represents a sticky item that displays a bitmap image.
-     * Bitmap images are pixel-based graphics, commonly used for photographs and detailed images.
-     */
-    BITMAP_IMAGE,
+  /**
+   * Represents a sticky item that displays a bitmap image.
+   * Bitmap images are pixel-based graphics, commonly used for photographs and detailed images.
+   */
+  BITMAP_IMAGE,
 
-    /**
-     * Represents a sticky item that functions like a text box.
-     * This can be used for larger blocks of text or for more complex textual content.
-     */
-    TEXT_BOX
+  /**
+   * Represents a sticky item that functions like a text box.
+   * This can be used for larger blocks of text or for more complex textual content.
+   */
+  TEXT_BOX,
 }

@@ -46,281 +46,277 @@ import writebuddy.app.generated.resources.ic_text_box
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun StickySample(
-    modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
+  val controller = rememberStickyItemController(
+    painterImageProperty = PainterImagePropertyExample(),
+    vectorImageProperty = VectorImagePropertyExample(),
+  )
 
-    val controller = rememberStickyItemController(
-        painterImageProperty = PainterImagePropertyExample(),
-        vectorImageProperty = VectorImagePropertyExample(),
+  LaunchedEffect(Unit) {
+    controller.updateBitmapImageImageBitmap(
+      Res.readBytes("drawable/ic_launcher.webp").decodeToImageBitmap(),
     )
+  }
 
-    LaunchedEffect(Unit) {
-        controller.updateBitmapImageImageBitmap(
-            Res.readBytes("drawable/ic_launcher.webp").decodeToImageBitmap()
-        )
-    }
+  var selectedIndex by remember { mutableStateOf(-1) }
+  val options = listOf("Painter", "Vector", "ImageBitmap")
 
-    var selectedIndex by remember { mutableStateOf(-1) }
-    val options = listOf("Painter", "Vector", "ImageBitmap")
+  Scaffold(
+    modifier = modifier.fillMaxSize(),
+    content = { innerPadding ->
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        content = { innerPadding ->
-
-            StickyNote(
+      StickyNote(
+        modifier = Modifier
+          .padding(innerPadding)
+          .fillMaxSize(),
+        controller = controller,
+      )
+    },
+    bottomBar = {
+      Box {
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .background(Color.White)
+            .padding(
+              horizontal = 20.dp,
+            ),
+          horizontalArrangement = Arrangement.spacedBy(
+            8.dp,
+            Alignment.CenterHorizontally,
+          ),
+        ) {
+          PaletteIconButtonWithToolTip(
+            modifier = Modifier,
+            drawableResource = Res.drawable.ic_post_it,
+            type = StickyType.POST_IT,
+            onClickIcon = controller::updateStickyType,
+            tooltipContent = {
+              Column(
                 modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                controller = controller
-            )
-        },
-        bottomBar = {
-            Box {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .navigationBarsPadding()
-                        .background(Color.White)
-                        .padding(
-                            horizontal = 20.dp,
-                        ),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        8.dp,
-                        Alignment.CenterHorizontally,
-                    ),
+                  .padding(16.dp),
+              ) {
+                Text(
+                  modifier = Modifier.fillMaxWidth(),
+                  fontSize = 18.sp,
+                  maxLines = 1,
+                  color = Color.Black,
+                  textAlign = TextAlign.Center,
+                  fontWeight = FontWeight.Bold,
+                  overflow = TextOverflow.Ellipsis,
+                  text = "PostIt",
+                )
+
+                VerticalSpacer(16.dp)
+
+                ColorPicker(
+                  title = "Background Color",
+                  selectedColor = controller.postItProperty.backgroundColor,
+                  onItemClick = {
+                    controller.updatePostItBackgroundColor(it)
+                  },
+                )
+
+                VerticalSpacer(16.dp)
+
+                Slider(
+                  title = "Width",
+                  value = controller.postItProperty.size.width.value,
+                  sliderRange = SliderRange.ONE_TO_THOUSANDS,
+                  onValueChangeFinished = {
+                    controller.updatePostItWidth(it.dp)
+                  },
+                )
+
+                VerticalSpacer(16.dp)
+
+                Slider(
+                  title = "Height",
+                  value = controller.postItProperty.size.height.value,
+                  sliderRange = SliderRange.ONE_TO_THOUSANDS,
+                  onValueChangeFinished = {
+                    controller.updatePostItHeight(it.dp)
+                  },
+                )
+
+                VerticalSpacer(16.dp)
+
+                ColorPicker(
+                  title = "Text Color",
+                  selectedColor = controller.postItProperty.textStyle.color,
+                  onItemClick = {
+                    controller.updatePostItTextColor(it)
+                  },
+                )
+
+                VerticalSpacer(16.dp)
+
+                Slider(
+                  title = "Font Size",
+                  value = controller.postItProperty.textStyle.fontSize.value,
+                  sliderRange = SliderRange.ONE_TO_HUNDRED,
+                  onValueChangeFinished = {
+                    controller.updatePostItFontSize(it)
+                  },
+                )
+              }
+            },
+          )
+
+          PaletteIconButtonWithToolTip(
+            modifier = Modifier,
+            drawableResource = Res.drawable.ic_text_box,
+            type = StickyType.TEXT_BOX,
+            onClickIcon = controller::updateStickyType,
+            tooltipContent = {
+              Column(
+                modifier = Modifier
+                  .padding(16.dp),
+              ) {
+                Text(
+                  modifier = Modifier.fillMaxWidth(),
+                  fontSize = 18.sp,
+                  maxLines = 1,
+                  color = Color.Black,
+                  textAlign = TextAlign.Center,
+                  fontWeight = FontWeight.Bold,
+                  overflow = TextOverflow.Ellipsis,
+                  text = "TextBox",
+                )
+
+                VerticalSpacer(16.dp)
+
+                ColorPicker(
+                  title = "Background Color",
+                  selectedColor = controller.textBoxProperty.backgroundColor,
+                  onItemClick = {
+                    controller.updateTextBoxBackgroundColor(it)
+                  },
+                )
+
+                VerticalSpacer(16.dp)
+
+                ColorPicker(
+                  title = "Text Color",
+                  selectedColor = controller.textBoxProperty.textStyle.color,
+                  onItemClick = {
+                    controller.updateTextBoxTextColor(it)
+                  },
+                )
+
+                VerticalSpacer(16.dp)
+
+                Slider(
+                  title = "Font Size",
+                  value = controller.textBoxProperty.textStyle.fontSize.value,
+                  sliderRange = SliderRange.ONE_TO_HUNDRED,
+                  onValueChangeFinished = {
+                    controller.updateTextBoxFontSize(it)
+                  },
+                )
+              }
+            },
+          )
+          PaletteIconButtonWithToolTip(
+            modifier = Modifier,
+            drawableResource = Res.drawable.ic_image,
+            type = StickyType.PAINTER_IMAGE,
+            onClickIcon = { },
+            tooltipContent = {
+              Column(
+                modifier = Modifier
+                  .padding(16.dp),
+              ) {
+                Text(
+                  modifier = Modifier.fillMaxWidth(),
+                  fontSize = 18.sp,
+                  maxLines = 1,
+                  color = Color.Black,
+                  textAlign = TextAlign.Center,
+                  fontWeight = FontWeight.Bold,
+                  overflow = TextOverflow.Ellipsis,
+                  text = "Image",
+                )
+
+                VerticalSpacer(16.dp)
+
+                SingleChoiceSegmentedButtonRow(
+                  modifier = Modifier
+                    .fillMaxWidth(),
                 ) {
-
-                    PaletteIconButtonWithToolTip(
-                        modifier = Modifier,
-                        drawableResource = Res.drawable.ic_post_it,
-                        type = StickyType.POST_IT,
-                        onClickIcon = controller::updateStickyType,
-                        tooltipContent = {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                            ) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    fontSize = 18.sp,
-                                    maxLines = 1,
-                                    color = Color.Black,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    overflow = TextOverflow.Ellipsis,
-                                    text = "PostIt"
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                ColorPicker(
-                                    title = "Background Color",
-                                    selectedColor = controller.postItProperty.backgroundColor,
-                                    onItemClick = {
-                                        controller.updatePostItBackgroundColor(it)
-                                    },
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                Slider(
-                                    title = "Width",
-                                    value = controller.postItProperty.size.width.value,
-                                    sliderRange = SliderRange.ONE_TO_THOUSANDS,
-                                    onValueChangeFinished = {
-                                        controller.updatePostItWidth(it.dp)
-                                    }
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                Slider(
-                                    title = "Height",
-                                    value = controller.postItProperty.size.height.value,
-                                    sliderRange = SliderRange.ONE_TO_THOUSANDS,
-                                    onValueChangeFinished = {
-                                        controller.updatePostItHeight(it.dp)
-                                    }
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                ColorPicker(
-                                    title = "Text Color",
-                                    selectedColor = controller.postItProperty.textStyle.color,
-                                    onItemClick = {
-                                        controller.updatePostItTextColor(it)
-                                    },
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                Slider(
-                                    title = "Font Size",
-                                    value = controller.postItProperty.textStyle.fontSize.value,
-                                    sliderRange = SliderRange.ONE_TO_HUNDRED,
-                                    onValueChangeFinished = {
-                                        controller.updatePostItFontSize(it)
-                                    }
-                                )
-                            }
-                        },
-                    )
-
-                    PaletteIconButtonWithToolTip(
-                        modifier = Modifier,
-                        drawableResource = Res.drawable.ic_text_box,
-                        type = StickyType.TEXT_BOX,
-                        onClickIcon = controller::updateStickyType,
-                        tooltipContent = {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                            ) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    fontSize = 18.sp,
-                                    maxLines = 1,
-                                    color = Color.Black,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    overflow = TextOverflow.Ellipsis,
-                                    text = "TextBox"
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                ColorPicker(
-                                    title = "Background Color",
-                                    selectedColor = controller.textBoxProperty.backgroundColor,
-                                    onItemClick = {
-                                        controller.updateTextBoxBackgroundColor(it)
-                                    },
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                ColorPicker(
-                                    title = "Text Color",
-                                    selectedColor = controller.textBoxProperty.textStyle.color,
-                                    onItemClick = {
-                                        controller.updateTextBoxTextColor(it)
-                                    },
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                Slider(
-                                    title = "Font Size",
-                                    value = controller.textBoxProperty.textStyle.fontSize.value,
-                                    sliderRange = SliderRange.ONE_TO_HUNDRED,
-                                    onValueChangeFinished = {
-                                        controller.updateTextBoxFontSize(it)
-                                    }
-                                )
-
-                            }
-                        },
-                    )
-                    PaletteIconButtonWithToolTip(
-                        modifier = Modifier,
-                        drawableResource = Res.drawable.ic_image,
-                        type = StickyType.PAINTER_IMAGE,
-                        onClickIcon = { },
-                        tooltipContent = {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                            ) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    fontSize = 18.sp,
-                                    maxLines = 1,
-                                    color = Color.Black,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    overflow = TextOverflow.Ellipsis,
-                                    text = "Image"
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                SingleChoiceSegmentedButtonRow(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                ) {
-                                    options.forEachIndexed { index, label ->
-                                        SegmentedButton(
-                                            shape = SegmentedButtonDefaults.itemShape(
-                                                index = index,
-                                                count = options.size
-                                            ),
-                                            onClick = {
-                                                selectedIndex = index
-                                                when (selectedIndex) {
-                                                    0 -> controller.updateStickyType(StickyType.PAINTER_IMAGE)
-                                                    1 -> controller.updateStickyType(StickyType.VECTOR_IMAGE)
-                                                    2 -> controller.updateStickyType(StickyType.BITMAP_IMAGE)
-                                                }
-                                            },
-                                            selected = index == selectedIndex
-                                        ) {
-                                            Text(label)
-                                        }
-                                    }
-                                }
-
-
-                                VerticalSpacer(16.dp)
-
-                                Slider(
-                                    title = "Width",
-                                    value = when (selectedIndex) {
-                                        0 -> controller.postItProperty.size.width.value
-                                        1 -> controller.vectorImageProperty.size.width.value
-                                        2 -> controller.bitmapImageProperty.size.width.value
-                                        else -> 0f
-                                    },
-                                    sliderRange = SliderRange.ONE_TO_THOUSANDS,
-                                    onValueChangeFinished = {
-                                        when (selectedIndex) {
-                                            0 -> controller.updatePainterImageWidth(it.dp)
-                                            1 -> controller.updateVectorImageWidth(it.dp)
-                                            2 -> controller.updateBitmapImageWidth(it.dp)
-                                            else -> {}
-                                        }
-                                    }
-                                )
-
-                                VerticalSpacer(16.dp)
-
-                                Slider(
-                                    title = "Height",
-                                    value = when (selectedIndex) {
-                                        0 -> {
-                                            println("selectedIndex: ${selectedIndex} ${controller.postItProperty.size.height.value}")
-                                            controller.postItProperty.size.height.value
-                                        }
-
-                                        1 -> controller.vectorImageProperty.size.height.value
-                                        2 -> controller.bitmapImageProperty.size.height.value
-                                        else -> 0f
-                                    },
-                                    sliderRange = SliderRange.ONE_TO_THOUSANDS,
-                                    onValueChangeFinished = {
-                                        when (selectedIndex) {
-                                            0 -> controller.updatePainterImageHeight(it.dp)
-                                            1 -> controller.updateVectorImageHeight(it.dp)
-                                            2 -> controller.updateBitmapImageHeight(it.dp)
-                                            else -> {}
-                                        }
-                                    }
-                                )
-                            }
-                        },
-                    )
+                  options.forEachIndexed { index, label ->
+                    SegmentedButton(
+                      shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = options.size,
+                      ),
+                      onClick = {
+                        selectedIndex = index
+                        when (selectedIndex) {
+                          0 -> controller.updateStickyType(StickyType.PAINTER_IMAGE)
+                          1 -> controller.updateStickyType(StickyType.VECTOR_IMAGE)
+                          2 -> controller.updateStickyType(StickyType.BITMAP_IMAGE)
+                        }
+                      },
+                      selected = index == selectedIndex,
+                    ) {
+                      Text(label)
+                    }
+                  }
                 }
-            }
+
+                VerticalSpacer(16.dp)
+
+                Slider(
+                  title = "Width",
+                  value = when (selectedIndex) {
+                    0 -> controller.postItProperty.size.width.value
+                    1 -> controller.vectorImageProperty.size.width.value
+                    2 -> controller.bitmapImageProperty.size.width.value
+                    else -> 0f
+                  },
+                  sliderRange = SliderRange.ONE_TO_THOUSANDS,
+                  onValueChangeFinished = {
+                    when (selectedIndex) {
+                      0 -> controller.updatePainterImageWidth(it.dp)
+                      1 -> controller.updateVectorImageWidth(it.dp)
+                      2 -> controller.updateBitmapImageWidth(it.dp)
+                      else -> {}
+                    }
+                  },
+                )
+
+                VerticalSpacer(16.dp)
+
+                Slider(
+                  title = "Height",
+                  value = when (selectedIndex) {
+                    0 -> {
+                      println("selectedIndex: $selectedIndex ${controller.postItProperty.size.height.value}")
+                      controller.postItProperty.size.height.value
+                    }
+
+                    1 -> controller.vectorImageProperty.size.height.value
+                    2 -> controller.bitmapImageProperty.size.height.value
+                    else -> 0f
+                  },
+                  sliderRange = SliderRange.ONE_TO_THOUSANDS,
+                  onValueChangeFinished = {
+                    when (selectedIndex) {
+                      0 -> controller.updatePainterImageHeight(it.dp)
+                      1 -> controller.updateVectorImageHeight(it.dp)
+                      2 -> controller.updateBitmapImageHeight(it.dp)
+                      else -> {}
+                    }
+                  },
+                )
+              }
+            },
+          )
         }
-    )
+      }
+    },
+  )
 }

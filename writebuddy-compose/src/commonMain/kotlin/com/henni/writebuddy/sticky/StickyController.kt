@@ -30,8 +30,8 @@ import com.henni.writebuddy.sticky.image.imageVector.VectorImageTouchEvent
 import com.henni.writebuddy.sticky.image.painter.PainterImageProperty
 import com.henni.writebuddy.sticky.image.painter.PainterImageTouchEvent
 import com.henni.writebuddy.sticky.text.common.StickyTextItem
-import com.henni.writebuddy.sticky.text.post_it.PostItProperty
-import com.henni.writebuddy.sticky.text.post_it.PostItTouchEvent
+import com.henni.writebuddy.sticky.text.postIt.PostItProperty
+import com.henni.writebuddy.sticky.text.postIt.PostItTouchEvent
 import com.henni.writebuddy.sticky.text.textbox.TextBoxProperty
 import com.henni.writebuddy.sticky.text.textbox.TextBoxTouchEvent
 import kotlinx.coroutines.flow.MutableStateFlow

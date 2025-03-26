@@ -22,8 +22,8 @@ subprojects {
                     "indent_size" to "2",
                     "continuation_indent_size" to "2",
                     "ktlint_standard_filename" to "disabled",
-                    "ktlint_function_naming_ignore_when_annotated_with" to "Composable"
-
+                    "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
+                    "disabled_rules" to "backing-property-naming"
                 )
             )
             trimTrailingWhitespace()

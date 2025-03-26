@@ -1,4 +1,4 @@
-package com.henni.writebuddy.sticky.text.post_it
+package com.henni.writebuddy.sticky.text.postIt
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -25,30 +25,29 @@ import com.henni.writebuddy.sticky.Property
 
 @Immutable
 data class PostItProperty(
-    val size: DpSize,
-    val backgroundColor: Color,
-    val textStyle: TextStyle,
-    val selectionBackgroundColor: Color,
-    val elevation: Dp,
-    val corner: Dp,
-    val padding: Dp
-): Property {
+  val size: DpSize,
+  val backgroundColor: Color,
+  val textStyle: TextStyle,
+  val selectionBackgroundColor: Color,
+  val elevation: Dp,
+  val corner: Dp,
+  val padding: Dp,
+) : Property {
 
-    companion object {
+  companion object {
 
-        @Stable
-        val DEFAULT = PostItProperty(
-            size = DpSize(200.dp, 100.dp),
-            backgroundColor = Color.Yellow,
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-                color = Color.Black
-            ),
-            selectionBackgroundColor = Color.LightGray,
-            elevation = 10.dp,
-            corner = 8.dp,
-            padding = 8.dp
-        )
-
-    }
+    @Stable
+    val DEFAULT = PostItProperty(
+      size = DpSize(200.dp, 100.dp),
+      backgroundColor = Color.Yellow,
+      textStyle = TextStyle(
+        fontSize = 16.sp,
+        color = Color.Black,
+      ),
+      selectionBackgroundColor = Color.LightGray,
+      elevation = 10.dp,
+      corner = 8.dp,
+      padding = 8.dp,
+    )
+  }
 }

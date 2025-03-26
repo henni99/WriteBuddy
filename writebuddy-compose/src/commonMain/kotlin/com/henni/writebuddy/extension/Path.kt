@@ -13,5 +13,5 @@ import androidx.compose.ui.graphics.PathOperation
  */
 
 internal fun overlaps(path1: Path, path2: Path): Boolean = Path().apply {
-    this.op(path1, path2, PathOperation.Intersect)
+  this.op(path1, path2, PathOperation.Intersect)
 }.isEmpty.not()

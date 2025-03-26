@@ -27,28 +27,28 @@ import com.henni.writebuddy.sticky.Property
 
 @Immutable
 data class VectorImageProperty(
-    val size: DpSize,
-    val imageVector: ImageVector?,
-    val color: Color,
-    val alignment: Alignment,
-    val contentScale: ContentScale,
-    val alpha: Float,
-    val colorFilter: ColorFilter?
+  val size: DpSize,
+  val imageVector: ImageVector?,
+  val color: Color,
+  val alignment: Alignment,
+  val contentScale: ContentScale,
+  val alpha: Float,
+  val colorFilter: ColorFilter?,
 ) : Property {
-    companion object {
+  companion object {
 
-        /**
-         * Default property values for an vector image.
-         */
-        @Stable
-        val DEFAULT = VectorImageProperty(
-            size = DpSize(200.dp, 200.dp),
-            imageVector = null,
-            color = Color.Transparent,
-            alignment = Alignment.Center,
-            contentScale = ContentScale.Fit,
-            alpha = DefaultAlpha,
-            colorFilter = null
-        )
-    }
+    /**
+     * Default property values for an vector image.
+     */
+    @Stable
+    val DEFAULT = VectorImageProperty(
+      size = DpSize(200.dp, 200.dp),
+      imageVector = null,
+      color = Color.Transparent,
+      alignment = Alignment.Center,
+      contentScale = ContentScale.Fit,
+      alpha = DefaultAlpha,
+      colorFilter = null,
+    )
+  }
 }

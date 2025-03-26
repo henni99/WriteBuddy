@@ -26,94 +26,94 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun Switch(
-    checked: Boolean,
-    title: String,
-    onCheckedChange: (Boolean) -> Unit,
+  checked: Boolean,
+  title: String,
+  onCheckedChange: (Boolean) -> Unit,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            modifier = Modifier.wrapContentWidth(),
-            fontSize = 14.sp,
-            maxLines = 1,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            overflow = TextOverflow.Ellipsis,
-            text = title,
-        )
+  Row(
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.Center,
+  ) {
+    Text(
+      modifier = Modifier.wrapContentWidth(),
+      fontSize = 14.sp,
+      maxLines = 1,
+      color = Color.Black,
+      fontWeight = FontWeight.Bold,
+      overflow = TextOverflow.Ellipsis,
+      text = title,
+    )
 
-        Spacer(Modifier.weight(1f))
+    Spacer(Modifier.weight(1f))
 
-        Switch(
-            checked = checked,
-            onCheckedChange = { checked ->
-                onCheckedChange(checked)
-            },
-        )
-    }
+    Switch(
+      checked = checked,
+      onCheckedChange = { checked ->
+        onCheckedChange(checked)
+      },
+    )
+  }
 }
 
 @Composable
 fun Slider(
-    title: String = "",
-    value: Float,
-    sliderRange: SliderRange = SliderRange.ZERO_TO_ONE,
-    onValueChangeFinished: (Float) -> Unit = { },
+  title: String = "",
+  value: Float,
+  sliderRange: SliderRange = SliderRange.ZERO_TO_ONE,
+  onValueChangeFinished: (Float) -> Unit = { },
 ) {
-    var sliderPosition by remember { mutableStateOf(0f) }
+  var sliderPosition by remember { mutableStateOf(0f) }
 
-    LaunchedEffect(value) {
-        sliderPosition = when (sliderRange) {
-            SliderRange.ONE_TO_THOUSANDS -> value / 1000
-            SliderRange.ONE_TO_HUNDRED -> value / 100
-            SliderRange.ZERO_TO_ONE -> value
-        }
+  LaunchedEffect(value) {
+    sliderPosition = when (sliderRange) {
+      SliderRange.ONE_TO_THOUSANDS -> value / 1000
+      SliderRange.ONE_TO_HUNDRED -> value / 100
+      SliderRange.ZERO_TO_ONE -> value
     }
+  }
 
-    Column {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            fontSize = 14.sp,
-            maxLines = 1,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            overflow = TextOverflow.Ellipsis,
-            text = title,
-        )
+  Column {
+    Text(
+      modifier = Modifier.fillMaxWidth(),
+      fontSize = 14.sp,
+      maxLines = 1,
+      color = Color.Black,
+      fontWeight = FontWeight.Bold,
+      overflow = TextOverflow.Ellipsis,
+      text = title,
+    )
 
-        VerticalSpacer(4.dp)
+    VerticalSpacer(4.dp)
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier.width(40.dp),
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                text = when (sliderRange) {
-                    SliderRange.ONE_TO_THOUSANDS -> "${(1000 * sliderPosition).toInt()}"
-                    SliderRange.ONE_TO_HUNDRED -> "${(100 * sliderPosition).toInt()}"
-                    SliderRange.ZERO_TO_ONE -> "${(100 * sliderPosition).toInt()}"
-                },
-            )
-            Slider(
-                modifier = Modifier
-                    .wrapContentWidth(),
-                value = sliderPosition,
-                onValueChange = { sliderPosition = it },
-                onValueChangeFinished = {
-                    onValueChangeFinished(
-                        when (sliderRange) {
-                            SliderRange.ONE_TO_THOUSANDS -> (sliderPosition * 1000)
-                            SliderRange.ONE_TO_HUNDRED -> (sliderPosition * 100)
-                            SliderRange.ZERO_TO_ONE -> sliderPosition
-                        },
-                    )
-                },
-            )
-        }
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Text(
+        modifier = Modifier.width(40.dp),
+        color = Color.Black,
+        fontWeight = FontWeight.Bold,
+        text = when (sliderRange) {
+          SliderRange.ONE_TO_THOUSANDS -> "${(1000 * sliderPosition).toInt()}"
+          SliderRange.ONE_TO_HUNDRED -> "${(100 * sliderPosition).toInt()}"
+          SliderRange.ZERO_TO_ONE -> "${(100 * sliderPosition).toInt()}"
+        },
+      )
+      Slider(
+        modifier = Modifier
+          .wrapContentWidth(),
+        value = sliderPosition,
+        onValueChange = { sliderPosition = it },
+        onValueChangeFinished = {
+          onValueChangeFinished(
+            when (sliderRange) {
+              SliderRange.ONE_TO_THOUSANDS -> (sliderPosition * 1000)
+              SliderRange.ONE_TO_HUNDRED -> (sliderPosition * 100)
+              SliderRange.ZERO_TO_ONE -> sliderPosition
+            },
+          )
+        },
+      )
     }
+  }
 }

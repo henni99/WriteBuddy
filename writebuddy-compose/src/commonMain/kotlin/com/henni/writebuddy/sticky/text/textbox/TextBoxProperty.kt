@@ -27,32 +27,31 @@ import com.henni.writebuddy.sticky.Property
 
 @Immutable
 data class TextBoxProperty(
-    val size: DpSize,
-    val backgroundColor: Color,
-    val textStyle: TextStyle,
-    val selectionBackgroundColor: Color,
-    val padding: Dp,
-    val borderBoxPaint: Paint,
-    val borderBoxPadding: Dp
+  val size: DpSize,
+  val backgroundColor: Color,
+  val textStyle: TextStyle,
+  val selectionBackgroundColor: Color,
+  val padding: Dp,
+  val borderBoxPaint: Paint,
+  val borderBoxPadding: Dp,
 ) : Property {
-    companion object {
+  companion object {
 
-        /**
-         * Default property values for an image bitmap.
-         */
-        @Stable
-        val DEFAULT = TextBoxProperty(
-            size = DpSize(200.dp, 40.dp),
-            backgroundColor = Color.Transparent,
-            selectionBackgroundColor = Color.LightGray,
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-                color = Color.Black
-            ),
-            padding = 8.dp,
-            borderBoxPaint = defaultBorderBoxPaint(),
-            borderBoxPadding = 16.dp
-        )
-
-    }
+    /**
+     * Default property values for an image bitmap.
+     */
+    @Stable
+    val DEFAULT = TextBoxProperty(
+      size = DpSize(200.dp, 40.dp),
+      backgroundColor = Color.Transparent,
+      selectionBackgroundColor = Color.LightGray,
+      textStyle = TextStyle(
+        fontSize = 16.sp,
+        color = Color.Black,
+      ),
+      padding = 8.dp,
+      borderBoxPaint = defaultBorderBoxPaint(),
+      borderBoxPadding = 16.dp,
+    )
+  }
 }

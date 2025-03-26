@@ -23,36 +23,35 @@ import kotlin.uuid.Uuid
  */
 
 @Immutable
-data class PainterImageItem @OptIn(ExperimentalUuidApi::class) constructor(
-    override val id: String = Uuid.random().toString(),
-    override val type: StickyType,
-    override val isFocus: Boolean = false,
-    override val firstPoint: Offset,
-    override val translate: Offset = Offset.Zero,
-    override val scaleFactor: Float = 1f,
-    override val scaleOffset: Offset = Offset.Zero,
-    override val property: Property
+data class PainterImageItem
+@OptIn(ExperimentalUuidApi::class)
+constructor(
+  override val id: String = Uuid.random().toString(),
+  override val type: StickyType,
+  override val isFocus: Boolean = false,
+  override val firstPoint: Offset,
+  override val translate: Offset = Offset.Zero,
+  override val scaleFactor: Float = 1f,
+  override val scaleOffset: Offset = Offset.Zero,
+  override val property: Property,
 ) : Attachable() {
-    override fun copySelf(
-        id: String,
-        type: StickyType,
-        isFocus: Boolean,
-        firstPoint: Offset,
-        translate: Offset,
-        scaleOffset: Offset,
-        scaleFactor: Float,
-        property: Property
-    ): Attachable {
-        return copy(
-            id = id,
-            type = type,
-            isFocus = isFocus,
-            firstPoint = firstPoint,
-            translate = translate,
-            scaleFactor = scaleFactor,
-            scaleOffset = scaleOffset,
-            property = property
-        )
-    }
+  override fun copySelf(
+    id: String,
+    type: StickyType,
+    isFocus: Boolean,
+    firstPoint: Offset,
+    translate: Offset,
+    scaleOffset: Offset,
+    scaleFactor: Float,
+    property: Property,
+  ): Attachable = copy(
+    id = id,
+    type = type,
+    isFocus = isFocus,
+    firstPoint = firstPoint,
+    translate = translate,
+    scaleFactor = scaleFactor,
+    scaleOffset = scaleOffset,
+    property = property,
+  )
 }
-

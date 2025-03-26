@@ -24,43 +24,39 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun WriteBuddySample() {
+  var selectedIndex by remember { mutableStateOf(0) }
 
-    var selectedIndex by remember { mutableStateOf(0) }
+  val options = listOf("Sticky", "Tool")
 
-    val options = listOf("Sticky", "Tool")
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        if (selectedIndex == 0) {
-            StickySample()
-        } else {
-            ToolSample()
-        }
-
-        SingleChoiceSegmentedButtonRow(
-            modifier = Modifier
-                .width(180.dp)
-                .offset {
-                    IntOffset(
-                        x = 0,
-                        y = 40.dp.toPx().toInt()
-                    )
-                }
-                .align(Alignment.TopCenter)
-        ) {
-            options.forEachIndexed { index, label ->
-                SegmentedButton(
-                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                    onClick = { selectedIndex = index },
-                    selected = index == selectedIndex
-                ) {
-                    Text(label)
-                }
-            }
-        }
-
+  Box(
+    modifier = Modifier.fillMaxSize(),
+  ) {
+    if (selectedIndex == 0) {
+      StickySample()
+    } else {
+      ToolSample()
     }
+
+    SingleChoiceSegmentedButtonRow(
+      modifier = Modifier
+        .width(180.dp)
+        .offset {
+          IntOffset(
+            x = 0,
+            y = 40.dp.toPx().toInt(),
+          )
+        }
+        .align(Alignment.TopCenter),
+    ) {
+      options.forEachIndexed { index, label ->
+        SegmentedButton(
+          shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+          onClick = { selectedIndex = index },
+          selected = index == selectedIndex,
+        ) {
+          Text(label)
+        }
+      }
+    }
+  }
 }
-
-
