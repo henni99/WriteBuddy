@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>TapeController</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
+            <a class="library-name--link" href="../../../index.html">
+                    writebuddy-compose
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+1.0.4        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active=""
+                        data-filter=":writebuddy-compose/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":writebuddy-compose/commonMain"
+                                       data-filter=":writebuddy-compose/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </div>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                        data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    writebuddy-compose
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="writebuddy-compose::com.henni.writebuddy.tool.tape/TapeController///PointingToDeclaration//-1000065257">
+  <div class="breadcrumbs"><a href="../../../index.html">writebuddy-compose</a><span class="delimiter">/</span><a href="../index.html">com.henni.writebuddy.tool.tape</a><span class="delimiter">/</span><span class="current">TapeController</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Tape</span><wbr></wbr><span><span>Controller</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Stable.html"><span class="token annotation builtin">Stable</span></a></div></div><span class="token keyword">class </span><a href="index.html">TapeController</a> : <a href="../../com.henni.writebuddy.tool/-tool-controller/index.html">ToolController</a></div><p class="paragraph">Controller responsible for managing tape-related actions, including drawing the tape, handling touch events, and maintaining the state of the tape items.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>default</span><wbr></wbr><span><span>Paint</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default paint used for drawing the tape.</p></div></div></div></div><div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>default</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Paint</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default paint used for drawing the tape image.</p></div></div></div></div><div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>default</span><wbr></wbr><span>Selected</span><wbr></wbr><span>Tape</span><wbr></wbr><span><span>Alpha</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default alpha value for selected tapes.</p></div></div></div></div><div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>default</span><wbr></wbr><span>Corner</span><wbr></wbr><span><span>Radius</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default corner radius of the tape.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="615093428%2FProperties%2F-1000065257" anchor-label="cornerRadius" id="615093428%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="corner-radius.html"><span>corner</span><wbr></wbr><span><span>Radius</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="615093428%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="corner-radius.html">cornerRadius</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/geometry/CornerRadius.html">CornerRadius</a></div><div class="brief "><p class="paragraph">Gets the current corner radius for the tape.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="465686328%2FProperties%2F-1000065257" anchor-label="imagePaint" id="465686328%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="image-paint.html"><span>image</span><wbr></wbr><span><span>Paint</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="465686328%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="image-paint.html">imagePaint</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Paint.html">Paint</a></div><div class="brief "><p class="paragraph">Gets the current paint style for the tape image.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2006627363%2FProperties%2F-1000065257" anchor-label="invalidateTick" id="2006627363%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="invalidate-tick.html"><span>invalidate</span><wbr></wbr><span><span>Tick</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2006627363%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="invalidate-tick.html">invalidateTick</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">The invalidate tick used to trigger re-rendering of the component.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-80400756%2FProperties%2F-1000065257" anchor-label="isMultiTouched" id="-80400756%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-multi-touched.html"><span>is</span><wbr></wbr><span>Multi</span><wbr></wbr><span><span>Touched</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-80400756%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="is-multi-touched.html">isMultiTouched</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if multi-touch mode is active.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1476527233%2FProperties%2F-1000065257" anchor-label="paint" id="1476527233%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="paint.html"><span><span>paint</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1476527233%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="paint.html">paint</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Paint.html">Paint</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1666452030%2FProperties%2F-1000065257" anchor-label="selectedTapeAlpha" id="1666452030%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="selected-tape-alpha.html"><span>selected</span><wbr></wbr><span>Tape</span><wbr></wbr><span><span>Alpha</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1666452030%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="selected-tape-alpha.html">selectedTapeAlpha</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Gets the current alpha value for selected tape items.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1709545956%2FProperties%2F-1000065257" anchor-label="selectedTapeItems" id="-1709545956%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="selected-tape-items.html"><span>selected</span><wbr></wbr><span>Tape</span><wbr></wbr><span><span>Items</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1709545956%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="selected-tape-items.html">selectedTapeItems</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gets a map of selected tape items.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1251294232%2FProperties%2F-1000065257" anchor-label="tapeItemList" id="-1251294232%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="tape-item-list.html"><span>tape</span><wbr></wbr><span>Item</span><wbr></wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1251294232%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="tape-item-list.html">tapeItemList</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../-tape-item/index.html">TapeItem</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gets a copy of the list of all tape items.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1929126048%2FProperties%2F-1000065257" anchor-label="touchEvent" id="-1929126048%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="touch-event.html"><span>touch</span><wbr></wbr><span><span>Event</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1929126048%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">val </span><a href="touch-event.html">touchEvent</a><span class="token operator">: </span><a href="../../com.henni.writebuddy.tool/-tool-touch-event/index.html">ToolTouchEvent</a></div><div class="brief "><p class="paragraph">The touch event handler for the tape.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="1784103510%2FFunctions%2F-1000065257" anchor-label="addTapeItem" id="1784103510%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-tape-item.html"><span>add</span><wbr></wbr><span>Tape</span><wbr></wbr><span><span>Item</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1784103510%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="add-tape-item.html"><span class="token function">addTapeItem</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="../-tape-item/index.html">TapeItem</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Adds a new tape item to the list of tape items.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-257967070%2FFunctions%2F-1000065257" anchor-label="selectTapeItem" id="-257967070%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="select-tape-item.html"><span>select</span><wbr></wbr><span>Tape</span><wbr></wbr><span><span>Item</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-257967070%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="select-tape-item.html"><span class="token function">selectTapeItem</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">point<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/geometry/Offset.html">Offset</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Selects or deselects a tape item based on the given point.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1444905619%2FFunctions%2F-1000065257" anchor-label="updateCornerRadius" id="-1444905619%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-corner-radius.html"><span>update</span><wbr></wbr><span>Corner</span><wbr></wbr><span><span>Radius</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1444905619%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-corner-radius.html"><span class="token function">updateCornerRadius</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/geometry/CornerRadius.html">CornerRadius</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the corner radius for the tape.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-427125606%2FFunctions%2F-1000065257" anchor-label="updateInvalidateTick" id="-427125606%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-invalidate-tick.html"><span>update</span><wbr></wbr><span>Invalidate</span><wbr></wbr><span><span>Tick</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-427125606%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="update-invalidate-tick.html"><span class="token function">updateInvalidateTick</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the invalidate tick to trigger a re-render.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-769854200%2FFunctions%2F-1000065257" anchor-label="updateIsMultiTouched" id="-769854200%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-is-multi-touched.html"><span>update</span><wbr></wbr><span>Is</span><wbr></wbr><span>Multi</span><wbr></wbr><span><span>Touched</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-769854200%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-is-multi-touched.html"><span class="token function">updateIsMultiTouched</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the multi-touch state of the controller.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="76332408%2FFunctions%2F-1000065257" anchor-label="updateSelectedTapeAlpha" id="76332408%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-selected-tape-alpha.html"><span>update</span><wbr></wbr><span>Selected</span><wbr></wbr><span>Tape</span><wbr></wbr><span><span>Alpha</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="76332408%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-selected-tape-alpha.html"><span class="token function">updateSelectedTapeAlpha</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the alpha value for selected tape items.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="794899406%2FFunctions%2F-1000065257" anchor-label="updateTapeColor" id="794899406%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-tape-color.html"><span>update</span><wbr></wbr><span>Tape</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="794899406%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-tape-color.html"><span class="token function">updateTapeColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the color of the tape.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1938115249%2FFunctions%2F-1000065257" anchor-label="updateTapeImageColor" id="-1938115249%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-tape-image-color.html"><span>update</span><wbr></wbr><span>Tape</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1938115249%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-tape-image-color.html"><span class="token function">updateTapeImageColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the color of the tape image.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1059413991%2FFunctions%2F-1000065257" anchor-label="updateTapeImagePaint" id="-1059413991%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-tape-image-paint.html"><span>update</span><wbr></wbr><span>Tape</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Paint</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1059413991%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-tape-image-paint.html"><span class="token function">updateTapeImagePaint</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Paint.html">Paint</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the paint style for the tape image.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1532932650%2FFunctions%2F-1000065257" anchor-label="updateTapeImageWidth" id="-1532932650%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-tape-image-width.html"><span>update</span><wbr></wbr><span>Tape</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1532932650%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-tape-image-width.html"><span class="token function">updateTapeImageWidth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the stroke width of the tape image.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1673600664%2FFunctions%2F-1000065257" anchor-label="updateTapePaint" id="1673600664%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-tape-paint.html"><span>update</span><wbr></wbr><span>Tape</span><wbr></wbr><span><span>Paint</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1673600664%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-tape-paint.html"><span class="token function">updateTapePaint</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Paint.html">Paint</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the paint style for the tape.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="215856533%2FFunctions%2F-1000065257" anchor-label="updateTapeWidth" id="215856533%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-tape-width.html"><span>update</span><wbr></wbr><span>Tape</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="215856533%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-tape-width.html"><span class="token function">updateTapeWidth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the stroke width of the tape.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2025 Copyright</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>StickyItemController</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
+            <a class="library-name--link" href="../../../index.html">
+                    writebuddy-compose
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+1.0.4        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active=""
+                        data-filter=":writebuddy-compose/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":writebuddy-compose/commonMain"
+                                       data-filter=":writebuddy-compose/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </div>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                        data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    writebuddy-compose
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="writebuddy-compose::com.henni.writebuddy.sticky/StickyItemController///PointingToDeclaration//-1000065257">
+  <div class="breadcrumbs"><a href="../../../index.html">writebuddy-compose</a><span class="delimiter">/</span><a href="../index.html">com.henni.writebuddy.sticky</a><span class="delimiter">/</span><span class="current">StickyItemController</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Sticky</span><wbr></wbr><span>Item</span><wbr></wbr><span><span>Controller</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Stable.html"><span class="token annotation builtin">Stable</span></a></div></div><span class="token keyword">class </span><a href="index.html">StickyItemController</a></div><p class="paragraph">A stable class that manages the state and properties of various sticky items (e.g., Post-it notes, images, text boxes). It allows updating properties such as size, background color, text style, and more.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>default</span><wbr></wbr><span>Post</span><wbr></wbr><span>It</span><wbr></wbr><span><span>Property</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default properties for a Post-it note.</p></div></div></div></div><div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>default</span><wbr></wbr><span>Painter</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Property</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default properties for a painter image.</p></div></div></div></div><div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>default</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Property</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default properties for a vector image.</p></div></div></div></div><div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>default</span><wbr></wbr><span>Bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Property</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default properties for a bitmap image.</p></div></div></div></div><div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>default</span><wbr></wbr><span>Text</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Property</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The default properties for a text box.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1364267333%2FProperties%2F-1000065257" anchor-label="bitmapImageProperty" id="1364267333%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bitmap-image-property.html"><span>bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Property</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1364267333%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="bitmap-image-property.html">bitmapImageProperty</a><span class="token operator">: </span><a href="../../com.henni.writebuddy.sticky.image.imageBitmap/-image-bitmap-property/index.html">ImageBitmapProperty</a></div><div class="brief "><p class="paragraph">Public read-only access to BitmapImage properties.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1206366756%2FProperties%2F-1000065257" anchor-label="invalidateTick" id="-1206366756%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="invalidate-tick.html"><span>invalidate</span><wbr></wbr><span><span>Tick</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1206366756%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="invalidate-tick.html">invalidateTick</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/MutableStateFlow///PointingToDeclaration/">MutableStateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">A flow that tracks the invalidation state of the sticky item list. Can be used to trigger UI re-renders when the list needs to be updated.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1103497681%2FProperties%2F-1000065257" anchor-label="painterImageProperty" id="-1103497681%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="painter-image-property.html"><span>painter</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Property</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1103497681%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="painter-image-property.html">painterImageProperty</a><span class="token operator">: </span><a href="../../com.henni.writebuddy.sticky.image.painter/-painter-image-property/index.html">PainterImageProperty</a></div><div class="brief "><p class="paragraph">Public read-only access to PainterImage properties.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2113162380%2FProperties%2F-1000065257" anchor-label="postItProperty" id="-2113162380%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="post-it-property.html"><span>post</span><wbr></wbr><span>It</span><wbr></wbr><span><span>Property</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2113162380%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="post-it-property.html">postItProperty</a><span class="token operator">: </span><a href="../../com.henni.writebuddy.sticky.text.post_it/-post-it-property/index.html">PostItProperty</a></div><div class="brief "><p class="paragraph">Public read-only access to Post-It properties.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="720975418%2FProperties%2F-1000065257" anchor-label="stickyItemList" id="720975418%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="sticky-item-list.html"><span>sticky</span><wbr></wbr><span>Item</span><wbr></wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="720975418%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="sticky-item-list.html">stickyItemList</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../com.henni.writebuddy/-attachable/index.html">Attachable</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">A public read-only list of sticky items. Provides access to the list of sticky items, but prevents modification from outside the class.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1458586605%2FProperties%2F-1000065257" anchor-label="textBoxProperty" id="-1458586605%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="text-box-property.html"><span>text</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Property</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1458586605%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="text-box-property.html">textBoxProperty</a><span class="token operator">: </span><a href="../../com.henni.writebuddy.sticky.text.textbox/-text-box-property/index.html">TextBoxProperty</a></div><div class="brief "><p class="paragraph">Public read-only access to TextBox properties.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1492037031%2FProperties%2F-1000065257" anchor-label="vectorImageProperty" id="-1492037031%2FProperties%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="vector-image-property.html"><span>vector</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Property</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1492037031%2FProperties%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="vector-image-property.html">vectorImageProperty</a><span class="token operator">: </span><a href="../../com.henni.writebuddy.sticky.image.imageVector/-vector-image-property/index.html">VectorImageProperty</a></div><div class="brief "><p class="paragraph">Public read-only access to VectorImage properties.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1573804030%2FFunctions%2F-1000065257" anchor-label="addStickyItem" id="-1573804030%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-sticky-item.html"><span>add</span><wbr></wbr><span>Sticky</span><wbr></wbr><span><span>Item</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1573804030%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="add-sticky-item.html"><span class="token function">addStickyItem</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">item<span class="token operator">: </span><a href="../../com.henni.writebuddy/-attachable/index.html">Attachable</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Adds a sticky item to the list and updates the map with its index.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="947702690%2FFunctions%2F-1000065257" anchor-label="clearAllFocus" id="947702690%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-all-focus.html"><span>clear</span><wbr></wbr><span>All</span><wbr></wbr><span><span>Focus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="947702690%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="clear-all-focus.html"><span class="token function">clearAllFocus</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Clears the focus from all sticky items by setting <code class="lang-kotlin">isFocus</code> to false for each.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1962048852%2FFunctions%2F-1000065257" anchor-label="isFocusNow" id="-1962048852%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-focus-now.html"><span>is</span><wbr></wbr><span>Focus</span><wbr></wbr><span><span>Now</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1962048852%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-focus-now.html"><span class="token function">isFocusNow</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if any StickyTextItem is currently focused.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-972207337%2FFunctions%2F-1000065257" anchor-label="removeStickyItem" id="-972207337%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-sticky-item.html"><span>remove</span><wbr></wbr><span>Sticky</span><wbr></wbr><span><span>Item</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-972207337%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="remove-sticky-item.html"><span class="token function">removeStickyItem</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">item<span class="token operator">: </span><a href="../../com.henni.writebuddy/-attachable/index.html">Attachable</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Removes a sticky item from the list and updates the map to reflect the removal.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1269028740%2FFunctions%2F-1000065257" anchor-label="updateBitmapImageAlignment" id="1269028740%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-bitmap-image-alignment.html"><span>update</span><wbr></wbr><span>Bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Alignment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1269028740%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-bitmap-image-alignment.html"><span class="token function">updateBitmapImageAlignment</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Alignment.html">Alignment</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the alignment of the BitmapImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="344426378%2FFunctions%2F-1000065257" anchor-label="updateBitmapImageAlpha" id="344426378%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-bitmap-image-alpha.html"><span>update</span><wbr></wbr><span>Bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Alpha</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="344426378%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-bitmap-image-alpha.html"><span class="token function">updateBitmapImageAlpha</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the alpha of the BitmapImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-978002261%2FFunctions%2F-1000065257" anchor-label="updateBitmapImageColorFilter" id="-978002261%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-bitmap-image-color-filter.html"><span>update</span><wbr></wbr><span>Bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span>Color</span><wbr></wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-978002261%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-bitmap-image-color-filter.html"><span class="token function">updateBitmapImageColorFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/ColorFilter.html">ColorFilter</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-278486860%2FFunctions%2F-1000065257" anchor-label="updateBitmapImageContentScale" id="-278486860%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-bitmap-image-content-scale.html"><span>update</span><wbr></wbr><span>Bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span>Content</span><wbr></wbr><span><span>Scale</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-278486860%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-bitmap-image-content-scale.html"><span class="token function">updateBitmapImageContentScale</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale.html">ContentScale</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the content scale of the BitmapImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1328678985%2FFunctions%2F-1000065257" anchor-label="updateBitmapImageHeight" id="1328678985%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-bitmap-image-height.html"><span>update</span><wbr></wbr><span>Bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1328678985%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-bitmap-image-height.html"><span class="token function">updateBitmapImageHeight</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the height of the BitmapImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1574571085%2FFunctions%2F-1000065257" anchor-label="updateBitmapImageImageBitmap" id="1574571085%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-bitmap-image-image-bitmap.html"><span>update</span><wbr></wbr><span>Bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Bitmap</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1574571085%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-bitmap-image-image-bitmap.html"><span class="token function">updateBitmapImageImageBitmap</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/ImageBitmap.html">ImageBitmap</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the ImageBitmap of the BitmapImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="380226146%2FFunctions%2F-1000065257" anchor-label="updateBitmapImageSize" id="380226146%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-bitmap-image-size.html"><span>update</span><wbr></wbr><span>Bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="380226146%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-bitmap-image-size.html"><span class="token function">updateBitmapImageSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/DpSize.html">DpSize</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the size (width and height) of the BitmapImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2074327180%2FFunctions%2F-1000065257" anchor-label="updateBitmapImageWidth" id="-2074327180%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-bitmap-image-width.html"><span>update</span><wbr></wbr><span>Bitmap</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2074327180%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-bitmap-image-width.html"><span class="token function">updateBitmapImageWidth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the width of the BitmapImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1857609047%2FFunctions%2F-1000065257" anchor-label="updateFocus" id="1857609047%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-focus.html"><span>update</span><wbr></wbr><span><span>Focus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1857609047%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-focus.html"><span class="token function">updateFocus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">isFocus<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the focus state of a sticky item.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-384680045%2FFunctions%2F-1000065257" anchor-label="updateInvalidateTick" id="-384680045%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-invalidate-tick.html"><span>update</span><wbr></wbr><span>Invalidate</span><wbr></wbr><span><span>Tick</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-384680045%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-invalidate-tick.html"><span class="token function">updateInvalidateTick</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the invalidate tick, signaling that the sticky item list should be re-rendered.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1401990716%2FFunctions%2F-1000065257" anchor-label="updatePainterImageAlignment" id="1401990716%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-painter-image-alignment.html"><span>update</span><wbr></wbr><span>Painter</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Alignment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1401990716%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-painter-image-alignment.html"><span class="token function">updatePainterImageAlignment</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Alignment.html">Alignment</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the alignment of the PainterImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="997387730%2FFunctions%2F-1000065257" anchor-label="updatePainterImageAlpha" id="997387730%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-painter-image-alpha.html"><span>update</span><wbr></wbr><span>Painter</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Alpha</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="997387730%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-painter-image-alpha.html"><span class="token function">updatePainterImageAlpha</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the alpha of the PainterImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1153649933%2FFunctions%2F-1000065257" anchor-label="updatePainterImageColorFilter" id="-1153649933%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-painter-image-color-filter.html"><span>update</span><wbr></wbr><span>Painter</span><wbr></wbr><span>Image</span><wbr></wbr><span>Color</span><wbr></wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1153649933%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-painter-image-color-filter.html"><span class="token function">updatePainterImageColorFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/ColorFilter.html">ColorFilter</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the color filter of the PainterImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-454134532%2FFunctions%2F-1000065257" anchor-label="updatePainterImageContentScale" id="-454134532%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-painter-image-content-scale.html"><span>update</span><wbr></wbr><span>Painter</span><wbr></wbr><span>Image</span><wbr></wbr><span>Content</span><wbr></wbr><span><span>Scale</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-454134532%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-painter-image-content-scale.html"><span class="token function">updatePainterImageContentScale</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale.html">ContentScale</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the content scale of the PainterImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1638408559%2FFunctions%2F-1000065257" anchor-label="updatePainterImageHeight" id="-1638408559%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-painter-image-height.html"><span>update</span><wbr></wbr><span>Painter</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1638408559%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-painter-image-height.html"><span class="token function">updatePainterImageHeight</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the height of the PainterImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2039152790%2FFunctions%2F-1000065257" anchor-label="updatePainterImagePainter" id="2039152790%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-painter-image-painter.html"><span>update</span><wbr></wbr><span>Painter</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Painter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2039152790%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-painter-image-painter.html"><span class="token function">updatePainterImagePainter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/painter/Painter.html">Painter</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the painter of the PainterImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="867380906%2FFunctions%2F-1000065257" anchor-label="updatePainterImageSize" id="867380906%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-painter-image-size.html"><span>update</span><wbr></wbr><span>Painter</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="867380906%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-painter-image-size.html"><span class="token function">updatePainterImageSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/DpSize.html">DpSize</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the size (width and height) of the PainterImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-646019028%2FFunctions%2F-1000065257" anchor-label="updatePainterImageWidth" id="-646019028%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-painter-image-width.html"><span>update</span><wbr></wbr><span>Painter</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-646019028%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-painter-image-width.html"><span class="token function">updatePainterImageWidth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the width of the PainterImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="967248079%2FFunctions%2F-1000065257" anchor-label="updatePostCorner" id="967248079%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-corner.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span><span>Corner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="967248079%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-corner.html"><span class="token function">updatePostCorner</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the corner radius of the Post-It.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1762811443%2FFunctions%2F-1000065257" anchor-label="updatePostElevation" id="1762811443%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-elevation.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span><span>Elevation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1762811443%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-elevation.html"><span class="token function">updatePostElevation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the elevation (shadow) of the Post-It.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1204498636%2FFunctions%2F-1000065257" anchor-label="updatePostItBackgroundColor" id="1204498636%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-it-background-color.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span>It</span><wbr></wbr><span>Background</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1204498636%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-it-background-color.html"><span class="token function">updatePostItBackgroundColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the background color of the Post-It.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1889944575%2FFunctions%2F-1000065257" anchor-label="updatePostItFontSize" id="-1889944575%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-it-font-size.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span>It</span><wbr></wbr><span>Font</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1889944575%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-it-font-size.html"><span class="token function">updatePostItFontSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the font size of the Post-It text.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-439080020%2FFunctions%2F-1000065257" anchor-label="updatePostItHeight" id="-439080020%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-it-height.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span>It</span><wbr></wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-439080020%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-it-height.html"><span class="token function">updatePostItHeight</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the height of the Post-It.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1924095739%2FFunctions%2F-1000065257" anchor-label="updatePostItSize" id="-1924095739%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-it-size.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span>It</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1924095739%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-it-size.html"><span class="token function">updatePostItSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/DpSize.html">DpSize</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the size (width and height) of the Post-It.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1711408501%2FFunctions%2F-1000065257" anchor-label="updatePostItTextColor" id="-1711408501%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-it-text-color.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span>It</span><wbr></wbr><span>Text</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1711408501%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-it-text-color.html"><span class="token function">updatePostItTextColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the text color of the Post-It.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1257953626%2FFunctions%2F-1000065257" anchor-label="updatePostItTextStyle" id="1257953626%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-it-text-style.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span>It</span><wbr></wbr><span>Text</span><wbr></wbr><span><span>Style</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1257953626%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-it-text-style.html"><span class="token function">updatePostItTextStyle</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the text style of the Post-It.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1022973007%2FFunctions%2F-1000065257" anchor-label="updatePostItWidth" id="-1022973007%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-it-width.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span>It</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1022973007%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-it-width.html"><span class="token function">updatePostItWidth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the width of the Post-It.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1235314023%2FFunctions%2F-1000065257" anchor-label="updatePostPadding" id="1235314023%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-padding.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span><span>Padding</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1235314023%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-padding.html"><span class="token function">updatePostPadding</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the padding of the Post-It.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-912408759%2FFunctions%2F-1000065257" anchor-label="updatePostSelectionBackgroundColor" id="-912408759%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-post-selection-background-color.html"><span>update</span><wbr></wbr><span>Post</span><wbr></wbr><span>Selection</span><wbr></wbr><span>Background</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-912408759%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-post-selection-background-color.html"><span class="token function">updatePostSelectionBackgroundColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the background color of the Post-It selection.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="525463192%2FFunctions%2F-1000065257" anchor-label="updateStickyType" id="525463192%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-sticky-type.html"><span>update</span><wbr></wbr><span>Sticky</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="525463192%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-sticky-type.html"><span class="token function">updateStickyType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="../-sticky-type/index.html">StickyType</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the color filter of the BitmapImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-868122325%2FFunctions%2F-1000065257" anchor-label="updateText" id="-868122325%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-text.html"><span>update</span><wbr></wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-868122325%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-text.html"><span class="token function">updateText</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the text content of a sticky item, specifically for StickyTextItem.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-267592741%2FFunctions%2F-1000065257" anchor-label="updateTextBoxBackgroundColor" id="-267592741%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-text-box-background-color.html"><span>update</span><wbr></wbr><span>Text</span><wbr></wbr><span>Box</span><wbr></wbr><span>Background</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-267592741%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-text-box-background-color.html"><span class="token function">updateTextBoxBackgroundColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the background color of the TextBox.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="78805542%2FFunctions%2F-1000065257" anchor-label="updateTextBoxBorderBoxPadding" id="78805542%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-text-box-border-box-padding.html"><span>update</span><wbr></wbr><span>Text</span><wbr></wbr><span>Box</span><wbr></wbr><span>Border</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Padding</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="78805542%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-text-box-border-box-padding.html"><span class="token function">updateTextBoxBorderBoxPadding</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the border box padding of the TextBox.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1030676386%2FFunctions%2F-1000065257" anchor-label="updateTextBoxBorderBoxPaint" id="-1030676386%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-text-box-border-box-paint.html"><span>update</span><wbr></wbr><span>Text</span><wbr></wbr><span>Box</span><wbr></wbr><span>Border</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Paint</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1030676386%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-text-box-border-box-paint.html"><span class="token function">updateTextBoxBorderBoxPaint</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Paint.html">Paint</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the border box paint of the TextBox.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1538360978%2FFunctions%2F-1000065257" anchor-label="updateTextBoxFontSize" id="1538360978%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-text-box-font-size.html"><span>update</span><wbr></wbr><span>Text</span><wbr></wbr><span>Box</span><wbr></wbr><span>Font</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1538360978%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-text-box-font-size.html"><span class="token function">updateTextBoxFontSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the font size of the TextBox text.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-360671603%2FFunctions%2F-1000065257" anchor-label="updateTextBoxPadding" id="-360671603%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-text-box-padding.html"><span>update</span><wbr></wbr><span>Text</span><wbr></wbr><span>Box</span><wbr></wbr><span><span>Padding</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-360671603%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-text-box-padding.html"><span class="token function">updateTextBoxPadding</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the padding of the TextBox.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1533369967%2FFunctions%2F-1000065257" anchor-label="updateTextBoxSelectionBackgroundColor" id="1533369967%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-text-box-selection-background-color.html"><span>update</span><wbr></wbr><span>Text</span><wbr></wbr><span>Box</span><wbr></wbr><span>Selection</span><wbr></wbr><span>Background</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1533369967%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-text-box-selection-background-color.html"><span class="token function">updateTextBoxSelectionBackgroundColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the selection background color of the TextBox.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-748364582%2FFunctions%2F-1000065257" anchor-label="updateTextBoxTextColor" id="-748364582%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-text-box-text-color.html"><span>update</span><wbr></wbr><span>Text</span><wbr></wbr><span>Box</span><wbr></wbr><span>Text</span><wbr></wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-748364582%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-text-box-text-color.html"><span class="token function">updateTextBoxTextColor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the text color of the TextBox.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2073969751%2FFunctions%2F-1000065257" anchor-label="updateTextBoxTextStyle" id="-2073969751%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-text-box-text-style.html"><span>update</span><wbr></wbr><span>Text</span><wbr></wbr><span>Box</span><wbr></wbr><span>Text</span><wbr></wbr><span><span>Style</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2073969751%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-text-box-text-style.html"><span class="token function">updateTextBoxTextStyle</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the text style of the TextBox.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1393017552%2FFunctions%2F-1000065257" anchor-label="updateTranslate" id="1393017552%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-translate.html"><span>update</span><wbr></wbr><span><span>Translate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1393017552%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-translate.html"><span class="token function">updateTranslate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">translate<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/geometry/Offset.html">Offset</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the translation (position) of a sticky item.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-831783528%2FFunctions%2F-1000065257" anchor-label="updateVectorImageAlignment" id="-831783528%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-vector-image-alignment.html"><span>update</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Alignment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-831783528%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-vector-image-alignment.html"><span class="token function">updateVectorImageAlignment</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Alignment.html">Alignment</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the alignment of the VectorImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-230867722%2FFunctions%2F-1000065257" anchor-label="updateVectorImageAlpha" id="-230867722%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-vector-image-alpha.html"><span>update</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Alpha</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-230867722%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-vector-image-alpha.html"><span class="token function">updateVectorImageAlpha</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the alpha of the VectorImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1725023977%2FFunctions%2F-1000065257" anchor-label="updateVectorImageColorFilter" id="-1725023977%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-vector-image-color-filter.html"><span>update</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Image</span><wbr></wbr><span>Color</span><wbr></wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1725023977%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-vector-image-color-filter.html"><span class="token function">updateVectorImageColorFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/ColorFilter.html">ColorFilter</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the color filter of the VectorImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1025508576%2FFunctions%2F-1000065257" anchor-label="updateVectorImageContentScale" id="-1025508576%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-vector-image-content-scale.html"><span>update</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Image</span><wbr></wbr><span>Content</span><wbr></wbr><span><span>Scale</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1025508576%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-vector-image-content-scale.html"><span class="token function">updateVectorImageContentScale</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/layout/ContentScale.html">ContentScale</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the content scale of the VectorImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1149724085%2FFunctions%2F-1000065257" anchor-label="updateVectorImageHeight" id="1149724085%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-vector-image-height.html"><span>update</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1149724085%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-vector-image-height.html"><span class="token function">updateVectorImageHeight</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the height of the VectorImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1390367776%2FFunctions%2F-1000065257" anchor-label="updateVectorImageImageVector" id="1390367776%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-vector-image-image-vector.html"><span>update</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Image</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Vector</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1390367776%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-vector-image-image-vector.html"><span class="token function">updateVectorImageImageVector</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/vector/ImageVector.html">ImageVector</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the image vector of the VectorImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="203259086%2FFunctions%2F-1000065257" anchor-label="updateVectorImageSize" id="203259086%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-vector-image-size.html"><span>update</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="203259086%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-vector-image-size.html"><span class="token function">updateVectorImageSize</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/DpSize.html">DpSize</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the size (width and height) of the VectorImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="829394056%2FFunctions%2F-1000065257" anchor-label="updateVectorImageWidth" id="829394056%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-vector-image-width.html"><span>update</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Image</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="829394056%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-vector-image-width.html"><span class="token function">updateVectorImageWidth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the width of the VectorImage.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-801251318%2FFunctions%2F-1000065257" anchor-label="updateZoomState" id="-801251318%2FFunctions%2F-1000065257" data-filterable-set=":writebuddy-compose/commonMain"></a>
+          <div class="table-row" data-filterable-current=":writebuddy-compose/commonMain" data-filterable-set=":writebuddy-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-zoom-state.html"><span>update</span><wbr></wbr><span>Zoom</span><wbr></wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-801251318%2FFunctions%2F-1000065257"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":writebuddy-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-zoom-state.html"><span class="token function">updateZoomState</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">scaleFactor<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter ">scaleOffset<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/geometry/Offset.html">Offset</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the zoom state of a sticky item (scale factor and scale offset).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2025 Copyright</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
