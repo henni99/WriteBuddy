@@ -15,7 +15,7 @@ Supports Sticky(PostIt, TextBox, Image), Tool(Laser, Tape)
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-blue)](https://kotlinlang.org/docs/reference/multiplatform.html)
 
 ![Platform](https://img.shields.io/badge/Android-3aab58)
-![Platform](https://img.shields.io/badge/IO(Experimentinal)S-d32408)
+![Platform](https://img.shields.io/badge/IOS(Experimentinal)-d32408)
 ![Platform](https://img.shields.io/badge/Desktop(Experimentinal)-097cd5)
 ![Platform](https://img.shields.io/badge/Web(Experimentinal)-99CC33)
     
@@ -133,6 +133,6 @@ Also, __[follow me](https://github.com/henni99)__ on GitHub for my next creation
 
 ## Document
 
-For more details, you can check out the [documentations](https://henni99.github.io/Handwriting/index.html)
+For more details, you can check out the [documentations](https://henni99.github.io/WriteBuddy/index.html)
 
 
