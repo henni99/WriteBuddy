@@ -125,12 +125,6 @@ If you find any bugs or have suggestions for better features, please feel free t
 
 <br>
 
-## Find this library useful? :heart:
-Support it by joining __[stargazers](https://github.com/henni99/Handwriting/stargazers)__ for this repository. :star: <br>
-Also, __[follow me](https://github.com/henni99)__ on GitHub for my next creations! 🤩
-
-<br>
-
 ## Document
 
 For more details, you can check out the [documentations](https://henni99.github.io/WriteBuddy/index.html)
