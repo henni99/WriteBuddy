@@ -46,7 +46,6 @@ google-services.json
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
