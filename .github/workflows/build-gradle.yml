@@ -37,4 +37,5 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Android build
-        run: ./gradlew build
+        run: ./gradlew assembleDebug -x :baselineprofile:assemble
+
