@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 rootProject.name = "WriteBuddy"
 include(":app")
 include(":writebuddy-compose")
+include(":baselineprofile")
