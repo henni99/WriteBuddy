@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.dokka)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.vanniktech.maven.publish)
+    alias(libs.plugins.baselineprofile)
 }
 
 mavenPublishing{
@@ -136,8 +137,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
+
+baselineProfile {
+    baselineProfileOutputDir = "."
+    filter {
+        include("com.henni.writebuddy.**")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.profileinstaller)
+    "baselineProfile"(project(":baselineprofile"))
 }
 
 dokka {

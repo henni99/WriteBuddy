@@ -118,6 +118,14 @@ android {
         debugImplementation(compose.uiTooling)
     }
 }
+
+baselineProfile {
+    baselineProfileOutputDir = "."
+    filter {
+        include("com.henni.writebuddy.**")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.profileinstaller)
     "baselineProfile"(project(":baselineprofile"))
