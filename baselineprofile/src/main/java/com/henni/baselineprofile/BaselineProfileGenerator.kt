@@ -27,7 +27,8 @@ import org.junit.runner.RunWith
  *
  * After you run the generator, you can verify the improvements running the [StartupBenchmarks] benchmark.
  *
- * When using this class to generate a baseline profile, only API 33+ or rooted API 28+ are supported.
+ * When using this class to generate a baseline p
+ * rofile, only API 33+ or rooted API 28+ are supported.
  *
  * The minimum required version of androidx.benchmark to generate a baseline profile is 1.2.0.
  **/
@@ -35,26 +36,25 @@ import org.junit.runner.RunWith
 @LargeTest
 class BaselineProfileGenerator {
 
-    @get:Rule
-    val rule = BaselineProfileRule()
+  @get:Rule
+  val rule = BaselineProfileRule()
 
-    @Test
-    fun generate() {
-        // The application id for the running build variant is read from the instrumentation arguments.
-        rule.collect(
-            packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
-                ?: throw Exception("targetAppId not passed as instrumentation runner arg"),
+  @Test
+  fun generate() {
+    // The application id for the running build variant is read from the instrumentation arguments.
+    rule.collect(
+      packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
+        ?: throw Exception("targetAppId not passed as instrumentation runner arg"),
 
-            // See: https://d.android.com/topic/performance/baselineprofiles/dex-layout-optimizations
-            includeInStartupProfile = true
-        ) {
-            // This block defines the app's critical user journey. Here we are interested in
-            // optimizing for app startup. But you can also navigate and scroll through your most important UI.
+      // See: https://d.android.com/topic/performance/baselineprofiles/dex-layout-optimizations
+      includeInStartupProfile = true,
+    ) {
+      // This block defines the app's critical user journey. Here we are interested in
+      // optimizing for app startup. But you can also navigate and scroll through your most important UI.
 
-            // Start default activity for your app
-            pressHome()
-            startActivityAndWait()
-
-        }
+      // Start default activity for your app
+      pressHome()
+      startActivityAndWait()
     }
+  }
 }
