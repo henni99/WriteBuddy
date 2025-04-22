@@ -148,7 +148,7 @@ baselineProfile {
 dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.profileinstaller)
-    "baselineProfile"(project(":baselineprofile"))
+    baselineProfile(project(":baselineprofile"))
 }
 
 dokka {
